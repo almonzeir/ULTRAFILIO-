@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MacbookFrame } from '@/components/shared/device-frames';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -36,10 +37,12 @@ export default function Hero() {
             {dict.subtitle}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg" className="btn-special">
-              <Rocket className="mr-2 h-5 w-5" />
-              {dict.ctaFree}
-            </Button>
+            <Link href="/upload-cv">
+              <Button size="lg" className="btn-special">
+                <Rocket className="mr-2 h-5 w-5" />
+                {dict.ctaFree}
+              </Button>
+            </Link>
             <Button size="lg" variant="outline">
               {dict.ctaDemo}
             </Button>
