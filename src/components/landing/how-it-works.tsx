@@ -49,7 +49,7 @@ export default function HowItWorks() {
     <section className="py-24 sm:py-32 bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <p className="text-base font-semibold leading-7 text-primary">{dict.eyebrow}</p>
+          <p className="text-base font-semibold leading-7 text-foreground">{dict.eyebrow}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
             {dict.title}
           </h2>
@@ -62,9 +62,10 @@ export default function HowItWorks() {
             {steps.map((step, index) => (
               <div key={step.name} className="relative flex flex-col">
                 <dt className="flex-shrink-0 text-base font-semibold leading-7 text-foreground">
-                  <div className="absolute start-0 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                    <step.icon className="h-6 w-6 text-primary" aria-hidden="true" />
+                  <div className="absolute start-0 flex h-12 w-12 items-center justify-center rounded-lg bg-foreground/10">
+                    <step.icon className="h-6 w-6 text-foreground" aria-hidden="true" />
                   </div>
+
                   <span className="ps-16">{step.name}</span>
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
