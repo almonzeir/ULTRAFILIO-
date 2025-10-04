@@ -5,7 +5,7 @@ import Logo from '@/components/shared/logo';
 import { useEffect, useState } from 'react';
 
 export default function Footer() {
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -51,7 +51,7 @@ export default function Footer() {
         <div className="flex items-center justify-between">
           <Logo />
           <p className="text-sm text-muted-foreground">
-            &copy; {year} UltraFolio. All rights reserved.
+            &copy; {year || new Date().getFullYear()} UltraFolio. All rights reserved.
           </p>
         </div>
       </div>
