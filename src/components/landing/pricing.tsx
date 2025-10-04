@@ -49,7 +49,7 @@ export default function Pricing() {
         </div>
         <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-stretch gap-8 sm:mt-20 lg:max-w-4xl lg:grid-cols-2">
           
-          <Card className="flex flex-col">
+          <Card className="flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
              <CardHeader>
               <CardTitle className="font-headline">{dict.free.title}</CardTitle>
               <CardDescription>{dict.free.description}</CardDescription>
