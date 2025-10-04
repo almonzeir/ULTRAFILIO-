@@ -90,3 +90,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .btn-special {
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105;
+  }
+
+  .dark .btn-special {
+    @apply from-blue-400 to-purple-500 text-white hover:from-blue-500 hover:to-purple-600;
+  }
+}

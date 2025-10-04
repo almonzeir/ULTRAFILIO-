@@ -8,6 +8,7 @@ import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { useEffect, useState } from 'react';
+import { Rocket } from 'lucide-react';
 
 export default function Hero() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-device-mockup');
@@ -35,7 +36,10 @@ export default function Hero() {
             {dict.subtitle}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg">{dict.ctaFree}</Button>
+            <Button size="lg" className="btn-special">
+              <Rocket className="mr-2 h-5 w-5" />
+              {dict.ctaFree}
+            </Button>
             <Button size="lg" variant="outline">
               {dict.ctaDemo}
             </Button>
