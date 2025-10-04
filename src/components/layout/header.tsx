@@ -15,7 +15,7 @@ const navLinks = [
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
-  const { setTheme, theme } = { setTheme: (theme: string) => {}, theme: 'dark' }; // Dummy theme functions
+  const { setTheme, theme } = useTheme();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +58,7 @@ export default function Header() {
               <Languages className="h-5 w-5" />
               <span className="sr-only">Toggle language</span>
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
               {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               <span className="sr-only">Toggle theme</span>
             </Button>
