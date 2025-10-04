@@ -10,6 +10,7 @@ import { ThemeProvider } from '@/context/ThemeContext';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 import ModernTemplate from '@/templates/ModernTemplate';
 import type { PortfolioData } from '@/templates/types';
+import { useRouter } from 'next/navigation';
 
 // Dummy data for previewing the template
 const dummyData: PortfolioData = {
@@ -66,6 +67,7 @@ const dummyData: PortfolioData = {
 export default function UploadCV() {
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const router = useRouter();
   const avatarImage = PlaceHolderImages.find(p => p.id === 'profile-avatar-placeholder');
 
 
@@ -86,9 +88,16 @@ export default function UploadCV() {
     }
   };
 
+  const handleContinue = () => {
+    // In a real app, you'd parse the CV here and save the data.
+    // For now, we'll save dummy data to localStorage to test the flow.
+    localStorage.setItem('userData', JSON.stringify(dummyData));
+    router.push('/choose-template');
+  };
+
   return (
     <ThemeProvider>
-      <div className="min-h-screen w-full flex items-center justify-center bg-background text-foreground">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-background text-foreground py-10">
         <div className="flex flex-col justify-center px-10 py-16 w-full max-w-lg">
           <div className="w-full max-w-md mx-auto">
             <h1 className="text-4xl font-bold text-foreground mb-2 font-headline text-center">
@@ -173,14 +182,10 @@ export default function UploadCV() {
               Fill Form Manually
             </Button>
 
-            <Button className="mt-6 w-full btn-special py-6 text-lg">
+            <Button onClick={handleContinue} className="mt-6 w-full btn-special py-6 text-lg">
               Continue
             </Button>
           </div>
-        </div>
-        <div className="mt-16">
-            <h2 className="text-center text-2xl font-bold mb-8">Template Preview</h2>
-            <ModernTemplate data={dummyData} />
         </div>
         <ThemeSwitcher />
       </div>
