@@ -93,10 +93,24 @@ body {
 
 @layer components {
   .btn-special {
-    @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105;
+    @apply relative overflow-hidden bg-black text-white transition-all duration-300 transform hover:scale-105;
+  }
+
+  .btn-special::after {
+    content: '';
+    @apply absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent;
+    transition: left 0.6s ease-out;
+  }
+
+  .btn-special:hover::after {
+    @apply -left-0;
   }
 
   .dark .btn-special {
-    @apply from-blue-400 to-purple-500 text-white hover:from-blue-500 hover:to-purple-600;
+    @apply bg-white text-black;
+  }
+
+  .dark .btn-special::after {
+    @apply via-black/20;
   }
 }
