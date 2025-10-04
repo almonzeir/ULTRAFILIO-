@@ -6,6 +6,8 @@ export default {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/templates/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/context/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     container: {
@@ -21,6 +23,8 @@ export default {
         headline: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
         arabic: ['Tajawal', 'sans-serif'],
         code: ['monospace'],
+        inter: ['Inter', 'sans-serif'],
+        sf: ['SF Pro Display', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -48,6 +52,11 @@ export default {
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
+          blue: '#3b82f6',
+          purple: '#8b5cf6',
+          teal: '#14b8a6',
+          gold: '#f59e0b',
+          rose: '#f43f5e',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
