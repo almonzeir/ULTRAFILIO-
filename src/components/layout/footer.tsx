@@ -1,7 +1,16 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/shared/logo';
+import { useEffect, useState } from 'react';
 
 export default function Footer() {
+  const [year, setYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="border-t border-white/5">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
@@ -42,7 +51,7 @@ export default function Footer() {
         <div className="flex items-center justify-between">
           <Logo />
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} UltraFolio. All rights reserved.
+            &copy; {year} UltraFolio. All rights reserved.
           </p>
         </div>
       </div>
