@@ -3,13 +3,29 @@
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/shared/logo';
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+
 
 export default function Footer() {
   const [year, setYear] = useState<number | null>(null);
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['footer'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.footer);
+    };
+    fetchDictionary();
+  }, [language]);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
   }, []);
+
+  if (!dict) return null;
 
   return (
     <footer className="border-t border-white/5">
@@ -18,17 +34,17 @@ export default function Footer() {
           <div className="relative isolate overflow-hidden">
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
-                Ready to Build Your UltraFolio?
+                {dict.ctaTitle}
               </h2>
               <p className="mt-4 text-lg leading-8 text-muted-foreground">
-                Start for free and create a portfolio that truly represents you. No credit card required.
+                {dict.ctaSubtitle}
               </p>
               <div className="mt-8 flex items-center justify-center gap-x-6">
                 <Button size="lg">
-                  Get Started for Free
+                  {dict.ctaButton}
                 </Button>
                 <Button size="lg" variant="ghost">
-                  Learn more <span aria-hidden="true">→</span>
+                  {dict.learnMore} <span aria-hidden="true">→</span>
                 </Button>
               </div>
             </div>
@@ -51,7 +67,7 @@ export default function Footer() {
         <div className="flex items-center justify-between">
           <Logo />
           <p className="text-sm text-muted-foreground">
-            &copy; {year || new Date().getFullYear()} UltraFolio. All rights reserved.
+            &copy; {year || new Date().getFullYear()} {dict.copyright}
           </p>
         </div>
       </div>

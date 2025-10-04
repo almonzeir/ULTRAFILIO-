@@ -19,6 +19,7 @@ export default {
       fontFamily: {
         body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
         headline: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
+        arabic: ['Cairo', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

@@ -1,39 +1,58 @@
+'use client';
+
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MacbookFrame } from '@/components/shared/device-frames';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Eye } from 'lucide-react';
-
-const templates = [
-  {
-    key: 'modern',
-    name: 'Modern (Apple Noir)',
-    description: 'Bold hero, asymmetry, animated cards',
-    imageId: 'template-modern',
-  },
-  {
-    key: 'minimalist',
-    name: 'Minimalist (Apple Light)',
-    description: 'Typography-first, ultra-white canvas',
-    imageId: 'template-minimalist',
-  },
-  {
-    key: 'basic',
-    name: 'Basic (Editorial)',
-    description: 'Clean resume-like column layout',
-    imageId: 'template-basic',
-  },
-];
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+import { useEffect, useState } from 'react';
 
 export default function TemplateGallery() {
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['templateGallery'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.templateGallery);
+    };
+    fetchDictionary();
+  }, [language]);
+
+  if (!dict) return null;
+
+  const templates = [
+    {
+      key: 'modern',
+      name: dict.modern.name,
+      description: dict.modern.description,
+      imageId: 'template-modern',
+    },
+    {
+      key: 'minimalist',
+      name: dict.minimalist.name,
+      description: dict.minimalist.description,
+      imageId: 'template-minimalist',
+    },
+    {
+      key: 'basic',
+      name: dict.basic.name,
+      description: dict.basic.description,
+      imageId: 'template-basic',
+    },
+  ];
+
   return (
     <section className="py-24 sm:py-32 bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Choose Your Style</h2>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">{dict.title}</h2>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Select from our professionally designed, Apple-inspired templates.
+            {dict.subtitle}
           </p>
         </div>
 
@@ -65,7 +84,7 @@ export default function TemplateGallery() {
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Button size="lg" variant="secondary">
                     <Eye className="mr-2 h-4 w-4" />
-                    Preview
+                    {dict.preview}
                   </Button>
                 </div>
               </Card>

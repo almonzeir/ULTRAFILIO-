@@ -1,5 +1,11 @@
+'use client';
+
 import { UploadCloud, Edit2, Rocket } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+import { useEffect, useState } from 'react';
 
 interface Step {
   name: string;
@@ -7,35 +13,48 @@ interface Step {
   icon: LucideIcon;
 }
 
-const steps: Step[] = [
-  {
-    name: 'Upload Your Resume',
-    description: 'Simply upload your existing CV or fill out our guided form. We parse the data for you.',
-    icon: UploadCloud,
-  },
-  {
-    name: 'Customize Your Design',
-    description: 'Choose from premium templates, adjust colors, and re-order sections with our live editor.',
-    icon: Edit2,
-  },
-  {
-    name: 'Deploy with One Click',
-    description: 'Publish your portfolio to a public URL. Download the code with our premium plan.',
-    icon: Rocket,
-  },
-];
-
 export default function HowItWorks() {
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['howItWorks'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.howItWorks);
+    };
+    fetchDictionary();
+  }, [language]);
+
+  if (!dict) return null;
+
+  const steps: Step[] = [
+    {
+      name: dict.step1.title,
+      description: dict.step1.description,
+      icon: UploadCloud,
+    },
+    {
+      name: dict.step2.title,
+      description: dict.step2.description,
+      icon: Edit2,
+    },
+    {
+      name: dict.step3.title,
+      description: dict.step3.description,
+      icon: Rocket,
+    },
+  ];
+
   return (
     <section className="py-24 sm:py-32 bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <p className="text-base font-semibold leading-7 text-primary">How it works</p>
+          <p className="text-base font-semibold leading-7 text-primary">{dict.eyebrow}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
-            Three steps to a perfect portfolio
+            {dict.title}
           </h2>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            From your resume to a live website in minutes. It's that simple.
+            {dict.subtitle}
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">

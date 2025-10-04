@@ -1,25 +1,43 @@
+'use client';
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { MacbookFrame } from '@/components/shared/device-frames';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+import { useEffect, useState } from 'react';
 
 export default function Hero() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-device-mockup');
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['hero'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.hero);
+    };
+    fetchDictionary();
+  }, [language]);
+
+  if (!dict) return null;
 
   return (
     <section className="relative overflow-hidden bg-background">
       <div className="relative container mx-auto px-6 py-24 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-headline">
-            Turn Your Resume into a Stunning Portfolio
+            {dict.title}
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            UltraFolio instantly transforms your CV into a beautiful, professional website. No coding required.
+            {dict.subtitle}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg">Get Started for Free</Button>
+            <Button size="lg">{dict.ctaFree}</Button>
             <Button size="lg" variant="outline">
-              Live Demo
+              {dict.ctaDemo}
             </Button>
           </div>
         </div>

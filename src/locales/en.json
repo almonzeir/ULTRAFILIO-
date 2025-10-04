@@ -1,0 +1,106 @@
+{
+  "header": {
+    "features": "Features",
+    "templates": "Templates",
+    "pricing": "Pricing",
+    "toggleLanguage": "Toggle language",
+    "toggleTheme": "Toggle theme",
+    "toggleNavigation": "Toggle navigation menu",
+    "login": "Login",
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "title": "Turn Your Resume into a Stunning Portfolio",
+    "subtitle": "UltraFolio instantly transforms your CV into a beautiful, professional website. No coding required.",
+    "ctaFree": "Get Started for Free",
+    "ctaDemo": "Live Demo"
+  },
+  "howItWorks": {
+    "eyebrow": "How it works",
+    "title": "Three steps to a perfect portfolio",
+    "subtitle": "From your resume to a live website in minutes. It's that simple.",
+    "step1": {
+      "title": "Upload Your Resume",
+      "description": "Simply upload your existing CV or fill out our guided form. We parse the data for you."
+    },
+    "step2": {
+      "title": "Customize Your Design",
+      "description": "Choose from premium templates, adjust colors, and re-order sections with our live editor."
+    },
+    "step3": {
+      "title": "Deploy with One Click",
+      "description": "Publish your portfolio to a public URL. Download the code with our premium plan."
+    }
+  },
+  "templateGallery": {
+    "title": "Choose Your Style",
+    "subtitle": "Select from our professionally designed, Apple-inspired templates.",
+    "modern": {
+      "name": "Modern (Apple Noir)",
+      "description": "Bold hero, asymmetry, animated cards"
+    },
+    "minimalist": {
+      "name": "Minimalist (Apple Light)",
+      "description": "Typography-first, ultra-white canvas"
+    },
+    "basic": {
+      "name": "Basic (Editorial)",
+      "description": "Clean resume-like column layout"
+    },
+    "preview": "Preview"
+  },
+  "pricing": {
+    "title": "Simple, transparent pricing",
+    "subtitle": "Choose the plan that's right for you. Get started for free, and upgrade when you need more power.",
+    "mostPopular": "Most Popular",
+    "free": {
+      "title": "Free",
+      "description": "For personal projects and getting started.",
+      "price": "$0",
+      "period": "forever",
+      "features": {
+        "generate": "Generate Portfolio",
+        "editor": "Live Editor",
+        "deploy": "One-Click Deployment",
+        "github": "GitHub Repository Integration"
+      },
+      "cta": "Get Started"
+    },
+    "premium": {
+      "title": "Premium",
+      "description": "For professionals who need full control.",
+      "price": "$29",
+      "period": "one-time",
+      "features": {
+        "all": "All features from Free Plan",
+        "download": "Download Source Code (ZIP)",
+        "templates": "Access to Premium Templates",
+        "support": "Priority Support"
+      },
+      "cta": "Upgrade to Premium"
+    }
+  },
+  "testimonials": {
+    "title": "Loved by Creatives & Developers",
+    "subtitle": "Don't just take our word for it. Here's what people are saying about UltraFolio.",
+    "testimonial1": {
+      "quote": "UltraFolio is a game-changer. I had a stunning portfolio live in 15 minutes without writing a single line of code. The templates are absolutely beautiful.",
+      "title": "UX Designer"
+    },
+    "testimonial2": {
+      "quote": "As a developer, I appreciate good design. UltraFolio delivers an Apple-level experience. The ability to download the code is a huge plus for me.",
+      "title": "Full-Stack Engineer"
+    },
+    "testimonial3": {
+      "quote": "The Arabic language support with proper RTL is fantastic. It's rare to see this level of quality and attention to detail for a global audience.",
+      "title": "Product Manager"
+    }
+  },
+  "footer": {
+    "ctaTitle": "Ready to Build Your UltraFolio?",
+    "ctaSubtitle": "Start for free and create a portfolio that truly represents you. No credit card required.",
+    "ctaButton": "Get Started for Free",
+    "learnMore": "Learn more",
+    "copyright": "UltraFolio. All rights reserved."
+  }
+}

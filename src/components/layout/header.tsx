@@ -6,18 +6,25 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Moon, Sun, Languages } from 'lucide-react';
 import Logo from '@/components/shared/logo';
 import { useTheme } from 'next-themes';
-
-const navLinks = [
-  { name: 'Features', href: '#' },
-  { name: 'Templates', href: '#' },
-  { name: 'Pricing', href: '#' },
-];
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  const { language, toggleLanguage } = useLanguage();
+  const [dict, setDict] = React.useState<Dictionary['header'] | null>(null);
 
+  React.useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.header);
+    };
+    fetchDictionary();
+  }, [language]);
+  
   React.useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -26,6 +33,14 @@ export default function Header() {
     setMounted(true);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (!dict) return null;
+
+  const navLinks = [
+    { name: dict.features, href: '#' },
+    { name: dict.templates, href: '#' },
+    { name: dict.pricing, href: '#' },
+  ];
 
   const NavMenu = () => (
     <>
@@ -56,34 +71,34 @@ export default function Header() {
 
         <div className="flex flex-1 items-center justify-between md:justify-end space-x-2">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={toggleLanguage}>
               <Languages className="h-5 w-5" />
-              <span className="sr-only">Toggle language</span>
+              <span className="sr-only">{dict.toggleLanguage}</span>
             </Button>
             {mounted && (
               <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                <span className="sr-only">Toggle theme</span>
+                <span className="sr-only">{dict.toggleTheme}</span>
               </Button>
             )}
           </div>
           <div className="hidden md:flex items-center space-x-2">
-             <Button variant="ghost">Login</Button>
-             <Button>Get Started</Button>
+             <Button variant="ghost">{dict.login}</Button>
+             <Button>{dict.getStarted}</Button>
           </div>
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle navigation menu</span>
+                <span className="sr-only">{dict.toggleNavigation}</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side={language === 'ar' ? 'left' : 'right'}>
               <div className="mt-8 flex flex-col space-y-4">
                 <NavMenu />
                 <div className="border-t pt-4 flex flex-col space-y-2">
-                    <Button variant="ghost">Login</Button>
-                    <Button>Get Started</Button>
+                    <Button variant="ghost">{dict.login}</Button>
+                    <Button>{dict.getStarted}</Button>
                 </div>
               </div>
             </SheetContent>
