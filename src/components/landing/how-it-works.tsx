@@ -49,7 +49,7 @@ export default function HowItWorks() {
     <section className="py-24 sm:py-32 bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <p className="text-base font-semibold leading-7 text-foreground">{dict.eyebrow}</p>
+          <p className="text-base font-semibold leading-7 text-muted-foreground">{dict.eyebrow}</p>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
             {dict.title}
           </h2>
