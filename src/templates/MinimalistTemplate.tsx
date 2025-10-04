@@ -1,6 +1,6 @@
-
+// MinimalistTemplate.tsx
 import React from "react";
-import type { PortfolioData } from "./types";
+import { PortfolioData } from "./types";
 
 export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
   return (

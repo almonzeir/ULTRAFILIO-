@@ -15,12 +15,15 @@ import {
   SheetClose,
 } from '@/components/ui/sheet';
 import Link from 'next/link';
+import UserProfileButton from '../auth/user-profile-button';
+import { useUser } from '@/firebase';
 
 export default function Header() {
   const { language, toggleLanguage } = useLanguage();
   const [dict, setDict] = React.useState<Dictionary['header'] | null>(null);
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  const { user } = useUser();
 
   React.useEffect(() => {
     const fetchDictionary = async () => {
@@ -95,6 +98,19 @@ export default function Header() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          {user ? (
+            <UserProfileButton />
+          ) : (
+            <>
+              <Button asChild variant="ghost">
+                <Link href="/login">{dict.login}</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">{dict.getStarted}</Link>
+              </Button>
+            </>
+          )}
+
           <Button variant="ghost" size="icon" onClick={toggleLanguage}>
             <Languages className="h-5 w-5" />
             <span className="sr-only">{dict.toggleLanguage}</span>

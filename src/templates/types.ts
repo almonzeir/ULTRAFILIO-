@@ -1,4 +1,4 @@
-
+// types.ts
 export interface PortfolioData {
   name: string;
   title: string;

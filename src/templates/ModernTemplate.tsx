@@ -1,6 +1,6 @@
-
+// ModernTemplate.tsx
 import React from "react";
-import type { PortfolioData } from "./types";
+import { PortfolioData } from "./types";
 
 export default function ModernTemplate({ data }: { data: PortfolioData }) {
   return (
