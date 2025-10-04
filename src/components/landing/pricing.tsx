@@ -70,7 +70,7 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black" variant="outline">{dict.free.cta}</Button>
+              <Button className="w-full hover:bg-black hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black" variant="outline">{dict.free.cta}</Button>
             </CardFooter>
           </Card>
 
