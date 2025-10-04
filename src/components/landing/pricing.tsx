@@ -22,18 +22,13 @@ export default function Pricing() {
 
   if (!dict) return null;
 
-  const freeFeatures = [
-    dict.free.features.generate,
-    dict.free.features.editor,
-    dict.free.features.deploy,
-    dict.free.features.github,
-  ];
-
-  const premiumFeatures = [
-    dict.premium.features.all,
-    dict.premium.features.download,
-    dict.premium.features.templates,
-    dict.premium.features.support,
+  const unlimitedFeatures = [
+      dict.premium.features.all,
+      dict.premium.features.download,
+      dict.premium.features.templates,
+      dict.premium.features.support,
+      "Unlimited Portfolio Generations",
+      "Unlimited Deployments",
   ];
 
   return (
@@ -45,49 +40,25 @@ export default function Pricing() {
             {dict.subtitle}
           </p>
         </div>
-        <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-8 lg:max-w-4xl lg:grid-cols-2">
+        <div className="mx-auto mt-16 flex justify-center max-w-lg">
           
-          <Card className="ring-1 ring-border">
-            <CardHeader>
-              <CardTitle className="font-headline">{dict.free.title}</CardTitle>
-              <CardDescription>{dict.free.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-baseline">
-                <span className="text-4xl font-bold tracking-tight">{dict.free.price}</span>
-                <span className="ml-1 text-sm font-semibold leading-6 text-muted-foreground">/{dict.free.period}</span>
-              </div>
-              <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
-                {freeFeatures.map(feature => (
-                  <li key={feature} className="flex gap-x-3">
-                    <Check className="h-6 w-5 flex-none text-primary" aria-hidden="true" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full" variant="outline">{dict.free.cta}</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card className="relative ring-2 ring-primary">
+          <Card className="relative ring-2 ring-primary w-full">
             <div className="absolute top-0 right-4 -mt-3">
                 <div className="flex items-center justify-center h-6 px-3 text-xs font-semibold tracking-wider text-primary-foreground uppercase bg-primary rounded-full">
                     {dict.mostPopular}
                 </div>
             </div>
             <CardHeader>
-              <CardTitle className="font-headline">{dict.premium.title}</CardTitle>
-              <CardDescription>{dict.premium.description}</CardDescription>
+              <CardTitle className="font-headline">Unlimited</CardTitle>
+              <CardDescription>Get everything you need for one simple price.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-baseline">
-                <span className="text-4xl font-bold tracking-tight">{dict.premium.price}</span>
-                <span className="ml-1 text-sm font-semibold leading-6 text-muted-foreground">/{dict.premium.period}</span>
+                <span className="text-4xl font-bold tracking-tight">$5</span>
+                <span className="ml-1 text-sm font-semibold leading-6 text-muted-foreground">/ one-time</span>
               </div>
               <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
-                {premiumFeatures.map(feature => (
+                {unlimitedFeatures.map(feature => (
                   <li key={feature} className="flex gap-x-3">
                     <Check className="h-6 w-5 flex-none text-primary" aria-hidden="true" />
                     {feature}
@@ -96,7 +67,7 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full">{dict.premium.cta}</Button>
+              <Button className="w-full btn-special">{dict.premium.cta}</Button>
             </CardFooter>
           </Card>
 

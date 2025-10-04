@@ -103,7 +103,7 @@ body {
   }
 
   .btn-special:hover::after {
-    @apply -left-0;
+    @apply left-0;
   }
 
   .dark .btn-special {

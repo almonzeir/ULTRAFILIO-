@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
+import { Github, Twitter, Linkedin } from 'lucide-react';
 
 
 export default function Footer() {
@@ -26,45 +27,41 @@ export default function Footer() {
   }, []);
 
   if (!dict) return null;
+  
+  const navItems = [
+    { name: 'Features', href: '#' },
+    { name: 'Pricing', href: '#' },
+    { name: 'Templates', href: '#' },
+    { name: 'About', href: '#' },
+  ];
+
+  const socialItems = [
+    { name: 'Twitter', href: '#', icon: Twitter },
+    { name: 'GitHub', href: '#', icon: Github },
+    { name: 'LinkedIn', href: '#', icon: Linkedin },
+  ];
 
   return (
-    <footer className="border-t border-white/5">
+    <footer className="bg-background border-t">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        <div className="bg-card rounded-2xl p-8 sm:p-10">
-          <div className="relative isolate overflow-hidden">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
-                {dict.ctaTitle}
-              </h2>
-              <p className="mt-4 text-lg leading-8 text-muted-foreground">
-                {dict.ctaSubtitle}
-              </p>
-              <div className="mt-8 flex items-center justify-center gap-x-6">
-                <Button size="lg">
-                  {dict.ctaButton}
-                </Button>
-                <Button size="lg" variant="ghost">
-                  {dict.learnMore} <span aria-hidden="true">→</span>
-                </Button>
-              </div>
+        <nav className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
+          {navItems.map((item) => (
+            <div key={item.name} className="pb-6">
+              <a href={item.href} className="text-sm leading-6 text-muted-foreground hover:text-foreground">
+                {item.name}
+              </a>
             </div>
-            <div
-              className="absolute-filter"
-              aria-hidden="true"
-            >
-              <div
-                className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-primary/30 to-primary/10 opacity-20"
-                style={{
-                  clipPath:
-                    'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-                }}
-              />
-            </div>
-          </div>
+          ))}
+        </nav>
+        <div className="mt-10 flex justify-center space-x-10">
+          {socialItems.map((item) => (
+            <a key={item.name} href={item.href} className="text-muted-foreground hover:text-foreground">
+              <span className="sr-only">{item.name}</span>
+              <item.icon className="h-6 w-6" aria-hidden="true" />
+            </a>
+          ))}
         </div>
-      </div>
-      <div className="mx-auto max-w-7xl px-6 pb-8 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="mt-10 flex items-center justify-between">
           <Logo />
           <p className="text-sm text-muted-foreground">
             &copy; {year || new Date().getFullYear()} {dict.copyright}
