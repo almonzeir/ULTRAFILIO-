@@ -37,7 +37,7 @@ export default function Hero() {
             {dict.subtitle}
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link href="/upload-cv">
+            <Link href="/create">
               <Button size="lg" className="btn-special">
                 <Rocket className="mr-2 h-5 w-5" />
                 {dict.ctaFree}
