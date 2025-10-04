@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, Moon, Sun, Languages } from 'lucide-react';
@@ -9,6 +10,8 @@ import { useTheme } from 'next-themes';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
+import { useUser } from '@/firebase';
+import UserProfileButton from '@/components/auth/user-profile-button';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -16,6 +19,7 @@ export default function Header() {
   const [mounted, setMounted] = React.useState(false);
   const { language, toggleLanguage } = useLanguage();
   const [dict, setDict] = React.useState<Dictionary['header'] | null>(null);
+  const { user } = useUser();
 
   React.useEffect(() => {
     const fetchDictionary = async () => {
@@ -82,10 +86,18 @@ export default function Header() {
               </Button>
             )}
           </div>
-          <div className="hidden md:flex items-center space-x-2">
-             <Button variant="ghost">{dict.login}</Button>
-             <Button>{dict.getStarted}</Button>
-          </div>
+          {user ? (
+            <UserProfileButton />
+          ) : (
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="ghost" asChild>
+                <Link href="/login">{dict.login}</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">{dict.getStarted}</Link>
+              </Button>
+            </div>
+          )}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -97,8 +109,18 @@ export default function Header() {
               <div className="mt-8 flex flex-col space-y-4">
                 <NavMenu />
                 <div className="border-t pt-4 flex flex-col space-y-2">
-                    <Button variant="ghost">{dict.login}</Button>
-                    <Button>{dict.getStarted}</Button>
+                  {user ? (
+                    <p className='text-sm text-center'>Welcome, {user.displayName}</p>
+                  ) : (
+                    <>
+                      <Button variant="ghost" asChild>
+                        <Link href="/login">{dict.login}</Link>
+                      </Button>
+                      <Button asChild>
+                        <Link href="/signup">{dict.getStarted}</Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
