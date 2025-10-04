@@ -41,6 +41,12 @@
       "description": "Avatar for Fatima A.",
       "imageUrl": "https://images.unsplash.com/photo-1635131902146-6957477a4ff4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwZXJzb24lMjBzbWlsaW5nfGVufDB8fHx8MTc1OTU0MTgzMnww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "person smiling"
+    },
+    {
+      "id": "profile-avatar-placeholder",
+      "description": "Placeholder for a user's profile picture.",
+      "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw1fHxwb3J0cmFpdHxlbnwwfHx8fDE2NjEyOTU5NDN8MA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "portrait person"
     }
   ]
 }
