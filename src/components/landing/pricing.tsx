@@ -73,7 +73,7 @@ export default function Pricing() {
             </CardFooter>
           </Card>
 
-          <Card className="relative border-2 border-foreground dark:border-border flex flex-col">
+          <Card className="relative border-2 border-black dark:border-white flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 dark:bg-neutral-900">
             <div className="absolute top-0 right-4 -mt-3">
                 <div className="flex items-center justify-center h-6 px-3 text-xs font-semibold tracking-wider bg-black text-white dark:bg-white dark:text-black uppercase rounded-full">
                     {dict.mostPopular}
