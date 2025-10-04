@@ -62,7 +62,7 @@ export default function Pricing() {
               <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
                 {freeFeatures.map(feature => (
                   <li key={feature} className="flex gap-x-3">
-                    <Check className="h-6 w-5 flex-none text-primary" aria-hidden="true" />
+                    <Check className="h-6 w-5 flex-none text-foreground" aria-hidden="true" />
                     {feature}
                   </li>
                 ))}
@@ -75,7 +75,7 @@ export default function Pricing() {
 
           <Card className="relative border-2 border-foreground dark:border-border flex flex-col">
             <div className="absolute top-0 right-4 -mt-3">
-                <div className="flex items-center justify-center h-6 px-3 text-xs font-semibold tracking-wider text-primary-foreground uppercase bg-primary rounded-full">
+                <div className="flex items-center justify-center h-6 px-3 text-xs font-semibold tracking-wider bg-black text-white dark:bg-white dark:text-black uppercase rounded-full">
                     {dict.mostPopular}
                 </div>
             </div>
@@ -91,7 +91,7 @@ export default function Pricing() {
               <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
                 {unlimitedFeatures.map(feature => (
                   <li key={feature} className="flex gap-x-3">
-                    <Check className="h-6 w-5 flex-none text-primary" aria-hidden="true" />
+                    <Check className="h-6 w-5 flex-none text-foreground" aria-hidden="true" />
                     {feature}
                   </li>
                 ))}
