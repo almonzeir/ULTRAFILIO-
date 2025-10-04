@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 
 const ProgressBar = ({ step }: { step: number }) => {
   return (
@@ -89,7 +90,7 @@ const Step2 = ({ nextStep, prevStep }: { nextStep: () => void, prevStep: () => v
   );
 };
 
-const Step3 = ({ prevStep }: { prevStep: () => void }) => {
+const Step3 = ({ prevStep, onSubmit }: { prevStep: () => void; onSubmit: () => void; }) => {
   return (
     <div>
       <h3 className="text-2xl font-semibold mb-8">Step 3: Projects, Certificates, Languages</h3>
@@ -135,7 +136,7 @@ const Step3 = ({ prevStep }: { prevStep: () => void }) => {
         <button onClick={prevStep} className="px-8 py-3 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-semibold rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition">
           ← Back
         </button>
-        <button className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full shadow-md hover:scale-105 transition">
+        <button onClick={onSubmit} className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-full shadow-md hover:scale-105 transition">
           Generate My Portfolio
         </button>
       </div>
@@ -143,18 +144,20 @@ const Step3 = ({ prevStep }: { prevStep: () => void }) => {
   );
 };
 
-export default function ManualForm() {
+export default function ManualForm({ onSubmit }: { onSubmit: () => void }) {
   const [step, setStep] = React.useState(1);
 
   const nextStep = () => setStep(s => s + 1);
   const prevStep = () => setStep(s => s - 1);
 
   return (
-    <div className="max-w-5xl mx-auto mt-16 p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
-      <ProgressBar step={step} />
-      {step === 1 && <Step1 nextStep={nextStep} />}
-      {step === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} />}
-      {step === 3 && <Step3 prevStep={prevStep} />}
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-black dark:to-gray-900 text-gray-900 dark:text-white px-6 py-20">
+        <div className="max-w-5xl mx-auto p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
+            <ProgressBar step={step} />
+            {step === 1 && <Step1 nextStep={nextStep} />}
+            {step === 2 && <Step2 nextStep={nextStep} prevStep={prevStep} />}
+            {step === 3 && <Step3 prevStep={prevStep} onSubmit={onSubmit} />}
+        </div>
     </div>
   );
 }
