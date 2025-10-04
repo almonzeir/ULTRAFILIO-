@@ -76,13 +76,17 @@ export default function Header() {
         <div className="flex flex-1 items-center justify-between md:justify-end space-x-2">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={toggleLanguage}>
-              <Languages className="h-5 w-5" />
-              <span className="sr-only">{dict.toggleLanguage}</span>
+              <div>
+                <Languages className="h-5 w-5" />
+                <span className="sr-only">{dict.toggleLanguage}</span>
+              </div>
             </Button>
             {mounted && (
               <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-                <span className="sr-only">{dict.toggleTheme}</span>
+                <div>
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                  <span className="sr-only">{dict.toggleTheme}</span>
+                </div>
               </Button>
             )}
           </div>
@@ -99,8 +103,8 @@ export default function Header() {
             </div>
           )}
           <Sheet>
-            <SheetTrigger>
-              <Button variant="ghost" size="icon" className="md:hidden">
+            <SheetTrigger className="md:hidden">
+              <Button variant="ghost" size="icon" >
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">{dict.toggleNavigation}</span>
               </Button>
