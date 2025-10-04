@@ -5,7 +5,7 @@ import Logo from '@/components/shared/logo';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Menu, Moon, Sun, Languages } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import {
@@ -17,6 +17,7 @@ import {
 import Link from 'next/link';
 import UserProfileButton from '../auth/user-profile-button';
 import { useUser } from '@/firebase';
+import { cn } from '@/lib/utils';
 
 export default function Header() {
   const { language, toggleLanguage } = useLanguage();
@@ -68,13 +69,9 @@ export default function Header() {
         
         <div className="md:hidden">
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <div>
-                  <Menu />
-                  <span className="sr-only">{dict.toggleNavigation}</span>
-                </div>
-              </Button>
+            <SheetTrigger className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}>
+              <Menu />
+              <span className="sr-only">{dict.toggleNavigation}</span>
             </SheetTrigger>
             <SheetContent side="left">
               <nav className="grid gap-6 text-lg font-medium mt-8">
