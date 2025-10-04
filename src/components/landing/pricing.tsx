@@ -47,14 +47,14 @@ export default function Pricing() {
             {dict.subtitle}
           </p>
         </div>
-        <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+        <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-stretch gap-8 sm:mt-20 lg:max-w-4xl lg:grid-cols-2">
           
-          <Card className="w-full">
+          <Card className="flex flex-col">
              <CardHeader>
               <CardTitle className="font-headline">{dict.free.title}</CardTitle>
               <CardDescription>{dict.free.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 flex-grow">
               <div className="flex items-baseline">
                 <span className="text-4xl font-bold tracking-tight">{dict.free.price}</span>
                 <span className="ml-1 text-sm font-semibold leading-6 text-muted-foreground">/{dict.free.period}</span>
@@ -73,7 +73,7 @@ export default function Pricing() {
             </CardFooter>
           </Card>
 
-          <Card className="relative ring-2 ring-primary w-full">
+          <Card className="relative border-2 border-foreground dark:border-border flex flex-col">
             <div className="absolute top-0 right-4 -mt-3">
                 <div className="flex items-center justify-center h-6 px-3 text-xs font-semibold tracking-wider text-primary-foreground uppercase bg-primary rounded-full">
                     {dict.mostPopular}
@@ -83,7 +83,7 @@ export default function Pricing() {
               <CardTitle className="font-headline">{dict.premium.title}</CardTitle>
               <CardDescription>{dict.premium.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 flex-grow">
               <div className="flex items-baseline">
                 <span className="text-4xl font-bold tracking-tight">$5</span>
                 <span className="ml-1 text-sm font-semibold leading-6 text-muted-foreground">/ one-time</span>
