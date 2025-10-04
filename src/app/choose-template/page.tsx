@@ -70,6 +70,7 @@ function GlobalStyles() {
 
 // Simple WebGL check
 function hasWebGL(): boolean {
+  if (typeof window === 'undefined') return false;
   try {
     const canvas = document.createElement("canvas");
     return !!(canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
@@ -101,7 +102,7 @@ class CanvasErrorBoundary extends React.Component<{ children: React.ReactNode },
         </div>
       );
     }
-    return this.props.children as any;
+    return this.props.children;
   }
 }
 
@@ -239,19 +240,22 @@ export default function Ultra3DPortfolioTemplate() {
   const [userData, setUserData] = useState<PortfolioData | null>(null);
 
   useEffect(() => {
-    const d = localStorage.getItem('userData');
-    if (d) {
-        try {
-            setUserData(JSON.parse(d));
-        } catch(e) {
-            console.error("Failed to parse user data from localStorage", e);
+    if (typeof window !== 'undefined') {
+        const d = localStorage.getItem('userData');
+        if (d) {
+            try {
+                setUserData(JSON.parse(d));
+            } catch(e) {
+                console.error("Failed to parse user data from localStorage", e);
+            }
         }
     }
   }, []);
 
   const accent = theme.accent;
   const accentStrong = theme.accentStrong;
-  const webglReady = typeof window !== "undefined" && hasWebGL();
+  const webglReady = useMemo(() => hasWebGL(), []);
+
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: theme.bg, color: "#e5f0ff" }}>
@@ -352,7 +356,7 @@ export default function Ultra3DPortfolioTemplate() {
       <section id="experience" className="container mx-auto px-6 py-16">
         <h2 className="mb-6 text-2xl font-bold">Experience</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          {(userData?.experience || [{role: null, company:null, location:null, start:null, end:null, description:null}, {role: null, company:null, location:null, start:null, end:null, description:null}, {role: null, company:null, location:null, start:null, end:null, description:null}, {role: null, company:null, location:null, start:null, end:null, description:null}]).map((exp: any, n: number) => (
+          {(userData?.experience || [1, 2, 3, 4]).map((exp: any, n: number) => (
             <div key={n} className="rounded-2xl border p-6" style={{ borderColor: "#ffffff18", background: "rgba(255,255,255,0.03)" }}>
               <div className="mb-1 text-sm uppercase tracking-wide text-white/60">{exp.company || '[Company]'} · {exp.location || '[Location]'} · {exp.start && exp.end ? `${exp.start} - ${exp.end}` : '[Dates]'}</div>
               <div className="text-lg font-semibold">{exp.role || '[Role Title]'}</div>
