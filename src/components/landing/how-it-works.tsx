@@ -60,12 +60,11 @@ export default function HowItWorks() {
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
           <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
             {steps.map((step, index) => (
-              <div key={step.name} className="relative flex flex-col">
+              <div key={step.name} className="relative flex flex-col p-8 border border-gray-200 dark:border-gray-700 rounded-2xl">
                 <dt className="flex-shrink-0 text-base font-semibold leading-7 text-foreground">
-                  <div className="absolute start-0 flex h-12 w-12 items-center justify-center rounded-lg bg-foreground/10">
+                  <div className="absolute top-8 left-8 flex h-12 w-12 items-center justify-center rounded-lg bg-foreground/10">
                     <step.icon className="h-6 w-6 text-foreground" aria-hidden="true" />
                   </div>
-
                   <span className="ps-16">{step.name}</span>
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
