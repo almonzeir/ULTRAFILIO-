@@ -31,13 +31,13 @@ export default function UploadCV() {
   };
 
   return (
-    <div className="min-h-screen w-full grid md:grid-cols-2">
-      <div className="flex flex-col justify-center px-10 py-16 bg-background text-foreground">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background text-foreground">
+      <div className="flex flex-col justify-center px-10 py-16 w-full max-w-lg">
         <div className="w-full max-w-md mx-auto">
-          <h1 className="text-4xl font-bold text-foreground mb-2 font-headline">
+          <h1 className="text-4xl font-bold text-foreground mb-2 font-headline text-center">
             Upload Your CV
           </h1>
-          <p className="text-muted-foreground mb-10">
+          <p className="text-muted-foreground mb-10 text-center">
             Let’s start building your portfolio. Upload your CV or fill in your
             info manually.
           </p>
@@ -119,26 +119,6 @@ export default function UploadCV() {
           <Button className="mt-6 w-full btn-special py-6 text-lg">
             Continue
           </Button>
-        </div>
-      </div>
-      
-      <div className="relative hidden md:flex flex-col justify-center items-center bg-gradient-to-b from-black to-gray-900 text-white px-10 py-16">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_40%)]" />
-        <div className="relative text-center">
-          <h2 className="text-3xl font-semibold mb-6">
-            Preview Your Future Portfolio
-          </h2>
-          <div className="w-96 h-72 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 flex items-center justify-center p-6">
-            <p className="text-gray-300 text-center">
-              Your generated portfolio preview will appear here once your CV is
-              processed.
-            </p>
-          </div>
-          <div className="mt-8 flex items-center justify-center space-x-2 opacity-70">
-            <span className="text-sm text-gray-400">
-              Step 1 of 3 • Upload & Setup
-            </span>
-          </div>
         </div>
       </div>
     </div>
