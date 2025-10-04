@@ -54,7 +54,7 @@ export default function CreatePortfolioPage() {
           link: formData.proj_link || '',
         },
       ],
-      skills: formData.skills.split(',').map(s => s.trim()).filter(Boolean),
+      skills: (formData.skills || '').split(',').map(s => s.trim()).filter(Boolean),
        // Add other properties from your form as needed
       ...formData.personal_info
     };

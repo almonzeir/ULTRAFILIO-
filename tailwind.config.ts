@@ -21,7 +21,7 @@ export default {
       fontFamily: {
         body: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
         headline: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', 'Arial', 'sans-serif'],
-        arabic: ['Tajawal', 'sans-serif'],
+        arabic: ['Noto Sans Arabic', 'sans-serif'],
         code: ['monospace'],
         inter: ['Inter', 'sans-serif'],
         sf: ['SF Pro Display', 'sans-serif'],
