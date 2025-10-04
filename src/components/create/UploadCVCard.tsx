@@ -1,16 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
 
-export default function UploadCVCard() {
-  const router = useRouter();
-
-  const handleContinue = () => {
-    // In a real app, you would parse the CV here.
-    // For now, we'll just navigate to the next step.
-    router.push('/choose-template');
-  };
+export default function UploadCVCard({ onContinue }: { onContinue: () => void }) {
 
   return (
     <div className="p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
@@ -29,7 +21,7 @@ export default function UploadCVCard() {
           </div>
         </div>
       </div>
-      <button onClick={handleContinue} className="mt-10 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300">
+      <button onClick={onContinue} className="mt-10 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300">
         Continue to Generate Portfolio
       </button>
     </div>

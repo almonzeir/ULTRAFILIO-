@@ -4,16 +4,78 @@ import * as React from 'react';
 import UploadCVCard from '@/components/create/UploadCVCard';
 import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
+import type { PortfolioData } from '@/templates/types';
 
 export default function CreatePortfolioPage() {
   const [showManualForm, setShowManualForm] = React.useState(false);
   const router = useRouter();
 
-  const handleManualFormSubmit = () => {
-    // Here you would handle the form data submission
-    // For now, we'll just navigate to the next step in the flow
-    router.push('/choose-template');
+  const handleDataAndNavigate = (data: PortfolioData) => {
+    // In a real app, you might send this to a backend.
+    // For now, we store in localStorage to pass between pages.
+    try {
+      localStorage.setItem('userData', JSON.stringify(data));
+      router.push('/choose-template');
+    } catch (e) {
+      console.error('Failed to save user data to localStorage', e);
+      // Optionally, show an error toast to the user
+    }
   };
+
+  const handleManualFormSubmit = (formData: Omit<PortfolioData, 'skills' | 'projects' | 'education' | 'experience' > & { skills: string;[key: string]: any }) => {
+    const portfolioData: PortfolioData = {
+      name: formData.name,
+      title: formData.title,
+      summary: formData.summary,
+      // A real implementation would handle multiple entries for these fields.
+      // For now, we'll create single entries based on the form.
+      experience: [
+        {
+          role: formData.exp_role || '',
+          company: formData.exp_company || '',
+          start: formData.exp_start || '',
+          end: formData.exp_end || '',
+          description: formData.exp_description || '',
+        },
+      ],
+      education: [
+        {
+          degree: formData.edu_degree || '',
+          institution: formData.edu_institution || '',
+          start: formData.edu_start_year || '',
+          end: formData.edu_end_year || '',
+        },
+      ],
+      projects: [
+        {
+          title: formData.proj_title || '',
+          description: formData.proj_description || '',
+          tech: (formData.proj_tech || '').split(',').map(t => t.trim()).filter(Boolean),
+          link: formData.proj_link || '',
+        },
+      ],
+      skills: formData.skills.split(',').map(s => s.trim()).filter(Boolean),
+       // Add other properties from your form as needed
+      ...formData.personal_info
+    };
+    handleDataAndNavigate(portfolioData);
+  };
+  
+  const handleUploadAndNavigate = () => {
+    // This is a placeholder. In a real app, you would parse the CV
+    // and then call handleDataAndNavigate with the extracted data.
+    const dummyData: PortfolioData = {
+        name: 'John Doe',
+        title: 'Software Engineer',
+        summary: 'A passionate software engineer with experience in building web applications.',
+        skills: ['React', 'TypeScript', 'Node.js'],
+        experience: [{ role: 'Frontend Developer', company: 'Tech Corp', start: '2020', end: 'Present', description: 'Developing cool stuff.' }],
+        projects: [{ title: 'My Project', description: 'A very cool project.', tech: ['React'] }],
+        education: [{ degree: 'B.Sc. Computer Science', institution: 'University of Code', start: '2016', end: '2020' }]
+    };
+    handleDataAndNavigate(dummyData);
+  };
+
 
   if (showManualForm) {
     return <ManualForm onSubmit={handleManualFormSubmit} />;
@@ -27,7 +89,7 @@ export default function CreatePortfolioPage() {
       </div>
 
       <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <UploadCVCard />
+        <UploadCVCard onContinue={handleUploadAndNavigate} />
         <div 
           className="p-8 bg-gradient-to-b from-black to-gray-900 text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-800 flex flex-col justify-between"
         >

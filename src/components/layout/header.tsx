@@ -69,9 +69,11 @@ export default function Header() {
         
         <div className="md:hidden">
           <Sheet>
-            <SheetTrigger className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}>
-              <Menu />
-              <span className="sr-only">{dict.toggleNavigation}</span>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu />
+                <span className="sr-only">{dict.toggleNavigation}</span>
+              </Button>
             </SheetTrigger>
             <SheetContent side="left">
               <nav className="grid gap-6 text-lg font-medium mt-8">
