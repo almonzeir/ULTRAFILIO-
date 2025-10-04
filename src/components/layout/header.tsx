@@ -99,7 +99,7 @@ export default function Header() {
             </div>
           )}
           <Sheet>
-            <SheetTrigger>
+            <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">{dict.toggleNavigation}</span>
