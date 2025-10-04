@@ -7,11 +7,7 @@ export default function Hero() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-device-mockup');
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 w-full h-full">
-          <div className="w-1/2 h-full bg-background float-left"></div>
-          <div className="w-1/2 h-full bg-foreground float-right"></div>
-      </div>
+    <section className="relative overflow-hidden bg-background">
       <div className="relative container mx-auto px-6 py-24 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-headline">
