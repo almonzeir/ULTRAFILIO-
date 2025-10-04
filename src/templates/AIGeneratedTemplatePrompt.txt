@@ -1,0 +1,18 @@
+
+You are a professional web designer and React developer.  
+Generate a **unique, fully responsive portfolio layout** using Tailwind CSS, based on this data:
+
+[USER DATA]
+{{name}}, {{title}}, {{summary}}, {{skills}}, {{experience}}, {{projects}}, {{education}}
+
+Goals:
+- Use a premium, modern design with creative layouts and spacing.
+- Include sections: Hero (name, title, summary), Skills grid, Experience timeline, Projects gallery, Education block.
+- Use Apple/Framer-inspired visual style with subtle shadows and gradients.
+- Output should be a single React component named `AIGeneratedTemplate`.
+- Use `<main className="max-w-6xl mx-auto px-6 py-20 bg-white text-gray-900">`.
+- Include smooth hover transitions and responsive breakpoints.
+- Return only the component code (JSX + Tailwind classes) with placeholders replaced by user data variables.
+
+Example:
+<h1 className="text-5xl font-bold">{user.name}</h1>
