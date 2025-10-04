@@ -16,12 +16,14 @@ const navLinks = [
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll);
+    setMounted(true);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -58,10 +60,12 @@ export default function Header() {
               <Languages className="h-5 w-5" />
               <span className="sr-only">Toggle language</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+            {mounted && (
+              <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+                {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                <span className="sr-only">Toggle theme</span>
+              </Button>
+            )}
           </div>
           <div className="hidden md:flex items-center space-x-2">
              <Button variant="ghost">Login</Button>
