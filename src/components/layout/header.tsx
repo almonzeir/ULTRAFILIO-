@@ -70,8 +70,10 @@ export default function Header() {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
-                <Menu />
-                <span className="sr-only">{dict.toggleNavigation}</span>
+                <div>
+                  <Menu />
+                  <span className="sr-only">{dict.toggleNavigation}</span>
+                </div>
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
