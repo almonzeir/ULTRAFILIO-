@@ -7,6 +7,7 @@ import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export default function Pricing() {
   const { language } = useLanguage();
@@ -69,7 +70,7 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline">{dict.free.cta}</Button>
+              <Button className="w-full dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black" variant="outline">{dict.free.cta}</Button>
             </CardFooter>
           </Card>
 
@@ -98,7 +99,7 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full btn-special">{dict.premium.cta}</Button>
+              <Button className={cn("w-full btn-special", "dark:bg-white dark:text-black")}>{dict.premium.cta}</Button>
             </CardFooter>
           </Card>
 
