@@ -24,6 +24,8 @@ export default function Hero() {
 
   if (!dict) return null;
 
+  const videoSrc = language === 'ar' ? '/hero-video-ar.mp4' : '/hero-video.mp4';
+
   return (
     <section className="relative overflow-hidden bg-background">
       <div className="relative container mx-auto px-6 py-24 sm:py-32 lg:px-8">
@@ -50,7 +52,7 @@ export default function Hero() {
           <div className="rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:p-4">
             <MacbookFrame>
               <video
-                src="/hero-video.mp4"
+                src={videoSrc}
                 autoPlay
                 loop
                 muted
