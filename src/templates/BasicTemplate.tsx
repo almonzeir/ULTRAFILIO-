@@ -13,9 +13,9 @@ export default function BasicTemplate({ data }: { data: PortfolioData }) {
           : 'bg-white text-gray-900 border-gray-200'
       }`}
     >
-      <header className="mb-8 border-b pb-4 border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl font-bold">{data.name}</h1>
-        <p className="opacity-70">{data.title}</p>
+      <header className="mb-8 border-b pb-4 border-gray-200 dark:border-gray-700 text-center">
+        <h1 className="text-3xl font-bold">{data.personalInfo.fullName}</h1>
+        <p className="opacity-70">{data.personalInfo.title}</p>
       </header>
 
       <section className="mb-6">

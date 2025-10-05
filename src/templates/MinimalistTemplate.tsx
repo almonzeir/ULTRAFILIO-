@@ -10,9 +10,11 @@ export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
         theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'
       }`}
     >
-      <h1 className="text-5xl font-bold">{data.name}</h1>
-      <p className="text-lg opacity-80 mb-8">{data.title}</p>
-      <p className="opacity-70 mb-8">{data.summary}</p>
+      <div className="text-center">
+        <h1 className="text-5xl font-bold">{data.personalInfo.fullName}</h1>
+        <p className="text-lg opacity-80 mb-8">{data.personalInfo.title}</p>
+      </div>
+      <p className="opacity-70 mb-8 text-center">{data.about.extendedBio}</p>
       <div className="border-t border-gray-300 dark:border-gray-700 pt-8">
         {data.experience.map((exp, i) => (
           <div key={i} className="mb-6">

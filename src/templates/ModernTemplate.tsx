@@ -91,9 +91,9 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
           <div className="absolute w-[300px] h-[300px] bg-electric-blue/20 rounded-full blur-3xl -top-20 -left-20 animate-pulse-slow"></div>
           <div className="absolute w-[400px] h-[400px] bg-secondary-glow/20 rounded-full blur-3xl bottom-0 right-0 animate-pulse-slow" style={{ animationDelay: '4s' }}></div>
 
-          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <p className="text-sm font-medium text-electric-blue flex items-center">
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1 space-y-6 text-center md:text-left">
+              <p className="text-sm font-medium text-electric-blue flex items-center justify-center md:justify-start">
                 <Sparkles className="w-4 h-4 mr-2" /> Elevating Digital Experiences
               </p>
               <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight">
@@ -102,11 +102,11 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
               <h2 className="text-2xl font-semibold text-gray-300">
                 {data.personalInfo.title}
               </h2>
-              <p className="text-gray-400 max-w-lg">
+              <p className="text-gray-400 max-w-lg mx-auto md:mx-0">
                 {data.personalInfo.tagline}
               </p>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap gap-4 pt-4 justify-center md:justify-start">
                 <a href="#projects" className="flex items-center bg-electric-blue hover:bg-blue-600 glowing-shadow transition duration-300 text-dark-bg font-bold py-3 px-6 rounded-xl">
                   <Layers className="w-5 h-5 mr-2" /> View My Work
                 </a>
@@ -116,7 +116,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
               </div>
             </div>
 
-            <div className="hidden md:flex justify-center relative">
+            <div className="order-1 md:order-2 flex justify-center relative">
               <div className="w-80 h-80 lg:w-96 lg:h-96 rounded-full bg-gradient-to-br from-electric-blue/70 to-secondary-glow/70 p-1.5 shadow-2xl glowing-shadow">
                 <Image src={data.personalInfo.profilePhotoURL} alt="Professional Profile" width={400} height={400} className="w-full h-full object-cover rounded-full" />
               </div>
@@ -243,69 +243,43 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
         </section>
 
         {/* Contact Section */}
-        <section id="contact" className="py-20 px-4 sm:px-6 lg:px-8 bg-dark-bg/50">
-          <div className="text-center">
-            <h3 className="text-4xl font-bold text-white section-title-wrap mx-auto mb-4">Ready to Collaborate?</h3>
-            <p className="text-gray-400 text-center mb-12 max-w-lg mx-auto">
-              I&apos;m currently seeking new opportunities and projects. Let&apos;s build something amazing together!
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
-            <div className="bg-card-bg p-8 rounded-xl shadow-xl space-y-8 border border-gray-700 glowing-shadow-sm">
-              <h4 className="text-2xl font-bold text-white">Contact Details</h4>
-              <div className="space-y-4">
-                <div className="flex items-center p-4 bg-gray-800 rounded-lg">
-                  <Mail className="w-5 h-5 mr-3 text-electric-blue" />
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <a href={`mailto:${data.personalInfo.email}`} className="text-white font-medium hover:text-electric-blue">{data.personalInfo.email}</a>
-                  </div>
+        <footer id="contact" className="bg-gray-50 border-t border-gray-200 mt-12 py-20 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
+            <div className="max-w-md">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Collaborate?</h2>
+                <p className="text-lg text-gray-600 mb-8">
+                  I&apos;m currently seeking new opportunities and projects. Let&apos;s build something amazing together!
+                </p>
+                <div className="flex space-x-6">
+                  <a href={data.personalInfo.linkedInURL} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900"><Linkedin className="w-6 h-6" /></a>
+                  <a href={`mailto:${data.personalInfo.email}`} className="text-gray-600 hover:text-gray-900"><Mail className="w-6 h-6" /></a>
                 </div>
-                <div className="flex items-center p-4 bg-gray-800 rounded-lg">
-                  <Linkedin className="w-5 h-5 mr-3 text-electric-blue" />
-                  <div>
-                    <p className="text-sm text-gray-500">LinkedIn</p>
-                    <a href={data.personalInfo.linkedInURL} target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:text-electric-blue">Connect on LinkedIn</a>
-                  </div>
-                </div>
-                <div className="flex items-center p-4 bg-gray-800 rounded-lg">
-                  <MapPin className="w-5 h-5 mr-3 text-electric-blue" />
-                  <div>
-                    <p className="text-sm text-gray-500">Location</p>
-                    <p className="text-white font-medium">{data.personalInfo.location}</p>
-                  </div>
-                </div>
-              </div>
             </div>
-            <div className="bg-card-bg p-8 rounded-xl shadow-xl border border-gray-700 glowing-shadow-sm">
-              <h4 className="text-2xl font-bold text-white mb-6">Send a Quick Message</h4>
-              <form className="space-y-4">
+            <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
+              <form className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">Name</label>
-                  <input type="text" id="name" placeholder="Your Name" className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-electric-blue focus:border-electric-blue" />
+                  <label htmlFor="name" className="sr-only">Name</label>
+                  <input type="text" id="name" placeholder="Your Name" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900" />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Email</label>
-                  <input type="email" id="email" placeholder="Your.email@example.com" className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-electric-blue focus:border-electric-blue" />
+                  <label htmlFor="email" className="sr-only">Email</label>
+                  <input type="email" id="email" placeholder="Your Email" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900" />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-400 mb-1">Message</label>
-                  <textarea id="message" rows={5} placeholder="Your inquiry..." className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:ring-electric-blue focus:border-electric-blue"></textarea>
+                  <label htmlFor="message" className="sr-only">Message</label>
+                  <textarea id="message" rows={5} placeholder="Your Message" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900"></textarea>
                 </div>
-                <button type="submit" className="w-full flex items-center justify-center bg-electric-blue hover:bg-blue-600 glowing-shadow transition duration-300 text-dark-bg font-bold py-3 px-6 rounded-xl">
+                <button type="submit" className="w-full flex items-center justify-center bg-gray-900 hover:bg-gray-700 transition duration-300 text-white font-bold py-3 px-6 rounded-lg">
                   <Send className="w-5 h-5 mr-2" /> Send Message
                 </button>
               </form>
             </div>
           </div>
-        </section>
+          <div className="max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-gray-200 text-center text-gray-600 text-sm">
+            <p>&copy; {new Date().getFullYear()} {data.personalInfo.fullName}. All rights reserved.</p>
+          </div>
+        </footer>
       </main>
-
-      <footer className="bg-card-bg border-t border-gray-700 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-500 text-sm">
-          &copy; {new Date().getFullYear()} {data.personalInfo.fullName}. All rights reserved. Built with <span className="text-electric-blue">Passion</span>.
-        </div>
-      </footer>
     </div>
   );
 }

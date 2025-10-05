@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { MacbookFrame } from '@/components/shared/device-frames';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
@@ -12,7 +11,6 @@ import { useEffect, useState } from 'react';
 import { Rocket } from 'lucide-react';
 
 export default function Hero() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-device-mockup');
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['hero'] | null>(null);
 
@@ -51,16 +49,14 @@ export default function Hero() {
         <div className="mt-16 flow-root sm:mt-24">
           <div className="-m-2 rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:-m-4 lg:rounded-2xl lg:p-4">
             <MacbookFrame>
-              {heroImage && (
-                <Image
-                  src={heroImage.imageUrl}
-                  alt={heroImage.description}
-                  data-ai-hint={heroImage.imageHint}
-                  width={1200}
-                  height={800}
-                  className="rounded-md"
-                />
-              )}
+              <video
+                src="https://cdn.dribbble.com/userupload/11311029/file/original-5a7f999333946059341d3a584995f7c3.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="rounded-md w-full h-full object-cover"
+              />
             </MacbookFrame>
           </div>
         </div>
