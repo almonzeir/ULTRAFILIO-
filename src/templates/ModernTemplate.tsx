@@ -7,77 +7,13 @@ import type { PortfolioData } from "./types";
 
 export default function ModernTemplate({ data }: { data: PortfolioData }) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{data.personalInfo.fullName} – Portfolio</title>
-
-        {/* Tailwind CDN (no project config needed) */}
-        <script src="https://cdn.tailwindcss.com"></script>
-
-        {/* Color System: light/dark tokens (HSL) + base UI tweaks */}
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-:root {
-  --bg-0: 0 0% 100%;
-  --bg-1: 210 20% 98%;
-  --bg-2: 210 16% 94%;
-  --text-0: 222 34% 12%;
-  --text-1: 220 11% 40%;
-  --stroke: 220 15% 88%;
-  --brand: 212 100% 56%;
-  --brand-2: 225 92% 62%;
-  --brand-contrast: 0 0% 100%;
-  --ring: var(--brand);
-}
-html.dark {
-  --bg-0: 222 40% 7%;
-  --bg-1: 222 34% 11%;
-  --bg-2: 222 30% 16%;
-  --text-0: 210 30% 96%;
-  --text-1: 214 18% 70%;
-  --stroke: 220 22% 22%;
-  --brand: 212 100% 60%;
-  --brand-2: 225 92% 66%;
-  --brand-contrast: 222 40% 7%;
-}
-:root, html.dark { color-scheme: light dark; }
-* { scrollbar-width: thin; scrollbar-color: hsl(var(--brand)) hsl(var(--bg-2)); }
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: hsl(var(--bg-2)); }
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, hsl(var(--brand)), hsl(var(--brand-2)));
-  border-radius: 8px;
-}
-body { background: hsl(var(--bg-0)); color: hsl(var(--text-0)); }
-a, button { outline: none; }
-.container-max { max-width: 80rem; margin-inline: auto; padding-inline: 1rem; }
-.glass { background: hsl(var(--bg-1) / 0.8); backdrop-filter: blur(12px); border: 1px solid hsl(var(--stroke)); box-shadow: 0 10px 28px rgba(0,0,0,.18); }
-.chip { display:inline-flex; align-items:center; gap:.4rem; border:1px solid hsl(var(--stroke)); background:hsl(var(--bg-2)); color:hsl(var(--text-1)); border-radius:999px; padding:.25rem .65rem; font-size:.75rem; font-weight:600; }
-.brand-glow { box-shadow: 0 0 0 4px hsl(var(--brand) / .18), 0 10px 30px hsl(var(--brand) / .22); }
-.hero-mask { pointer-events:none; position:absolute; inset:0; -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%); mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%); }
-        `,
-          }}
-        />
-
-        {/* Theme boot: respect saved or system */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-(function(){
-  try {
-    const saved = localStorage.getItem('theme');
-    const prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (saved ? saved === 'dark' : prefers) document.documentElement.classList.add('dark');
-  } catch(e){}
-})();
-        `,
-          }}
-        />
       </head>
-      <body className="selection:bg-[hsl(var(--brand)/0.28)] selection:text-[hsl(var(--text-0))]">
+      <body className="selection:bg-brand/28 selection:text-text-0 bg-background text-foreground scroll-smooth">
         {/* Skip link */}
         <a
           href="#main"
@@ -87,11 +23,11 @@ a, button { outline: none; }
         </a>
 
         {/* HEADER */}
-        <header className="sticky top-0 z-50 border-b border-[hsl(var(--stroke))] bg-[hsl(var(--bg-0)/0.8)] backdrop-blur-md">
-          <div className="container-max flex items-center justify-between py-4">
+        <header className="sticky top-0 z-50 border-b border-stroke bg-background/80 backdrop-blur-md">
+          <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-4">
             <a
               href="#home"
-              className="text-xl md:text-2xl font-black tracking-widest text-[hsl(var(--brand))] hover:opacity-90 focus:ring-2 focus:ring-[hsl(var(--ring))] rounded px-1"
+              className="text-xl md:text-2xl font-black tracking-widest text-brand hover:opacity-90 focus:ring-2 focus:ring-ring rounded px-1"
               aria-label="Go to home"
             >
               {data.personalInfo.portfolioNameAbbr}
@@ -102,14 +38,14 @@ a, button { outline: none; }
                 <a
                   key={id}
                   href={`#${id}`}
-                  className="text-sm font-medium text-[hsl(var(--text-1))] hover:text-[hsl(var(--text-0))] focus:ring-2 focus:ring-[hsl(var(--ring))] rounded px-1"
+                  className="text-sm font-medium text-text-1 hover:text-text-0 focus:ring-2 focus:ring-ring rounded px-1"
                 >
                   {id[0].toUpperCase() + id.slice(1)}
                 </a>
               ))}
               <button
                 id="themeToggle"
-                className="inline-flex items-center gap-2 rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] px-3 py-2 text-sm text-[hsl(var(--text-0))] hover:bg-[hsl(var(--bg-1))] focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                className="inline-flex items-center gap-2 rounded-xl border border-stroke bg-bg-2 px-3 py-2 text-sm text-text-0 hover:bg-bg-1 focus:ring-2 focus:ring-ring"
                 onClick={() => {
                   const el = document.documentElement;
                   const dark = el.classList.toggle("dark");
@@ -128,21 +64,21 @@ a, button { outline: none; }
 
             {/* mobile menu (simple) */}
             <details className="md:hidden relative">
-              <summary className="list-none rounded p-2 hover:bg-[hsl(var(--bg-2))] focus:ring-2 focus:ring-[hsl(var(--ring))]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[hsl(var(--text-0))]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              <summary className="list-none rounded p-2 hover:bg-bg-2 focus:ring-2 focus:ring-ring">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-text-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
               </summary>
-              <div className="absolute right-0 mt-2 w-48 rounded-xl glass p-2">
+              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-bg-1/80 backdrop-blur-md border border-stroke shadow-lg p-2">
                 {["home","about","experience","projects","contact"].map((id) => (
                   <a
                     key={id}
                     href={`#${id}`}
-                    className="block rounded-lg px-3 py-2 text-[hsl(var(--text-0))] hover:bg-[hsl(var(--bg-2))]"
+                    className="block rounded-lg px-3 py-2 text-text-0 hover:bg-bg-2"
                   >
                     {id[0].toUpperCase() + id.slice(1)}
                   </a>
                 ))}
                 <button
-                  className="mt-1 w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] px-3 py-2 text-left text-[hsl(var(--text-0))] hover:bg-[hsl(var(--bg-1))]"
+                  className="mt-1 w-full rounded-lg border border-stroke bg-bg-2 px-3 py-2 text-left text-text-0 hover:bg-bg-1"
                   onClick={() => (document.getElementById("themeToggle") as HTMLButtonElement)?.click()}
                 >
                   Toggle Theme
@@ -152,38 +88,38 @@ a, button { outline: none; }
           </div>
         </header>
 
-        <main id="main" className="container-max">
+        <main id="main" className="max-w-screen-xl mx-auto px-4">
           {/* HERO */}
           <section id="home" className="relative min-h-[86vh] py-20 sm:py-24 overflow-hidden">
             <div className="hero-mask">
-              <div className="absolute -top-24 -left-32 h-72 w-72 rounded-full bg-[hsl(var(--brand)/0.18)] blur-3xl" />
-              <div className="absolute -bottom-20 -right-16 h-[20rem] w-[20rem] rounded-full bg-[hsl(var(--brand-2)/0.16)] blur-3xl" />
+              <div className="absolute -top-24 -left-32 h-72 w-72 rounded-full bg-brand/18 blur-3xl" />
+              <div className="absolute -bottom-20 -right-16 h-[20rem] w-[20rem] rounded-full bg-brand-2/16 blur-3xl" />
             </div>
 
             <div className="relative grid grid-cols-1 md:grid-cols-2 items-center gap-12">
               <div className="order-2 md:order-1 text-center md:text-left">
                 <span className="chip mx-auto md:mx-0">
                   {/* sparkles icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-[hsl(var(--brand))]" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z"/><path d="M5 16l.8 1.7L7.5 18l-1.7.8L5 20.5l-.8-1.7L2.5 18l1.7-.3L5 16z"/><path d="M19 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z"/><path d="M5 16l.8 1.7L7.5 18l-1.7.8L5 20.5l-.8-1.7L2.5 18l1.7-.3L5 16z"/><path d="M19 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/></svg>
                   Elevating Digital Experiences
                 </span>
 
                 <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05]">
                   Hi, I’m{" "}
-                  <span className="relative text-[hsl(var(--brand))]">
+                  <span className="relative text-brand">
                     {data.personalInfo.fullName}
-                    <span className="absolute -inset-x-1 -bottom-1 -z-10 block h-3 bg-[hsl(var(--brand)/0.2)] blur-sm" />
+                    <span className="absolute -inset-x-1 -bottom-1 -z-10 block h-3 bg-brand/20 blur-sm" />
                   </span>
                 </h1>
-                <h2 className="mt-3 text-xl sm:text-2xl font-semibold text-[hsl(var(--text-1))]">
+                <h2 className="mt-3 text-xl sm:text-2xl font-semibold text-text-1">
                   {data.personalInfo.title}
                 </h2>
-                <p className="mt-4 text-[hsl(var(--text-1))] max-w-xl mx-auto md:mx-0">{data.personalInfo.tagline}</p>
+                <p className="mt-4 text-text-1 max-w-xl mx-auto md:mx-0">{data.personalInfo.tagline}</p>
 
                 <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
                   <a
                     href="#projects"
-                    className="inline-flex items-center rounded-xl bg-[hsl(var(--brand))] px-5 py-3 font-semibold text-[hsl(var(--brand-contrast))] hover:opacity-95 brand-glow focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="inline-flex items-center rounded-xl bg-brand px-5 py-3 font-semibold text-brand-contrast hover:opacity-95 brand-glow focus:ring-2 focus:ring-ring"
                   >
                     {/* layers icon */}
                     <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l9 4.5-9 4.5L3 6.5 12 2z"/><path d="M21 11l-9 4.5L3 11"/><path d="M21 16l-9 4.5L3 16"/></svg>
@@ -191,10 +127,10 @@ a, button { outline: none; }
                   </a>
                   <a
                     href="#contact"
-                    className="inline-flex items-center rounded-xl border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-1))] px-5 py-3 font-medium text-[hsl(var(--text-0))] hover:bg-[hsl(var(--bg-2))] focus:ring-2 focus:ring-[hsl(var(--ring))]"
+                    className="inline-flex items-center rounded-xl border border-stroke bg-bg-1 px-5 py-3 font-medium text-text-0 hover:bg-bg-2 focus:ring-2 focus:ring-ring"
                   >
                     {/* mail icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5 text-[hsl(var(--brand))]" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
                     Get in Touch
                   </a>
                 </div>
@@ -202,11 +138,11 @@ a, button { outline: none; }
 
               <div className="order-1 md:order-2 flex justify-center">
                 <div className="relative">
-                  <div className="absolute -inset-1 rounded-full bg-[conic-gradient(from_210deg, hsl(var(--brand)/.55), hsl(var(--brand-2)/.55))] blur-xl" />
+                  <div className="absolute -inset-1 rounded-full bg-[conic-gradient(from_210deg,theme(colors.brand.500/0.55),theme(colors.brand-2.500/0.55))] blur-xl" />
                   <img
                     src={data.personalInfo.profilePhotoURL}
                     alt={`Portrait of ${data.personalInfo.fullName}`}
-                    className="relative z-10 h-72 w-72 sm:h-80 sm:w-80 lg:h-96 lg:w-96 rounded-full object-cover ring-4 ring-[hsl(var(--stroke))]"
+                    className="relative z-10 h-72 w-72 sm:h-80 sm:w-80 lg:h-96 lg:w-96 rounded-full object-cover ring-4 ring-stroke"
                     loading="lazy"
                   />
                 </div>
@@ -217,7 +153,7 @@ a, button { outline: none; }
           {/* ABOUT */}
           <section id="about" className="py-20 sm:py-24">
             <SectionTitle>About Me</SectionTitle>
-            <p className="mx-auto mb-12 max-w-3xl text-center text-lg text-[hsl(var(--text-1))]">
+            <p className="mx-auto mb-12 max-w-3xl text-center text-lg text-text-1">
               {data.about.extendedBio}
             </p>
 
@@ -226,11 +162,11 @@ a, button { outline: none; }
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
                 {data.about.stats.map((s, i) => (
                   <div key={i} className="glass rounded-2xl p-6 text-center">
-                    <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-[hsl(var(--bg-2))]">
+                    <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-bg-2">
                       <Icon name={s.icon} />
                     </div>
                     <div className="text-3xl font-extrabold">{s.value}</div>
-                    <div className="mt-1 text-xs text-[hsl(var(--text-1))]">{s.label}</div>
+                    <div className="mt-1 text-xs text-text-1">{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -259,9 +195,9 @@ a, button { outline: none; }
           {/* EXPERIENCE */}
           <section id="experience" className="py-20 sm:py-24">
             <SectionTitle>Work Experience</SectionTitle>
-            <p className="text-center text-[hsl(var(--text-1))] mb-10">Where I’ve applied my skills and grown professionally</p>
+            <p className="text-center text-text-1 mb-10">Where I’ve applied my skills and grown professionally</p>
             <div className="relative mx-auto max-w-4xl">
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-[hsl(var(--stroke))] sm:left-1/2 sm:-translate-x-1/2" />
+              <div className="absolute left-4 top-0 bottom-0 w-px bg-stroke sm:left-1/2 sm:-translate-x-1/2" />
               <div className="grid gap-10">
                 {data.experience.map((exp, idx) => (
                   <ExperienceItem key={idx} exp={exp} even={idx % 2 === 0} />

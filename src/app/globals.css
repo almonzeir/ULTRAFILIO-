@@ -30,6 +30,16 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
 
+    /* New Color Tokens */
+    --bg-0: var(--background);
+    --bg-1: var(--card);
+    --bg-2: var(--popover);
+    --text-0: var(--foreground);
+    --text-1: var(--muted-foreground);
+    --stroke: var(--border);
+    --brand: var(--primary);
+    --brand-2: var(--secondary);
+
     /* Modern Template Dark Theme */
     --dark-bg: 220 27% 5%; /* #070C15 */
     --card-bg: 220 27% 9%; /* #101725 */
@@ -57,15 +67,25 @@
     --border: 220 27% 12%; /* Darker border */
     --input: var(--card-bg);
     --ring: var(--electric-blue);
+
+    /* New Color Tokens for Dark Mode */
+    --bg-0: var(--dark-bg);
+    --bg-1: var(--card-bg);
+    --bg-2: var(--dark-bg); /* Using dark-bg for popover in dark mode */
+    --text-0: var(--text-light);
+    --text-1: var(--muted-foreground);
+    --stroke: var(--border);
+    --brand: var(--electric-blue);
+    --brand-2: var(--secondary-glow);
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-[var(--stroke)];
   }
   body {
-    @apply bg-background text-foreground scroll-smooth;
+    @apply bg-[var(--bg-0)] text-[var(--text-0)] scroll-smooth;
     line-height: 1.6;
   }
   .dark body {
@@ -80,16 +100,16 @@
 @layer components {
   /* Custom scrollbar for webkit browsers */
   ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: hsl(var(--card-bg)); }
-  ::-webkit-scrollbar-thumb { background: hsl(var(--electric-blue)); border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--bg-1)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--brand)); border-radius: 4px; }
 
   /* Glowing Accent Class */
   .glowing-shadow {
-    box-shadow: 0 0 10px hsla(var(--electric-blue), 0.5), 0 0 20px hsla(var(--electric-blue), 0.3);
+    box-shadow: 0 0 10px hsla(var(--brand), 0.5), 0 0 20px hsla(var(--brand), 0.3);
     transition: all 0.3s ease-in-out;
   }
   .glowing-shadow:hover {
-    box-shadow: 0 0 15px hsla(var(--electric-blue), 0.7), 0 0 30px hsla(var(--electric-blue), 0.5);
+    box-shadow: 0 0 15px hsla(var(--brand), 0.7), 0 0 30px hsla(var(--brand), 0.5);
   }
 
   /* Section Title Styling */
@@ -106,9 +126,9 @@
     transform: translateX(-50%);
     width: 80px;
     height: 3px;
-    background-color: hsl(var(--electric-blue));
+    background-color: hsl(var(--brand));
     border-radius: 2px;
-    box-shadow: 0 0 5px hsl(var(--electric-blue));
+    box-shadow: 0 0 5px hsl(var(--brand));
   }
 
   /* Timeline for Experience Section */
@@ -125,7 +145,7 @@
       top: 0;
       bottom: 0;
       width: 2px;
-      background-color: hsl(var(--card-bg));
+      background-color: hsl(var(--bg-1));
   }
 
   .timeline-dot {
@@ -134,11 +154,11 @@
       top: 6px;
       width: 14px;
       height: 14px;
-      background-color: hsl(var(--electric-blue));
+      background-color: hsl(var(--brand));
       border-radius: 50%;
       z-index: 10;
-      box-shadow: 0 0 8px hsl(var(--electric-blue));
-      border: 2px solid hsl(var(--dark-bg));
+      box-shadow: 0 0 8px hsl(var(--brand));
+      border: 2px solid hsl(var(--bg-0));
   }
 
   @media (min-width: 768px) {
@@ -165,6 +185,28 @@
 
   .dark .btn-special::after {
     @apply via-black/20;
+  }
+
+  /* Custom classes from ModernTemplate.tsx */
+  .container-max {
+    @apply max-w-screen-xl mx-auto px-4;
+  }
+
+  .glass {
+    background-color: hsla(var(--bg-1), 0.8);
+    @apply backdrop-blur-md border border-[hsl(var(--stroke))] shadow-lg;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 border border-stroke bg-bg-2 text-text-1 rounded-full px-2.5 py-1 text-xs font-semibold;
+  }
+
+  .brand-glow {
+    box-shadow: 0 0 0 4px hsl(var(--brand) / .18), 0 10px 30px hsl(var(--brand) / .22);
+  }
+
+  .hero-mask {
+    pointer-events:none; position:absolute; inset:0; -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%); mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
   }
 }
 

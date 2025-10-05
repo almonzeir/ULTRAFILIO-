@@ -82,6 +82,9 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        'bg-0': 'hsl(var(--bg-0))',
+        'bg-1': 'hsl(var(--bg-1))',
+        'bg-2': 'hsl(var(--bg-2))',
       },
       borderRadius: {
         'xs': '2px',
