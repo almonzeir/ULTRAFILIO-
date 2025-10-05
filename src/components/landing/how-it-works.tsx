@@ -49,10 +49,10 @@ export default function HowItWorks() {
     <section className="py-24 sm:py-32 bg-background">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-headline mb-2">{dict.eyebrow}</h1>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
+          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-headline mb-2">{dict.eyebrow}</h2>
+          <h3 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
             {dict.title}
-          </h2>
+          </h3>
           <p className="mt-6 text-lg leading-8 text-muted-foreground">
             {dict.subtitle}
           </p>
