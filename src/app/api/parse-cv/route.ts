@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
@@ -68,9 +69,9 @@ You are an expert CV to Portfolio data extractor. Your task is to parse a resume
 - Normalize dates to "YYYY-MM – YYYY-MM" or "YYYY-MM – Present".
 - Deduplicate skills and group them by category where obvious.
 - Use empty arrays for unknown lists; omit null or undefined properties.
-- **NEVER** include commentary, markdown, or any text outside of the JSON object. Your entire output must be a single, valid JSON.
+- NEVER include commentary, markdown, or any text outside of the JSON object. Your entire output must be a single, valid JSON.
 - If a field is not present in the CV, omit it from the JSON.
-- Generate a `portfolioNameAbbr` from the user's initials (e.g., "Jane Doe" -> "JD").
+- Generate a \`portfolioNameAbbr\` from the user's initials (e.g., "Jane Doe" -> "JD").
 `;
 
 async function uploadFileToFirebase(file: File): Promise<string> {
@@ -93,7 +94,6 @@ export async function POST(req: NextRequest) {
     // 1. Convert CV file to a data URL to pass to Gemini
     const cvArrayBuffer = await cvFile.arrayBuffer();
     const cvBase64 = Buffer.from(cvArrayBuffer).toString('base64');
-    const cvDataUrl = `data:${cvFile.type};base64,${cvBase64}`;
 
     // 2. Prepare prompt for Gemini
     const userPrompt = `
@@ -115,8 +115,6 @@ export async function POST(req: NextRequest) {
       model: model,
       system: SYSTEM_PROMPT,
       prompt: userPrompt,
-      tools: {},
-      toolChoice: 'none',
       attachments: [
         {
           contentType: cvFile.type,
