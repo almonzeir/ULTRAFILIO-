@@ -4,14 +4,9 @@ import { useRouter } from 'next/navigation';
 import ModernTemplate from '@/templates/ModernTemplate';
 import MinimalistTemplate from '@/templates/MinimalistTemplate';
 import BasicTemplate from '@/templates/BasicTemplate';
-import { ThemeProvider } from '@/components/theme-provider';
-import ThemeSwitcher from '@/components/ThemeSwitcher';
 import type { PortfolioData } from '@/templates/types';
-import { LanguageProvider } from '@/context/language-context';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
-import { Toaster } from "@/components/ui/toaster";
-import './globals.css';
 
+// Hardcoded sample data for the preview page
 const sampleData: PortfolioData = {
   personalInfo: {
     fullName: "Your Name",
@@ -91,45 +86,32 @@ export default function TemplatePreviewPage() {
   }[template || 'modern'];
 
   return (
-    <LanguageProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <FirebaseClientProvider>
-          <main className="min-h-screen bg-gray-50 dark:bg-black text-gray-900 dark:text-white">
-            <div className="text-center pt-10">
-              <h1 className="text-3xl font-bold mb-3">Preview Your Portfolio</h1>
-              <p className="text-gray-500 dark:text-gray-400 mb-8">
-                You can explore your chosen design before continuing.
-              </p>
-            </div>
+    <main className="min-h-screen bg-gray-50 dark:bg-black text-gray-900 dark:text-white">
+      <div className="text-center pt-10">
+        <h1 className="text-3xl font-bold mb-3">Preview Your Portfolio</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">
+          You can explore your chosen design before continuing.
+        </p>
+      </div>
 
-            <div className="border-t border-gray-200 dark:border-gray-800 mt-4 pt-8">
-              {TemplateComponent && <TemplateComponent data={sampleData} />}
-            </div>
+      <div className="border-t border-gray-200 dark:border-gray-800 mt-4 pt-8">
+        {TemplateComponent && <TemplateComponent data={sampleData} />}
+      </div>
 
-            <div className="text-center my-16">
-              <button
-                onClick={() => router.back()}
-                className="px-6 py-3 mr-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                ← Back
-              </button>
-              <button
-                onClick={handleContinue}
-                className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:scale-105 transition"
-              >
-                Continue →
-              </button>
-            </div>
-            <ThemeSwitcher />
-          </main>
-          <Toaster />
-        </FirebaseClientProvider>
-      </ThemeProvider>
-    </LanguageProvider>
+      <div className="text-center my-16">
+        <button
+          onClick={() => router.back()}
+          className="px-6 py-3 mr-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          ← Back
+        </button>
+        <button
+          onClick={handleContinue}
+          className="px-8 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:scale-105 transition"
+        >
+          Continue →
+        </button>
+      </div>
+    </main>
   );
 }
