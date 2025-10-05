@@ -47,7 +47,7 @@ export default function Header() {
   ];
 
   const NavMenu = () => (
-    <nav className="flex items-center space-x-6">
+    <nav className="flex items-center gap-6">
       {navLinks.map((link) => (
         <a
           key={link.name}
