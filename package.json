@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 9002",
+    "dev": "next dev -p 9003",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "rebuild": "rm -rf .next && next dev -p 9002"
+    "rebuild": "rm -rf .next && next dev -p 9003"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
