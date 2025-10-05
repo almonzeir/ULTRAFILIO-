@@ -99,10 +99,25 @@
     }
   },
   "footer": {
-    "ctaTitle": "Ready to Build Your UltraFolio?",
-    "ctaSubtitle": "Start for free and create a portfolio that truly represents you. No credit card required.",
-    "ctaButton": "Get Started for Free",
-    "learnMore": "Learn more",
-    "copyright": "UltraFolio. All rights reserved."
+    "title": "Footer",
+    "tagline": "Turn your CV into a stunning portfolio instantly.",
+    "copyright": "UltraFolio. All rights reserved.",
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "templates": "Templates",
+      "pricing": "Pricing"
+    },
+    "company": {
+      "title": "Company",
+      "about": "About",
+      "blog": "Blog",
+      "contact": "Contact"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
   }
 }

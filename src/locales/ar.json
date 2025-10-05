@@ -76,7 +76,7 @@
         "download": "تنزيل الكود المصدري (ZIP)",
         "templates": "الوصول إلى القوالب المميزة",
         "support": "دعم ذو أولوية",
-        "unlimitedGenerations": "إنشاء عدد غير محدود من معارض الأعمال",
+        "unlimitedGenerations": "إنشاء محافظ أعمال غير محدودة",
         "unlimitedDeployments": "عمليات نشر غير محدودة"
       },
       "cta": "الترقية إلى المميز"
@@ -99,10 +99,25 @@
     }
   },
   "footer": {
-    "ctaTitle": "هل أنت مستعد لبناء UltraFolio الخاص بك؟",
-    "ctaSubtitle": "ابدأ مجانًا وأنشئ معرض أعمال يمثلك حقًا. لا حاجة لبطاقة ائتمان.",
-    "ctaButton": "ابدأ مجانًا",
-    "learnMore": "اعرف المزيد",
-    "copyright": "UltraFolio. جميع الحقوق محفوظة."
+    "title": "تذييل",
+    "tagline": "حوّل سيرتك الذاتية إلى معرض أعمال مذهل على الفور.",
+    "copyright": "UltraFolio. جميع الحقوق محفوظة.",
+    "product": {
+      "title": "المنتج",
+      "features": "الميزات",
+      "templates": "القوالب",
+      "pricing": "الأسعار"
+    },
+    "company": {
+      "title": "الشركة",
+      "about": "عنا",
+      "blog": "المدونة",
+      "contact": "اتصل بنا"
+    },
+    "legal": {
+      "title": "قانوني",
+      "privacy": "سياسة الخصوصية",
+      "terms": "شروط الخدمة"
+    }
   }
 }

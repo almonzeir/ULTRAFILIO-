@@ -28,18 +28,18 @@ export default function Footer() {
 
   const navigation = {
     product: [
-      { name: 'Features', href: '#' },
-      { name: 'Templates', href: '#' },
-      { name: 'Pricing', href: '#' },
+      { name: dict.product.features, href: '#' },
+      { name: dict.product.templates, href: '#' },
+      { name: dict.product.pricing, href: '#' },
     ],
     company: [
-      { name: 'About', href: '#' },
-      { name: 'Blog', href: '#' },
-      { name: 'Contact', href: '#' },
+      { name: dict.company.about, href: '#' },
+      { name: dict.company.blog, href: '#' },
+      { name: dict.company.contact, href: '#' },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
+      { name: dict.legal.privacy, href: '#' },
+      { name: dict.legal.terms, href: '#' },
     ],
   };
 
@@ -64,14 +64,14 @@ export default function Footer() {
   return (
     <footer className="bg-background" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
-        Footer
+        {dict.title}
       </h2>
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
             <Logo />
             <p className="text-sm leading-6 text-muted-foreground">
-              Turn your CV into a stunning portfolio instantly.
+              {dict.tagline}
             </p>
             <div className="flex space-x-6">
               {social.map((item) => (
@@ -85,7 +85,7 @@ export default function Footer() {
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-foreground">Product</h3>
+                <h3 className="text-sm font-semibold leading-6 text-foreground">{dict.product.title}</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {navigation.product.map((item) => (
                     <li key={item.name}>
@@ -97,7 +97,7 @@ export default function Footer() {
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-foreground">Company</h3>
+                <h3 className="text-sm font-semibold leading-6 text-foreground">{dict.company.title}</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {navigation.company.map((item) => (
                     <li key={item.name}>
@@ -111,7 +111,7 @@ export default function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-foreground">Legal</h3>
+                <h3 className="text-sm font-semibold leading-6 text-foreground">{dict.legal.title}</h3>
                 <ul role="list" className="mt-6 space-y-4">
                   {navigation.legal.map((item) => (
                     <li key={item.name}>

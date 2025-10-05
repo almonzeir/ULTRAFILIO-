@@ -32,20 +32,22 @@ export default function ChooseTemplatePage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const data = localStorage.getItem('cvFile');
-    if (!data) {
+    // Check for uploadMeta instead of cvFile
+    const uploadMeta = localStorage.getItem('uploadMeta');
+    if (!uploadMeta) {
       toast({
         variant: 'destructive',
         title: 'CV not found!',
         description: 'Please upload your CV before choosing a template.',
       });
-      router.push('/create');
+      router.push('/upload-cv'); // Redirect to the new upload page
     }
   }, [router, toast]);
 
   const handleContinue = () => {
     if (!selected) return;
-    localStorage.setItem('selectedTemplate', selected);
+    // Persist chosenTemplate
+    localStorage.setItem('chosenTemplate', selected);
     router.push('/ai-building');
   };
 
