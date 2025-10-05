@@ -52,37 +52,35 @@ export default function Testimonials() {
             {dict.subtitle}
           </p>
         </div>
-        <div className="mx-auto mt-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {testimonialsData.map((testimonial) => {
-              const avatar = PlaceHolderImages.find(p => p.id === testimonial.avatarId);
-              return (
-                <Card key={testimonial.name} className="pt-8 bg-card text-card-foreground border-border/50">
-                  <CardContent>
-                    <blockquote className="text-lg leading-7 tracking-tight text-card-foreground">
-                      <p>“{testimonial.quote}”</p>
-                    </blockquote>
-                    <figcaption className="mt-6 flex items-center gap-x-4">
-                      {avatar && (
-                         <Image
-                          className="h-12 w-12 rounded-full bg-muted"
-                          src={avatar.imageUrl}
-                          alt={testimonial.name}
-                          data-ai-hint={avatar.imageHint}
-                          width={48}
-                          height={48}
-                        />
-                      )}
-                      <div>
-                        <div className="font-semibold">{testimonial.name}</div>
-                        <div className="text-sm text-muted-foreground">{testimonial.title}</div>
-                      </div>
-                    </figcaption>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+        <div className="mx-auto mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {testimonialsData.map((testimonial) => {
+            const avatar = PlaceHolderImages.find(p => p.id === testimonial.avatarId);
+            return (
+              <Card key={testimonial.name} className="flex flex-col bg-card text-card-foreground border-border/50">
+                <CardContent className="flex flex-col flex-grow p-6">
+                  <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
+                    <p>“{testimonial.quote}”</p>
+                  </blockquote>
+                  <figcaption className="mt-6 flex items-center gap-x-4">
+                    {avatar && (
+                        <Image
+                        className="h-12 w-12 rounded-full bg-muted"
+                        src={avatar.imageUrl}
+                        alt={testimonial.name}
+                        data-ai-hint={avatar.imageHint}
+                        width={48}
+                        height={48}
+                      />
+                    )}
+                    <div>
+                      <div className="font-semibold">{testimonial.name}</div>
+                      <div className="text-sm text-muted-foreground">{testimonial.title}</div>
+                    </div>
+                  </figcaption>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </section>
