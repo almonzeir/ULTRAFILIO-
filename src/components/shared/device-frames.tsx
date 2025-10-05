@@ -6,7 +6,7 @@ interface FrameProps {
 
 export function MacbookFrame({ children }: FrameProps) {
   return (
-    <div className="w-full max-w-4xl mx-auto bg-neutral-900 rounded-lg shadow-lg">
+    <div className="w-full mx-auto bg-neutral-900 rounded-lg shadow-lg">
       <div className="relative p-2 pt-6 bg-neutral-800 dark:bg-neutral-900/50 rounded-t-lg">
         <div className="absolute top-2.5 left-4 flex space-x-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>

@@ -1,4 +1,5 @@
 import type { PortfolioData } from './types';
+import Script from 'next/script';
 
 // Helper component for icons to keep the main component clean
 const Icon = ({ d, className }: { d: string; className?: string }) => (
@@ -18,6 +19,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+      <Script src="https://cdn.tailwindcss.com" />
       <div className="max-w-screen-xl mx-auto lg:flex lg:gap-12 p-6 md:p-12">
         {/* Left Sticky Column */}
         <aside className="lg:w-1/3 lg:sticky lg:top-12 self-start mb-12 lg:mb-0">

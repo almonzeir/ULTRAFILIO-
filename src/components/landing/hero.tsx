@@ -47,7 +47,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="mt-16 flow-root sm:mt-24">
-          <div className="-m-2 rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:-m-4 lg:rounded-2xl lg:p-4">
+          <div className="rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:p-4">
             <MacbookFrame>
               <video
                 src="/hero-video.mp4"
