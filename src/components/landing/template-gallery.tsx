@@ -82,7 +82,7 @@ export default function TemplateGallery() {
                   </div>
                 </CardContent>
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="lg" variant="secondary">
+                  <Button size="lg" variant="secondary" className="dark:text-black">
                     <Eye className="mr-2 h-4 w-4" />
                     {dict.preview}
                   </Button>
