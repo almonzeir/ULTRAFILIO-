@@ -70,6 +70,16 @@ export default function Testimonials() {
 
   return (
     <section className="py-24 sm:py-32 bg-foreground text-background dark:bg-white dark:text-black">
+       <style jsx>{`
+        .rtl-carousel-item {
+          padding-left: 0;
+          padding-right: 1rem;
+        }
+        .rtl-carousel-content {
+          margin-left: 0;
+          margin-right: -1rem;
+        }
+      `}</style>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">{dict.title}</h2>
@@ -92,11 +102,11 @@ export default function Testimonials() {
           ]}
           className="w-full mt-16"
         >
-          <CarouselContent>
+          <CarouselContent className={language === 'ar' ? 'rtl-carousel-content' : '-ml-4'}>
             {testimonialsData.map((testimonial, index) => {
               const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
               return (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                <CarouselItem key={index} className={`md:basis-1/2 lg:basis-1/3 ${language === 'ar' ? 'rtl-carousel-item' : 'pl-4'}`}>
                   <div className="h-full p-1">
                     <Card className="flex flex-col h-full bg-card text-card-foreground border-border/50">
                       <CardContent className="flex flex-col flex-grow p-6">
