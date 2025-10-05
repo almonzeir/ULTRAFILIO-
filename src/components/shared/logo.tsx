@@ -6,7 +6,7 @@ export default function Logo() {
     <Link href="/" className="flex items-center space-x-2">
       {/* Light mode logo */}
       <Image 
-        src="/logo-light.svg" 
+        src="/black logo.svg" 
         alt="UltraFolio Logo" 
         width={28} 
         height={28}
@@ -14,7 +14,7 @@ export default function Logo() {
       />
       {/* Dark mode logo */}
       <Image 
-        src="/logo-dark.svg" 
+        src="/white logo.svg" 
         alt="UltraFolio Logo" 
         width={28} 
         height={28}
