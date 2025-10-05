@@ -70,6 +70,7 @@ export default function HowItWorks() {
 
   return (
     <motion.section 
+      key={language}
       className="py-24 sm:py-32 bg-background"
       initial="hidden"
       whileInView="visible"
