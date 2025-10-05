@@ -75,7 +75,9 @@
         "all": "All features from Free Plan",
         "download": "Download Source Code (ZIP)",
         "templates": "Access to Premium Templates",
-        "support": "Priority Support"
+        "support": "Priority Support",
+        "unlimitedGenerations": "Unlimited Portfolio Generations",
+        "unlimitedDeployments": "Unlimited Deployments"
       },
       "cta": "Upgrade to Premium"
     }

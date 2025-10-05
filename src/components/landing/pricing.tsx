@@ -35,8 +35,8 @@ export default function Pricing() {
       dict.premium.features.download,
       dict.premium.features.templates,
       dict.premium.features.support,
-      "Unlimited Portfolio Generations",
-      "Unlimited Deployments",
+      dict.premium.features.unlimitedGenerations,
+      dict.premium.features.unlimitedDeployments,
   ];
 
   return (
