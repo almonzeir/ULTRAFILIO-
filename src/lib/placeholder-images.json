@@ -43,6 +43,24 @@
       "imageHint": "person smiling"
     },
     {
+      "id": "testimonial-avatar-4",
+      "description": "Avatar for Kenji T.",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMnx8bWFuJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzU5NDcxODM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "asian man"
+    },
+    {
+      "id": "testimonial-avatar-5",
+      "description": "Avatar for Maria G.",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTUyMDY3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "latina woman"
+    },
+    {
+      "id": "testimonial-avatar-6",
+      "description": "Avatar for David L.",
+      "imageUrl": "https://images.unsplash.com/photo-1557862921-37829c790f19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyMHx8bWFuJTIwcG9ydHJhaXR8ZW58MHx8fHwxNzU5NDcxODM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man glasses"
+    },
+    {
       "id": "profile-avatar-placeholder",
       "description": "Placeholder for a user's profile picture.",
       "imageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw1fHxwb3J0cmFpdHxlbnwwfHx8fDE2NjEyOTU5NDN8MA&ixlib=rb-4.0.3&q=80&w=1080",

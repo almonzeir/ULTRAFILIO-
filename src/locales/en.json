@@ -96,6 +96,18 @@
     "testimonial3": {
       "quote": "The Arabic language support with proper RTL is fantastic. It's rare to see this level of quality and attention to detail for a global audience.",
       "title": "Product Manager"
+    },
+    "testimonial4": {
+      "quote": "UltraFolio saves me hours of work every time I need to update my portfolio. It's fast, intuitive, and makes me look great.",
+      "title": "Freelance Designer"
+    },
+    "testimonial5": {
+      "quote": "I've used other site builders, but nothing comes close to UltraFolio. The design quality and attention to detail are unparalleled.",
+      "title": "Marketing Consultant"
+    },
+    "testimonial6": {
+      "quote": "Being able to go from a resume to a live website in minutes is a superpower. I've recommended it to all my colleagues.",
+      "title": "Data Scientist"
     }
   },
   "footer": {
