@@ -50,7 +50,7 @@ export default function Hero() {
           <div className="-m-2 rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:-m-4 lg:rounded-2xl lg:p-4">
             <MacbookFrame>
               <video
-                src="https://cdn.dribbble.com/userupload/11311029/file/original-5a7f999333946059341d3a584995f7c3.mp4"
+                src="/hero-video.mp4"
                 autoPlay
                 loop
                 muted

@@ -1,142 +1,95 @@
 import type { PortfolioData } from './types';
 
-export default function GeneratedModernTemplate({ data }: { data: PortfolioData }) {
-  return (
-    <div className="bg-white text-gray-800 font-sans">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <a href="#home" className="text-lg font-bold text-gray-900 tracking-wide">
-            {data.personalInfo.fullName}
-          </a>
-          <div className="hidden md:flex space-x-8 text-gray-600 font-medium">
-            <a href="#about" className="hover:text-gray-900 transition duration-300">About</a>
-            <a href="#experience" className="hover:text-gray-900 transition duration-300">Experience</a>
-            <a href="#projects" className="hover:text-gray-900 transition duration-300">Projects</a>
-            <a href="#contact" className="hover:text-gray-900 transition duration-300">Contact</a>
-          </div>
-          <button className="md:hidden text-gray-600 hover:text-gray-900">
-            {/* You might want to add a menu icon here */}
-          </button>
-        </nav>
-      </header>
+// Helper component for icons to keep the main component clean
+const Icon = ({ d, className }: { d: string; className?: string }) => (
+  <svg viewBox="0 0 24 24" className={`w-5 h-5 ${className}`} fill="currentColor">
+    <path d={d} />
+  </svg>
+);
 
-      <main className="max-w-7xl mx-auto px-6">
-        {/* Hero Section */}
-        <section id="home" className="py-24 md:py-32 flex flex-col items-center text-center">
-          <div className="w-24 h-24 rounded-full mb-6">
-            <img src={data.personalInfo.profilePhotoURL} alt="Professional Profile" width={96} height={96} className="w-full h-full object-cover rounded-full" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight mb-4">
-            I&apos;m {data.personalInfo.fullName}. <br />
-            A {data.personalInfo.title}.
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+const MailIcon = () => <Icon d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM4 6v.51l8 4.51 8-4.51V6H4zM4 18h16V8.5l-8 4.5-8-4.5V18z" />;
+const LinkedInIcon = () => <Icon d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />;
+const ArrowRightIcon = () => <Icon d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />;
+
+export default function GeneratedModernTemplate({ data }: { data: PortfolioData }) {
+  const accentColor = 'text-blue-600';
+  const accentBg = 'bg-blue-600';
+  const accentBgHover = 'hover:bg-blue-700';
+
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
+      <div className="max-w-screen-xl mx-auto lg:flex lg:gap-12 p-6 md:p-12">
+        {/* Left Sticky Column */}
+        <aside className="lg:w-1/3 lg:sticky lg:top-12 self-start mb-12 lg:mb-0">
+          <img src={data.personalInfo.profilePhotoURL} alt="Profile" className="w-24 h-24 rounded-full mb-4 object-cover" />
+          <h1 className="text-4xl font-bold text-gray-900">{data.personalInfo.fullName}</h1>
+          <h2 className="text-xl font-medium text-gray-700 mt-1">{data.personalInfo.title}</h2>
+          <p className="text-gray-600 mt-4 max-w-xs">
             {data.personalInfo.tagline}
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <a href="#projects" className="flex items-center bg-gray-900 hover:bg-gray-700 transition duration-300 text-white font-bold py-3 px-6 rounded-lg">
-              View My Work
+          <nav className="mt-8 space-y-3">
+            <a href="#about" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+              <span className="w-16 h-px bg-gray-400"></span>
+              <span>About</span>
             </a>
-            <a href="#contact" className="flex items-center border border-gray-300 text-gray-700 hover:bg-gray-100 transition duration-300 font-medium py-3 px-6 rounded-lg">
-              Get in Touch
+            <a href="#experience" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+              <span className="w-16 h-px bg-gray-400"></span>
+              <span>Experience</span>
             </a>
+            <a href="#projects" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
+              <span className="w-16 h-px bg-gray-400"></span>
+              <span>Projects</span>
+            </a>
+          </nav>
+          <div className="mt-8 flex gap-4">
+            <a href={`mailto:${data.personalInfo.email}`} className="text-gray-500 hover:text-blue-600 transition-colors"><MailIcon /></a>
+            <a href={data.personalInfo.linkedInURL} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 transition-colors"><LinkedInIcon /></a>
           </div>
-        </section>
+        </aside>
 
-        {/* About Section */}
-        <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-8">About Me</h2>
-            <p className="text-lg text-gray-600 text-center leading-relaxed">
-              {data.about.extendedBio}
-            </p>
-          </div>
-        </section>
+        {/* Right Scrolling Column */}
+        <main className="lg:w-2/3">
+          <section id="about" className="mb-16 scroll-mt-24">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">About</h3>
+            <div className="space-y-4 text-gray-700 leading-relaxed">
+              {data.about.extendedBio.split('\n').map((paragraph, i) => <p key={i}>{paragraph}</p>)}
+            </div>
+          </section>
 
-        {/* Professional Experience */}
-        <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 rounded-xl">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Work Experience</h2>
-            <div className="space-y-12">
-              {data.experience.map((exp, index) => (
-                <div key={index} className="flex flex-col sm:flex-row gap-8">
-                  <div className="sm:w-1/3 text-left sm:text-right">
-                    <h3 className="text-xl font-bold text-gray-900">{exp.company}</h3>
-                    <p className="text-gray-600">{exp.location}</p>
-                    <p className="text-sm text-gray-500">{exp.dates}</p>
+          <section id="experience" className="mb-16 scroll-mt-24">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Work Experience</h3>
+            <div className="space-y-8">
+              {data.experience.map((exp, i) => (
+                <div key={i} className="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-900">{exp.jobTitle}</h4>
+                      <p className="text-gray-700">{exp.company}</p>
+                    </div>
+                    <p className="text-sm text-gray-500 whitespace-nowrap">{exp.dates}</p>
                   </div>
-                  <div className="sm:w-2/3">
-                    <h4 className="text-xl font-semibold text-gray-800">{exp.jobTitle}</h4>
-                    <ul className="mt-2 space-y-2 text-gray-600 list-disc list-inside">
-                      {exp.responsibilities.map((r, i) => <li key={i}>{r}</li>)}
-                    </ul>
-                  </div>
+                  <ul className="mt-4 list-disc list-inside text-gray-600 space-y-1">
+                    {exp.responsibilities.map((r, j) => <li key={j}>{r}</li>)}
+                  </ul>
                 </div>
               ))}
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Projects Section */}
-        <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Featured Projects</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {data.projects.map(project => (
-                <div key={project.name} className="bg-white rounded-lg border border-gray-200 overflow-hidden group">
-                  <img src={project.imageURL} alt={project.name} width={600} height={400} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{project.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4">{project.description}</p>
-                    <a href={project.detailsURL} className="inline-flex items-center text-gray-800 hover:text-black font-bold transition duration-300">
-                      View Details
-                    </a>
-                  </div>
-                </div>
+          <section id="projects" className="scroll-mt-24">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Projects</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {data.projects.map((project, i) => (
+                <a href={project.detailsURL} key={i} target="_blank" rel="noopener noreferrer" className="block p-6 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow group">
+                  <img src={project.imageURL} alt={project.name} className="w-full h-40 object-cover rounded-md mb-4" />
+                  <h4 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{project.name}</h4>
+                  <p className="text-gray-600 text-sm mt-1">{project.description}</p>
+                </a>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <footer id="contact" className="bg-gray-50 border-t border-gray-200 mt-12 py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12">
-            <div className="max-w-md">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Collaborate?</h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  I&apos;m currently seeking new opportunities and projects. Let&apos;s build something amazing together!
-                </p>
-                <div className="flex space-x-6">
-                  <a href={data.personalInfo.linkedInURL} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900">LinkedIn</a>
-                  <a href={`mailto:${data.personalInfo.email}`} className="text-gray-600 hover:text-gray-900">Email</a>
-                </div>
-            </div>
-            <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">
-              <form className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="sr-only">Name</label>
-                  <input type="text" id="name" placeholder="Your Name" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="sr-only">Email</label>
-                  <input type="email" id="email" placeholder="Your Email" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900" />
-                </div>
-                <div>
-                  <label htmlFor="message" className="sr-only">Message</label>
-                  <textarea id="message" rows={5} placeholder="Your Message" className="w-full p-3 rounded-lg bg-gray-100 border border-gray-300 text-gray-800 focus:ring-gray-900 focus:border-gray-900"></textarea>
-                </div>
-                <button type="submit" className="w-full flex items-center justify-center bg-gray-900 hover:bg-gray-700 transition duration-300 text-white font-bold py-3 px-6 rounded-lg">
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </div>
-          <div className="max-w-7xl mx-auto px-6 py-8 mt-12 border-t border-gray-200 text-center text-gray-600 text-sm">
-            <p>&copy; {new Date().getFullYear()} {data.personalInfo.fullName}. All rights reserved.</p>
-          </div>
-        </footer>
-      </main>
+          </section>
+        </main>
+      </div>
     </div>
   );
 }
