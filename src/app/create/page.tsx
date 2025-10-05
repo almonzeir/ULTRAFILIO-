@@ -5,76 +5,136 @@ import UploadCVCard from '@/components/create/UploadCVCard';
 import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
+import { useToast } from '@/hooks/use-toast';
+import { parseCV } from '@/ai/flows/parse-cv';
 
 export default function CreatePortfolioPage() {
   const [showManualForm, setShowManualForm] = React.useState(false);
+  const [isParsing, setIsParsing] = React.useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleDataAndNavigate = (data: PortfolioData) => {
-    // In a real app, you might send this to a backend.
-    // For now, we store in localStorage to pass between pages.
     try {
-      localStorage.setItem('userData', JSON.stringify(data));
+      localStorage.setItem('portfolioData', JSON.stringify(data));
       router.push('/choose-template');
     } catch (e) {
       console.error('Failed to save user data to localStorage', e);
-      // Optionally, show an error toast to the user
+      toast({
+        variant: 'destructive',
+        title: 'Oh no!',
+        description: 'Could not save your portfolio data. Please try again.',
+      });
     }
   };
 
   const handleManualFormSubmit = (formData: Omit<PortfolioData, 'skills' | 'projects' | 'education' | 'experience' > & { skills: string;[key: string]: any }) => {
+    // This is a simplified conversion. A real app might have more complex logic.
     const portfolioData: PortfolioData = {
-      name: formData.name,
-      title: formData.title,
-      summary: formData.summary,
-      // A real implementation would handle multiple entries for these fields.
-      // For now, we'll create single entries based on the form.
-      experience: [
+      person: {
+        fullName: formData.name,
+        headline: formData.title,
+        summary: formData.summary,
+      },
+      contact: {
+        email: formData.email,
+        phone: formData.phone,
+        location: formData.location,
+        website: formData.website,
+        linkedin: formData.linkedin,
+        github: formData.github,
+      },
+      experience: formData.exp_role ? [
         {
-          role: formData.exp_role || '',
+          role: formData.exp_role,
           company: formData.exp_company || '',
-          start: formData.exp_start || '',
-          end: formData.exp_end || '',
-          description: formData.exp_description || '',
+          location: '',
+          startDate: formData.exp_start || '',
+          endDate: formData.exp_end || '',
+          bullets: (formData.exp_description || '').split('\n').filter(b => b),
         },
-      ],
-      education: [
+      ] : [],
+      education: formData.edu_degree ? [
         {
-          degree: formData.edu_degree || '',
+          degree: formData.edu_degree,
+          field: '',
           institution: formData.edu_institution || '',
-          start: formData.edu_start_year || '',
-          end: formData.edu_end_year || '',
+          startDate: formData.edu_start_year || '',
+          endDate: formData.edu_end_year || '',
+          notes: formData.edu_details || '',
         },
-      ],
-      projects: [
+      ] : [],
+      projects: formData.proj_title ? [
         {
-          title: formData.proj_title || '',
+          name: formData.proj_title,
           description: formData.proj_description || '',
           tech: (formData.proj_tech || '').split(',').map(t => t.trim()).filter(Boolean),
-          link: formData.proj_link || '',
+          links: formData.proj_link ? [{url: formData.proj_link}] : [],
+          impact: '',
         },
-      ],
+      ] : [],
       skills: (formData.skills || '').split(',').map(s => s.trim()).filter(Boolean),
-       // Add other properties from your form as needed
-      ...formData.personal_info
+      certifications: [],
+      awards: [],
+      languages: [],
+      interests: []
     };
     handleDataAndNavigate(portfolioData);
   };
   
-  const handleUploadAndNavigate = () => {
-    // This is a placeholder. In a real app, you would parse the CV
-    // and then call handleDataAndNavigate with the extracted data.
-    const dummyData: PortfolioData = {
-        name: 'John Doe',
-        title: 'Software Engineer',
-        summary: 'A passionate software engineer with experience in building web applications.',
-        skills: ['React', 'TypeScript', 'Node.js'],
-        experience: [{ role: 'Frontend Developer', company: 'Tech Corp', start: '2020', end: 'Present', description: 'Developing cool stuff.' }],
-        projects: [{ title: 'My Project', description: 'A very cool project.', tech: ['React'] }],
-        education: [{ degree: 'B.Sc. Computer Science', institution: 'University of Code', start: '2016', end: '2020' }]
-    };
-    handleDataAndNavigate(dummyData);
+  const handleUploadAndNavigate = async (cvFile: File, photoFile: File | null) => {
+    setIsParsing(true);
+    toast({
+      title: 'Parsing your CV...',
+      description: 'The AI is extracting your experience and skills. This may take a moment.',
+    });
+
+    try {
+      const reader = new FileReader();
+      reader.readAsDataURL(cvFile);
+      reader.onload = async () => {
+        const cvDataUri = reader.result as string;
+
+        // Also convert photo to data URI if it exists
+        if (photoFile) {
+            const photoReader = new FileReader();
+            photoReader.readAsDataURL(photoFile);
+            photoReader.onload = async () => {
+                const photoDataUri = photoReader.result as string;
+                localStorage.setItem('userPhoto', photoDataUri);
+                await handleCvParsing(cvDataUri);
+            }
+        } else {
+            localStorage.removeItem('userPhoto');
+            await handleCvParsing(cvDataUri);
+        }
+      };
+    } catch (error) {
+      console.error("CV Parsing Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Parsing Failed",
+        description: "Could not parse your CV. Please try a different file or fill out the form manually.",
+      });
+      setIsParsing(false);
+    }
   };
+
+  const handleCvParsing = async (cvDataUri: string) => {
+    try {
+        const parsedData = await parseCV({ cvDataUri });
+        handleDataAndNavigate(parsedData);
+    } catch(e) {
+        console.error("CV Parsing Error:", e);
+        toast({
+            variant: "destructive",
+            title: "Parsing Failed",
+            description: "The AI could not understand your CV. Please try a different file or fill out the form manually.",
+        });
+    } finally {
+        setIsParsing(false);
+    }
+  }
 
 
   if (showManualForm) {
@@ -89,7 +149,7 @@ export default function CreatePortfolioPage() {
       </div>
 
       <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <UploadCVCard onContinue={handleUploadAndNavigate} />
+        <UploadCVCard onContinue={handleUploadAndNavigate} isParsing={isParsing} />
         <div 
           className="p-8 bg-gradient-to-b from-black to-gray-900 text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-800 flex flex-col justify-between"
         >
