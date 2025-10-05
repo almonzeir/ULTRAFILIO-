@@ -6,7 +6,62 @@ import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
-import { parseCV } from '@/ai/flows/parse-cv';
+
+const mockParsedData: PortfolioData = {
+    person: {
+        fullName: "John Doe",
+        headline: "Senior Software Engineer",
+        summary: "An experienced software engineer specializing in building scalable web applications with modern technologies. Passionate about clean code and great user experiences.",
+    },
+    contact: {
+        email: "john.doe@example.com",
+        phone: "123-456-7890",
+        location: "San Francisco, USA",
+        website: "johndoe.dev",
+        linkedin: "linkedin.com/in/johndoe",
+        github: "github.com/johndoe",
+    },
+    experience: [
+        {
+            role: "Senior Software Engineer",
+            company: "Tech Solutions Inc.",
+            location: "San Francisco, CA",
+            startDate: "2020-01",
+            endDate: "Present",
+            bullets: [
+                "Led the development of a new microservices-based architecture, improving system scalability by 50%.",
+                "Mentored junior engineers, fostering a culture of knowledge sharing and growth.",
+                "Reduced API response times by 30% through performance optimization.",
+            ],
+        },
+    ],
+    projects: [
+        {
+            name: "Portfolio Generator",
+            description: "A tool to automatically generate a personal portfolio website from a CV.",
+            tech: ["Next.js", "Tailwind CSS", "TypeScript", "Genkit"],
+            links: [{ url: "https://github.com/johndoe/portfolio-generator" }],
+            impact: "Enabled hundreds of users to create a professional online presence in minutes.",
+        },
+    ],
+    education: [
+        {
+            degree: "B.Sc. in Computer Science",
+            field: "Computer Science",
+            institution: "State University",
+            startDate: "2012",
+            endDate: "2016",
+            notes: "Graduated with Honors.",
+        },
+    ],
+    skills: ["React", "TypeScript", "Node.js", "Next.js", "GraphQL", "PostgreSQL", "Docker"],
+    certifications: [],
+    awards: [],
+    languages: [{ name: "English", level: "Native" }],
+    interests: ["Hiking", "Photography", "Open Source"],
+    photoUrl: null,
+};
+
 
 export default function CreatePortfolioPage() {
   const [showManualForm, setShowManualForm] = React.useState(false);
@@ -85,57 +140,28 @@ export default function CreatePortfolioPage() {
   const handleUploadAndNavigate = async (cvFile: File, photoFile: File | null) => {
     setIsParsing(true);
     toast({
-      title: 'Parsing your CV...',
-      description: 'The AI is extracting your experience and skills. This may take a moment.',
+      title: 'Processing your CV...',
+      description: 'This may take a moment.',
     });
 
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(cvFile);
-      reader.onload = async () => {
-        const cvDataUri = reader.result as string;
-
-        // Also convert photo to data URI if it exists
+    // Simulate parsing delay
+    setTimeout(() => {
         if (photoFile) {
             const photoReader = new FileReader();
             photoReader.readAsDataURL(photoFile);
             photoReader.onload = async () => {
                 const photoDataUri = photoReader.result as string;
                 localStorage.setItem('userPhoto', photoDataUri);
-                await handleCvParsing(cvDataUri);
+                handleDataAndNavigate(mockParsedData);
+                setIsParsing(false);
             }
         } else {
             localStorage.removeItem('userPhoto');
-            await handleCvParsing(cvDataUri);
+            handleDataAndNavigate(mockParsedData);
+            setIsParsing(false);
         }
-      };
-    } catch (error) {
-      console.error("CV Parsing Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Parsing Failed",
-        description: "Could not parse your CV. Please try a different file or fill out the form manually.",
-      });
-      setIsParsing(false);
-    }
+    }, 2000);
   };
-
-  const handleCvParsing = async (cvDataUri: string) => {
-    try {
-        const parsedData = await parseCV({ cvDataUri });
-        handleDataAndNavigate(parsedData);
-    } catch(e) {
-        console.error("CV Parsing Error:", e);
-        toast({
-            variant: "destructive",
-            title: "Parsing Failed",
-            description: "The AI could not understand your CV. Please try a different file or fill out the form manually.",
-        });
-    } finally {
-        setIsParsing(false);
-    }
-  }
-
 
   if (showManualForm) {
     return <ManualForm onSubmit={handleManualFormSubmit} />;
