@@ -93,15 +93,15 @@ export default function HowItWorks() {
             variants={containerVariants}
           >
             {steps.map((step, index) => (
-              <motion.div key={step.name} className="relative flex flex-col p-8 border border-gray-200 dark:border-gray-700 rounded-2xl" variants={itemVariants}>
-                <dt className="flex-shrink-0 text-base font-semibold leading-7 text-foreground">
-                  <div className="absolute top-8 ltr:left-8 rtl:right-8 flex h-12 w-12 items-center justify-center rounded-lg bg-foreground/10">
+              <motion.div key={step.name} className="relative flex flex-col" variants={itemVariants}>
+                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-foreground">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-foreground/10">
                     <step.icon className="h-6 w-6 text-foreground" aria-hidden="true" />
                   </div>
-                  <span className="ltr:ps-16 rtl:pe-16">{step.name}</span>
+                  {step.name}
                 </dt>
                 <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                  <p className="flex-auto ltr:ps-16 rtl:pe-16">{step.description}</p>
+                  <p className="flex-auto">{step.description}</p>
                 </dd>
               </motion.div>
             ))}
