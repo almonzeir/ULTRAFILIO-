@@ -17,10 +17,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const root = window.document.documentElement;
     root.lang = language;
     root.dir = language === 'ar' ? 'rtl' : 'ltr';
+
     if (language === 'ar') {
+        root.classList.add('rtl');
+        root.classList.remove('ltr');
         document.body.classList.add('font-arabic');
         document.body.classList.remove('font-body');
     } else {
+        root.classList.add('ltr');
+        root.classList.remove('rtl');
         document.body.classList.add('font-body');
         document.body.classList.remove('font-arabic');
     }
