@@ -32,7 +32,7 @@ export default function ChooseTemplatePage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const data = localStorage.getItem('portfolioData');
+    const data = localStorage.getItem('cvFile');
     if (!data) {
       toast({
         variant: 'destructive',
@@ -46,7 +46,7 @@ export default function ChooseTemplatePage() {
   const handleContinue = () => {
     if (!selected) return;
     localStorage.setItem('selectedTemplate', selected);
-    router.push('/portfolio');
+    router.push('/ai-building');
   };
 
   return (

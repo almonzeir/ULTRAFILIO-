@@ -6,132 +6,26 @@ import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
-import { addDoc, collection } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/firebase';
-import { v4 as uuidv4 } from 'uuid';
 
-const mockParsedData: PortfolioData = {
-  personalInfo: {
-    fullName: "Jane Doe",
-    portfolioNameAbbr: "JD",
-    title: "Senior Product Designer",
-    tagline: "An experienced product designer specializing in creating intuitive and beautiful user interfaces for complex applications. Passionate about user-centric design and problem-solving.",
-    email: "jane.doe@example.com",
-    linkedInURL: "https://linkedin.com/in/janedoe",
-    location: "London, UK",
-    profilePhotoURL: "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTUyMDY3NXww&ixlib=rb-4.1.0&q=80&w=1080"
-  },
-  about: {
-    extendedBio: "With over 7 years in the design industry, I've had the opportunity to work on a diverse range of projects, from mobile apps to enterprise software. My design process is rooted in empathy and a deep understanding of user needs, which I translate into elegant and effective solutions. I enjoy collaborating with cross-functional teams to bring ideas to life.",
-    stats: [
-      {"icon": "trending-up", "value": "7+", "label": "Years in Design"},
-      {"icon": "check-circle", "value": "50+", "label": "Projects Shipped"},
-      {"icon": "code", "value": "12+", "label": "Design Tools"},
-      {"icon": "globe", "value": "2", "label": "Languages Spoken"}
-    ],
-    skills: [
-      {
-        "category": "UX/UI Design",
-        "icon": "laptop-2",
-        "tags": ["Figma", "Sketch", "Adobe XD", "User Research"]
-      },
-      {
-        "category": "Prototyping & Testing",
-        "icon": "server",
-        "tags": ["InVision", "Principle", "A/B Testing", "Usability Testing"]
-      },
-      {
-        "category": "Tools & Methodologies",
-        "icon": "settings",
-        "tags": ["Agile/Scrum", "Jira", "Design Systems", "HTML/CSS"]
-      }
-    ]
-  },
-  experience: [
-    {
-      jobTitle: "Senior Product Designer",
-      company: "Innovate Inc.",
-      dates: "2021 – Present",
-      location: "London, UK",
-      responsibilities: [
-        "Led the redesign of the main dashboard, improving user satisfaction by 25%.",
-        "Developed and maintained the company's design system, ensuring consistency across all products.",
-        "Mentored two junior designers, helping them grow their skills and careers."
-      ],
-      tags: ["UX/UI", "Figma", "Design Systems", "Leadership"]
-    },
-    {
-      jobTitle: "UX/UI Designer",
-      company: "Digital Creations",
-      dates: "2018 – 2021",
-      location: "Manchester, UK",
-      responsibilities: [
-        "Designed interfaces for client projects, from initial wireframes to high-fidelity mockups.",
-        "Worked closely with developers to ensure faithful implementation of designs."
-      ],
-      tags: ["UX/UI", "Sketch", "Mobile Design"]
-    }
-  ],
-  projects: [
-    {
-      name: "Fintech Mobile App",
-      category: "Mobile App",
-      description: "A mobile banking app focused on simplicity and financial wellness. I led the UX research and UI design.",
-      imageURL: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw0fHxmaW50ZWNoJTIwYXBwfGVufDB8fHx8MTc2MTE5Mzk0OXww&ixlib=rb-4.1.0&q=80&w=1080",
-      tags: ["Figma", "UX Research", "iOS"],
-      detailsURL: "#"
-    },
-     {
-      name: "SaaS Analytics Dashboard",
-      category: "Web App",
-      description: "A complex data visualization dashboard for a B2B SaaS product. My role was to simplify data presentation.",
-      imageURL: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXNoYm9hcmR8ZW58MHx8fHwxNzYxMTkzOTgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      tags: ["UI Design", "Data Viz", "B2B"],
-      detailsURL: "#"
-    },
-    {
-      name: "E-commerce Redesign",
-      category: "Branding & Web",
-      description: "A complete redesign of an online fashion retailer's website to be more modern and mobile-first.",
-      imageURL: "https://images.unsplash.com/photo-1522201949107-6b3f5c5b1285?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw1fHxmYXNoaW9uJTIwZSUyMGNvbW1lcmNlfGVufDB8fHx8MTc2MTE5NDAxNnww&ixlib=rb-4.1.0&q=80&w=1080",
-      tags: ["Web Design", "Branding", "Mobile-First"],
-      detailsURL: "#"
-    }
-  ],
-   education: [
-        {
-            degree: "M.A. in Digital Media Design",
-            institution: "University of the Arts",
-            startDate: "2016",
-            endDate: "2018",
-        },
-    ],
+
+// This function converts a file to a base64 string
+const fileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
 };
-
 
 export default function CreatePortfolioPage() {
   const [showManualForm, setShowManualForm] = React.useState(false);
-  const [isParsing, setIsParsing] = React.useState(false);
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleDataAndNavigate = (data: PortfolioData) => {
-    try {
-      localStorage.setItem('portfolioData', JSON.stringify(data));
-      router.push('/choose-template');
-    } catch (e) {
-      console.error('Failed to save user data to localStorage', e);
-      toast({
-        variant: 'destructive',
-        title: 'Oh no!',
-        description: 'Could not save your portfolio data. Please try again.',
-      });
-    }
-  };
-
   const handleManualFormSubmit = (formData: any) => {
-    // This is a simplified conversion. A real app might have more complex logic.
+     // This is a simplified conversion. A real app might have more complex logic.
     const portfolioData: PortfolioData = {
       personalInfo: {
         fullName: formData.name,
@@ -177,73 +71,61 @@ export default function CreatePortfolioPage() {
         },
       ] : [],
     };
-    handleDataAndNavigate(portfolioData);
+    try {
+      localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
+      // For manual flow, we can skip the build screen and go to a default template
+      localStorage.setItem('selectedTemplate', 'modern');
+      router.push('/portfolio');
+    } catch (e) {
+      console.error('Failed to save user data to localStorage', e);
+      toast({
+        variant: 'destructive',
+        title: 'Oh no!',
+        description: 'Could not save your portfolio data. Please try again.',
+      });
+    }
   };
   
   const handleUploadAndNavigate = async (cvFile: File, photoFile: File | null) => {
-    setIsParsing(true);
+    setIsProcessing(true);
     toast({
-      title: 'Processing your CV...',
-      description: 'This may take a moment. We are parsing your CV and uploading your photo.',
+      title: 'Processing files...',
+      description: 'Saving your files securely before the next step.',
     });
 
     try {
-      // 1. Send CV to our API route for parsing
-      const cvFormData = new FormData();
-      cvFormData.append('cv', cvFile);
+      // Convert CV file to a serializable format (data URL)
+      const cvDataUrl = await fileToDataURL(cvFile);
+      const cvFileObject = {
+        name: cvFile.name,
+        type: cvFile.type,
+        size: cvFile.size,
+        data: cvDataUrl,
+      };
+      localStorage.setItem('cvFile', JSON.stringify(cvFileObject));
 
-      const parseResponse = await fetch('/api/parse-cv', {
-        method: 'POST',
-        body: cvFormData,
-      });
-
-      if (!parseResponse.ok) {
-        throw new Error('Failed to parse CV');
-      }
-
-      const parsedCvData: PortfolioData = await parseResponse.json();
-
-      let photoURL = '';
+      // Handle photo file if it exists
       if (photoFile) {
-        // 2. Upload photo to Firebase Storage
-        const storageRef = ref(storage, `profile_photos/${uuidv4()}-${photoFile.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, photoFile);
-
-        await new Promise<void>((resolve, reject) => {
-          uploadTask.on('state_changed',
-            (snapshot) => {
-              // Optional: handle progress
-            },
-            (error) => {
-              console.error('Photo upload failed:', error);
-              reject(error);
-            },
-            async () => {
-              photoURL = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve();
-            }
-          );
-        });
+        const photoDataUrl = await fileToDataURL(photoFile);
+        localStorage.setItem('photoFile', photoDataUrl);
+      } else {
+        localStorage.removeItem('photoFile');
       }
 
-      // Update portfolio data with photo URL
-      parsedCvData.personalInfo.profilePhotoURL = photoURL;
+      // Clear any old portfolio data
+      localStorage.removeItem('portfolioData');
 
-      // 3. Save portfolio data to Firestore
-      const docRef = await addDoc(collection(db, 'portfolios'), parsedCvData);
-
-      // 4. Navigate to the dynamic portfolio page
-      router.push(`/portfolio/${docRef.id}`);
+      router.push('/choose-template');
 
     } catch (error) {
-      console.error('Upload and save failed:', error);
+      console.error('File processing failed:', error);
       toast({
         variant: 'destructive',
         title: 'Oh no! Something went wrong.',
-        description: 'Could not process your request. Please try again or fill the form manually.',
+        description: 'Could not process your files. Please try again.',
       });
     } finally {
-      setIsParsing(false);
+      setIsProcessing(false);
     }
   };
 
@@ -259,7 +141,7 @@ export default function CreatePortfolioPage() {
       </div>
 
       <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <UploadCVCard onContinue={handleUploadAndNavigate} isParsing={isParsing} />
+        <UploadCVCard onContinue={handleUploadAndNavigate} isParsing={isProcessing} />
         <div 
           className="p-8 bg-gradient-to-b from-black to-gray-900 text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-800 flex flex-col justify-between"
         >

@@ -6,10 +6,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface UploadCVCardProps {
     onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
-    isParsing: boolean;
+    isParsing: boolean; // Renamed to isProcessing for clarity
 }
 
-export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProps) {
+export default function UploadCVCard({ onContinue, isParsing: isProcessing }: UploadCVCardProps) {
   const [cvFile, setCvFile] = React.useState<File | null>(null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
@@ -40,7 +40,12 @@ export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProp
         setCvFile(file);
       } else {
         setPhotoFile(file);
-        setPhotoPreview(URL.createObjectURL(file));
+        // Create a preview URL for the photo
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPhotoPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
       }
     }
   };
@@ -52,6 +57,12 @@ export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProp
   const handleContinueClick = () => {
     if (cvFile) {
       onContinue(cvFile, photoFile);
+    } else {
+        toast({
+            variant: 'destructive',
+            title: 'CV Required',
+            description: 'Please upload your CV to continue.',
+        });
     }
   };
 
@@ -65,7 +76,7 @@ export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProp
           ref={cvFileInputRef}
           onChange={(e) => handleFileChange(e, 'cv')}
           className="hidden"
-          accept=".pdf,.doc,.docx"
+          accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         />
         <div 
           onClick={handleDropAreaClick}
@@ -77,14 +88,14 @@ export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProp
           ) : (
             <>
               <p className="text-gray-600 dark:text-gray-400">Click to upload or drag & drop</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">PDF, DOCX (max 15MB)</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">PDF, DOC, DOCX (max 15MB)</p>
             </>
           )}
         </div>
         <div className="mt-8">
           <label className="block text-gray-700 dark:text-gray-300 mb-3 font-medium">Profile Picture (Recommended)</label>
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+            <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden flex items-center justify-center">
                 {photoPreview ? (
                     <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
                 ): <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800"></div>}
@@ -95,15 +106,15 @@ export default function UploadCVCard({ onContinue, isParsing }: UploadCVCardProp
       </div>
       <button 
         onClick={handleContinueClick} 
-        disabled={!cvFile || isParsing}
+        disabled={!cvFile || isProcessing}
         className="mt-10 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 disabled:bg-gray-400 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
-        {isParsing ? (
+        {isProcessing ? (
             <>
                 <Loader2 className="animate-spin" />
-                Parsing CV...
+                Processing...
             </>
-        ) : "Continue to Generate Portfolio"}
+        ) : "Continue"}
       </button>
     </div>
   );
