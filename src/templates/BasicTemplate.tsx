@@ -18,23 +18,31 @@ export default function BasicTemplate({ data }: { data: PortfolioData }) {
         <p className="opacity-70">{data.personalInfo.title}</p>
       </header>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Profile</h2>
-        <p className="opacity-80">{data.summary}</p>
-      </section>
+      {data.about?.extendedBio && (
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Profile</h2>
+          <p className="opacity-80">{data.about.extendedBio}</p>
+        </section>
+      )}
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Experience</h2>
-        {data.experience.map((exp, i) => (
-          <div key={i} className="mb-3">
-            <strong>{exp.role}</strong> – {exp.company}
-            <div className="text-sm opacity-70">
-              {exp.start} to {exp.end}
+      {data.experience && data.experience.length > 0 && (
+        <section className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Experience</h2>
+          {data.experience.map((exp, i) => (
+            <div key={i} className="mb-3">
+              <strong>{exp.jobTitle}</strong> – {exp.company}
+              <div className="text-sm opacity-70">
+                {exp.dates} {exp.location && ` | ${exp.location}`}
+              </div>
+              <ul className="list-disc list-inside text-sm opacity-80">
+                {exp.responsibilities.map((res, j) => (
+                  <li key={j}>{res}</li>
+                ))}
+              </ul>
             </div>
-            <p className="text-sm opacity-80">{exp.description}</p>
-          </div>
-        ))}
-      </section>
+          ))}
+        </section>
+      )}
     </main>
   );
 }

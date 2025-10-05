@@ -40,7 +40,7 @@ export default function ChooseTemplatePage() {
         title: 'CV not found!',
         description: 'Please upload your CV before choosing a template.',
       });
-      router.push('/upload-cv'); // Redirect to the new upload page
+      router.push('/create'); // Redirect to the consolidated upload page
     }
   }, [router, toast]);
 

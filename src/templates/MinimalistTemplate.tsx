@@ -15,17 +15,23 @@ export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
         <p className="text-lg opacity-80 mb-8">{data.personalInfo.title}</p>
       </div>
       <p className="opacity-70 mb-8 text-center">{data.about.extendedBio}</p>
-      <div className="border-t border-gray-300 dark:border-gray-700 pt-8">
-        {data.experience.map((exp, i) => (
-          <div key={i} className="mb-6">
-            <h3 className="font-medium">{exp.role}</h3>
-            <p className="text-sm opacity-70">
-              {exp.company} — {exp.start} to {exp.end}
-            </p>
-            <p className="opacity-80">{exp.description}</p>
-          </div>
-        ))}
-      </div>
+      {data.experience && data.experience.length > 0 && (
+        <div className="border-t border-gray-300 dark:border-gray-700 pt-8">
+          {data.experience.map((exp, i) => (
+            <div key={i} className="mb-6">
+              <h3 className="font-medium">{exp.jobTitle}</h3>
+              <p className="text-sm opacity-70">
+                {exp.company} — {exp.dates} {exp.location && ` | ${exp.location}`}
+              </p>
+              <ul className="list-disc list-inside opacity-80 text-sm">
+                {exp.responsibilities.map((res, j) => (
+                  <li key={j}>{res}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

@@ -118,21 +118,26 @@ interface PortfolioData {
       portfolioNameAbbr: 'JD',
       title: 'Senior Product Manager',
       tagline: 'Driving innovation and delivering impactful products',
-      profilePhotoURL: '',
-      email: 'jane.doe@example.example.com',
-      linkedInURL: 'https://www.linkedin.com/in/janedoe',
+      profilePhotoURL: 'https://randomuser.me/api/portraits/women/68.jpg', // Added a dummy photo URL
+      email: 'jane.doe@example.com',
+      phone: '+1-555-123-4567',
       location: 'New York, NY',
+      website: 'https://janedoe.com',
+      linkedInURL: 'https://www.linkedin.com/in/janedoe',
+      githubURL: 'https://github.com/janedoe',
     },
     about: {
       extendedBio:
-        'Results-oriented Product Manager with 8+ years of experience in SaaS and B2C products. Proven ability to lead cross-functional teams, define product roadmaps, and launch successful products.',
+        'Results-oriented Product Manager with 8+ years of experience in SaaS and B2C products. Proven ability to lead cross-functional teams, define product roadmaps, and launch successful products. Passionate about user-centric design and data-driven decision making.',
       stats: [
         { label: 'Products Launched', value: '10+', icon: 'rocket' },
         { label: 'User Growth', value: '200%', icon: 'growth' },
+        { label: 'Revenue Increase', value: '15%', icon: 'dollar' },
       ],
       skills: [
-        { category: 'Product Management', tags: ['Roadmapping', 'Agile', 'Scrum', 'User Stories'] },
-        { category: 'Technical', tags: ['SQL', 'Jira', 'Confluence'] },
+        { category: 'Product Management', tags: ['Roadmapping', 'Agile', 'Scrum', 'User Stories', 'Market Research', 'Competitive Analysis'] },
+        { category: 'Technical', tags: ['SQL', 'Jira', 'Confluence', 'Google Analytics', 'Figma'] },
+        { category: 'Soft Skills', tags: ['Leadership', 'Communication', 'Problem Solving', 'Mentorship'] },
       ],
     },
     experience: [
@@ -142,11 +147,12 @@ interface PortfolioData {
         location: 'New York, NY',
         dates: '2020-03 – Present',
         responsibilities: [
-          'Led product strategy and roadmap for flagship SaaS platform, increasing user engagement by 30%.',
-          'Managed a team of 5 product owners and designers, fostering a collaborative environment.',
-          'Successfully launched 3 major features, resulting in a 15% revenue increase.',
+          'Led product strategy and roadmap for flagship SaaS platform, increasing user engagement by 30% through new feature development and optimization.',
+          'Managed a team of 5 product owners and designers, fostering a collaborative environment and ensuring timely delivery of high-quality software.',
+          'Successfully launched 3 major features, resulting in a 15% revenue increase and improved customer satisfaction scores.',
+          'Conducted extensive user research and A/B testing to validate product hypotheses and inform design decisions.',
         ],
-        tags: ['SaaS', 'Product Strategy', 'Agile', 'Leadership'],
+        tags: ['SaaS', 'Product Strategy', 'Agile', 'Leadership', 'User Research', 'A/B Testing'],
       },
       {
         jobTitle: 'Product Manager',
@@ -154,31 +160,62 @@ interface PortfolioData {
         location: 'New York, NY',
         dates: '2017-06 – 2020-02',
         responsibilities: [
-          'Defined and prioritized product requirements for mobile applications.',
-          'Conducted market research and competitive analysis to identify new opportunities.',
-          'Collaborated with engineering to deliver features on time and within budget.',
+          'Defined and prioritized product requirements for mobile applications, leading to a 25% increase in app store ratings.',
+          'Conducted market research and competitive analysis to identify new opportunities and inform product roadmap.',
+          'Collaborated with engineering to deliver features on time and within budget, managing stakeholder expectations.',
+          'Developed and maintained product backlog, ensuring alignment with business goals and user needs.',
         ],
-        tags: ['Mobile', 'Market Research', 'B2C'],
+        tags: ['Mobile', 'Market Research', 'B2C', 'Product Backlog', 'Stakeholder Management'],
       },
     ],
     projects: [
       {
         name: 'AI-Powered Recommendation Engine',
         category: 'Product Development',
-        description: 'Developed and launched an AI-driven recommendation engine, boosting conversion rates by 20%.',
-        tags: ['AI', 'Machine Learning', 'Product Launch'],
-        imageURL: '',
-        detailsURL: '#',
+        description: 'Developed and launched an AI-driven recommendation engine, boosting conversion rates by 20% and improving user personalization.',
+        tags: ['AI', 'Machine Learning', 'Product Launch', 'Python', 'TensorFlow'],
+        imageURL: 'https://picsum.photos/seed/ai-reco/400/300', // Dummy image URL
+        detailsURL: 'https://janedoe.com/projects/ai-reco',
+      },
+      {
+        name: 'Customer Feedback Platform',
+        category: 'Web Development',
+        description: 'Designed and implemented a comprehensive customer feedback platform, leading to a 10% reduction in customer support tickets.',
+        tags: ['React', 'Node.js', 'MongoDB', 'User Experience'],
+        imageURL: 'https://picsum.photos/seed/feedback/400/300', // Dummy image URL
+        detailsURL: 'https://janedoe.com/projects/feedback-platform',
+      },
+      {
+        name: 'Internal Analytics Dashboard',
+        category: 'Data Visualization',
+        description: 'Built an internal analytics dashboard to track key product metrics, enabling data-driven decision-making across the organization.',
+        tags: ['Tableau', 'SQL', 'Data Analysis', 'Business Intelligence'],
+        imageURL: 'https://picsum.photos/seed/analytics/400/300', // Dummy image URL
+        detailsURL: 'https://janedoe.com/projects/analytics-dashboard',
       },
     ],
     education: [
       {
         degree: 'MBA',
+        field: 'Business Administration',
         institution: 'Columbia Business School',
         startDate: '2015-09',
         endDate: '2017-05',
+        notes: 'Focused on product management and technology strategy.',
+      },
+      {
+        degree: 'Bachelor of Science',
+        field: 'Computer Science',
+        institution: 'University of California, Berkeley',
+        startDate: '2011-09',
+        endDate: '2015-05',
+        notes: 'Graduated with honors.',
       },
     ],
+    certifications: ['Certified Scrum Product Owner (CSPO)', 'Google Analytics Certified'],
+    awards: ['Innovator of the Year 2022', 'Product Excellence Award 2019'],
+    languages: [{ name: 'English', level: 'Native' }, { name: 'Spanish', level: 'Conversational' }],
+    interests: ['Hiking', 'Photography', 'Reading', 'Travel'],
   };
 
   // In a real scenario, you'd make a fetch call to the Gemini API or your backend proxy
