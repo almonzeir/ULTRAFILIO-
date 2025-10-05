@@ -46,9 +46,12 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
       const href = target.getAttribute('href');
       if (href && href.startsWith('#')) {
         e.preventDefault();
-        document.querySelector(href)?.scrollIntoView({
-          behavior: 'smooth'
-        });
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({
+            behavior: 'smooth'
+          });
+        }
       }
     };
 
@@ -174,14 +177,14 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
               <div key={index} className={`timeline-item md:grid md:grid-cols-2 md:gap-x-12 md:p-0`}>
                 {index % 2 === 0 ? (
                   <>
-                    <div className="md:col-span-1 md:pr-10 md:text-right">
+                    <div className="md:text-right">
                       <div className="timeline-dot hidden md:block" style={{ left: 'auto', right: '-12px', top: '12px' }}></div>
                       <div className="timeline-dot md:hidden"></div>
                       <div className="bg-card-bg p-6 rounded-xl shadow-xl border border-gray-700 glowing-shadow-sm hover:scale-[1.01] duration-300">
                         <p className="text-sm text-gray-500 mb-2">{exp.dates} • {exp.location}</p>
                         <h4 className="text-xl font-semibold text-electric-blue">{exp.jobTitle}</h4>
                         <p className="text-sm text-gray-400 mb-3 flex items-center md:justify-end"><Factory className="w-3 h-3 mr-1" /> {exp.company}</p>
-                        <ul className="space-y-2 text-sm text-gray-400 list-inside list-disc">
+                        <ul className="space-y-2 text-sm text-gray-400 list-inside list-disc text-left">
                           {exp.responsibilities.map((r, i) => <li key={i}>{r}</li>)}
                         </ul>
                         <div className="flex flex-wrap gap-2 mt-4 md:justify-end">
@@ -189,12 +192,12 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
                         </div>
                       </div>
                     </div>
-                    <div className="hidden md:block md:col-span-1"></div>
+                    <div className="hidden md:block"></div>
                   </>
                 ) : (
                   <>
-                    <div className="hidden md:block md:col-span-1"></div>
-                    <div className="md:col-span-1 md:pl-10 md:text-left">
+                    <div className="hidden md:block"></div>
+                    <div className="md:text-left">
                       <div className="timeline-dot hidden md:block" style={{ right: 'auto', left: '-12px', top: '12px' }}></div>
                       <div className="timeline-dot md:hidden"></div>
                       <div className="bg-card-bg p-6 rounded-xl shadow-xl border border-gray-700 glowing-shadow-sm hover:scale-[1.01] duration-300">

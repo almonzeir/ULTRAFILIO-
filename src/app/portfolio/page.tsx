@@ -12,6 +12,7 @@ export default function PortfolioPage() {
   const { toast } = useToast();
   const [template, setTemplate] = useState<string | null>(null);
   const [userData, setUserData] = useState<PortfolioData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem('selectedTemplate');
@@ -27,23 +28,32 @@ export default function PortfolioPage() {
       return;
     }
     
-    setTemplate(selectedTemplate);
-    setUserData(JSON.parse(data));
+    try {
+        setTemplate(selectedTemplate);
+        setUserData(JSON.parse(data));
+    } catch(e) {
+        toast({
+            variant: 'destructive',
+            title: 'Error loading data',
+            description: 'Could not read portfolio data. Please try creating it again.',
+        });
+        router.push('/create');
+    } finally {
+        setLoading(false);
+    }
     
   }, [router, toast]);
 
   const renderTemplate = () => {
-    if (!template || !userData) {
+    if (loading || !template || !userData) {
       return (
-        <div className="text-center p-20">
-            <h1 className="text-2xl font-bold">Loading Portfolio...</h1>
-            <p>Please wait a moment.</p>
+        <div className="text-center p-20 flex flex-col items-center justify-center min-h-screen bg-dark-bg">
+            <div className="animate-spin mb-4 border-2 border-t-transparent border-electric-blue rounded-full w-12 h-12"></div>
+            <h1 className="text-2xl font-bold text-text-light">Loading Portfolio...</h1>
+            <p className="text-gray-400">Please wait a moment.</p>
         </div>
       );
     }
-    
-    // The photo URL is now part of the main data object in the new structure
-    // const dataWithPhoto = { ...userData, photoUrl: userPhoto };
 
     switch (template) {
       case 'modern':
@@ -52,50 +62,48 @@ export default function PortfolioPage() {
         // This template would need to be updated to support the new data structure
         // For now, we pass a simplified version of the data
         const minimalistData = {
+            personalInfo: userData.personalInfo,
+            experience: userData.experience,
+            about: {extendedBio: userData.about.extendedBio, stats: [], skills: []},
+            projects: [],
+            education: [],
+            // @ts-ignore
             name: userData.personalInfo.fullName,
+            // @ts-ignore
             title: userData.personalInfo.title,
+            // @ts-ignore
             summary: userData.personalInfo.tagline,
-            experience: userData.experience.map(e => ({
-                role: e.jobTitle,
-                company: e.company,
-                start: e.dates.split('–')[0],
-                end: e.dates.split('–')[1],
-                description: e.responsibilities.join(' '),
-            })),
-            projects: [], // Minimalist template doesn't show them
-            skills: [], // Minimalist template doesn't show them
         };
-        // @ts-ignore
         return <MinimalistTemplate data={minimalistData} />;
       case 'basic':
         // This template would need to be updated to support the new data structure
          const basicData = {
+            personalInfo: userData.personalInfo,
+            experience: userData.experience,
+            about: {extendedBio: userData.about.extendedBio, stats: [], skills: []},
+            projects: [],
+            education: [],
+            // @ts-ignore
             name: userData.personalInfo.fullName,
+            // @ts-ignore
             title: userData.personalInfo.title,
+            // @ts-ignore
             summary: userData.personalInfo.tagline,
-            experience: userData.experience.map(e => ({
-                role: e.jobTitle,
-                company: e.company,
-                start: e.dates.split('–')[0],
-                end: e.dates.split('–')[1],
-                description: e.responsibilities.join(' '),
-            })),
         };
-        // @ts-ignore
         return <BasicTemplate data={basicData} />;
       default:
-        return <p>Unknown template selected.</p>;
+        return <p className="p-20 text-center">Unknown template selected. Please go back and choose a template.</p>;
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-black text-gray-900 dark:text-white font-inter">
+    <div>
       {/* Add controls for editing, changing template etc. here */}
-      <div className="p-4 bg-background/80 backdrop-blur-md sticky top-0 z-10 border-b flex items-center justify-center gap-4">
+      <div className="p-4 bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b flex items-center justify-center gap-4">
         <h1 className="text-lg font-semibold">Your Generated Portfolio</h1>
         <button onClick={() => router.push('/choose-template')} className="text-sm bg-secondary text-secondary-foreground hover:bg-secondary/80 px-3 py-1 rounded-md">Change Template</button>
       </div>
       {renderTemplate()}
-    </main>
+    </div>
   );
 }

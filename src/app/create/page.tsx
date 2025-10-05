@@ -4,94 +4,102 @@ import * as React from 'react';
 import UploadCVCard from '@/components/create/UploadCVCard';
 import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
-import type { PortfolioData, Person, Experience, Project, Education } from '@/templates/types';
+import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
 
 const mockParsedData: PortfolioData = {
   personalInfo: {
-    fullName: "John Doe",
+    fullName: "Jane Doe",
     portfolioNameAbbr: "JD",
-    title: "Senior Software Engineer",
-    tagline: "An experienced software engineer specializing in building scalable web applications with modern technologies. Passionate about clean code and great user experiences.",
-    email: "john.doe@example.com",
-    linkedInURL: "https://linkedin.com/in/johndoe",
-    location: "San Francisco, USA",
-    profilePhotoURL: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NTk0NzE4Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080"
+    title: "Senior Product Designer",
+    tagline: "An experienced product designer specializing in creating intuitive and beautiful user interfaces for complex applications. Passionate about user-centric design and problem-solving.",
+    email: "jane.doe@example.com",
+    linkedInURL: "https://linkedin.com/in/janedoe",
+    location: "London, UK",
+    profilePhotoURL: "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc1OTUyMDY3NXww&ixlib=rb-4.1.0&q=80&w=1080"
   },
   about: {
-    extendedBio: "With over 5 years in the industry, I've had the privilege of contributing to robust applications and leading talented teams. My philosophy revolves around creating user-centric products that are not only functional but also a delight to use. I thrive in collaborative environments and am always eager to tackle new challenges.",
+    extendedBio: "With over 7 years in the design industry, I've had the opportunity to work on a diverse range of projects, from mobile apps to enterprise software. My design process is rooted in empathy and a deep understanding of user needs, which I translate into elegant and effective solutions. I enjoy collaborating with cross-functional teams to bring ideas to life.",
     stats: [
-      {"icon": "trending-up", "value": "5+", "label": "Years in Industry"},
-      {"icon": "check-circle", "value": "40+", "label": "Projects Delivered"},
-      {"icon": "code", "value": "10+", "label": "Core Technologies"},
+      {"icon": "trending-up", "value": "7+", "label": "Years in Design"},
+      {"icon": "check-circle", "value": "50+", "label": "Projects Shipped"},
+      {"icon": "code", "value": "12+", "label": "Design Tools"},
       {"icon": "globe", "value": "2", "label": "Languages Spoken"}
     ],
     skills: [
       {
-        "category": "Frontend Development",
+        "category": "UX/UI Design",
         "icon": "laptop-2",
-        "tags": ["React", "Next.js", "Tailwind CSS", "TypeScript"]
+        "tags": ["Figma", "Sketch", "Adobe XD", "User Research"]
       },
       {
-        "category": "Backend & Data",
+        "category": "Prototyping & Testing",
         "icon": "server",
-        "tags": ["Node.js / Express", "Genkit", "PostgreSQL", "Firebase"]
+        "tags": ["InVision", "Principle", "A/B Testing", "Usability Testing"]
       },
       {
-        "category": "Tools & Cloud",
+        "category": "Tools & Methodologies",
         "icon": "settings",
-        "tags": ["Google Cloud", "Docker", "Git / GitHub", "CI/CD"]
+        "tags": ["Agile/Scrum", "Jira", "Design Systems", "HTML/CSS"]
       }
     ]
   },
   experience: [
     {
-      jobTitle: "Senior Software Engineer",
-      company: "Tech Solutions Inc.",
-      dates: "2020 – Present",
-      location: "San Francisco, CA",
+      jobTitle: "Senior Product Designer",
+      company: "Innovate Inc.",
+      dates: "2021 – Present",
+      location: "London, UK",
       responsibilities: [
-        "Led the development of a new microservices-based architecture, improving system scalability by 50%.",
-        "Mentored junior engineers, fostering a culture of knowledge sharing and growth.",
-        "Reduced API response times by 30% through performance optimization."
+        "Led the redesign of the main dashboard, improving user satisfaction by 25%.",
+        "Developed and maintained the company's design system, ensuring consistency across all products.",
+        "Mentored two junior designers, helping them grow their skills and careers."
       ],
-      tags: ["React", "Node.js", "Microservices"]
+      tags: ["UX/UI", "Figma", "Design Systems", "Leadership"]
     },
     {
-      jobTitle: "Software Engineer",
-      company: "Innovate Co.",
-      dates: "2018 – 2020",
-      location: "Palo Alto, CA",
-      responsibilities": [
-        "Developed and maintained features for a high-traffic consumer-facing web application.",
-        "Collaborated with product managers to define feature specifications and timelines."
+      jobTitle: "UX/UI Designer",
+      company: "Digital Creations",
+      dates: "2018 – 2021",
+      location: "Manchester, UK",
+      responsibilities: [
+        "Designed interfaces for client projects, from initial wireframes to high-fidelity mockups.",
+        "Worked closely with developers to ensure faithful implementation of designs."
       ],
-      tags: ["JavaScript", "React", "Redux"]
+      tags: ["UX/UI", "Sketch", "Mobile Design"]
     }
   ],
   projects: [
     {
-      name: "Portfolio Generator",
-      category: "Web App",
-      description: "A tool to automatically generate a personal portfolio website from a CV using AI.",
-      imageURL": "https://images.unsplash.com/photo-1674469569316-fc5e94b02537?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGFyayUyMHBvcnRmb2xpb3xlbnwwfHx8fDE3NTk1NzMzMjB8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      tags: ["Next.js", "Tailwind CSS", "TypeScript", "Genkit"],
-      detailsURL": "#"
+      name: "Fintech Mobile App",
+      category: "Mobile App",
+      description: "A mobile banking app focused on simplicity and financial wellness. I led the UX research and UI design.",
+      imageURL: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw0fHxmaW50ZWNoJTIwYXBwfGVufDB8fHx8MTc2MTE5Mzk0OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      tags: ["Figma", "UX Research", "iOS"],
+      detailsURL: "#"
     },
      {
-      name: "E-Commerce Analytics Dashboard",
-      category: "Data Visualization",
-      description: "A dashboard for visualizing sales data and customer behavior for an e-commerce platform.",
-      imageURL": "https://images.unsplash.com/photo-1742540531234-146d41a8833b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsaWdodCUyMHBvcnRmb2xpb3xlbnwwfHx8fDE3NTk1NzMzMjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      tags": ["React", "D3.js", "Node.js"],
-      detailsURL": "#"
+      name: "SaaS Analytics Dashboard",
+      category: "Web App",
+      description: "A complex data visualization dashboard for a B2B SaaS product. My role was to simplify data presentation.",
+      imageURL: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHwxfHxkYXNoYm9hcmR8ZW58MHx8fHwxNzYxMTkzOTgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      tags: ["UI Design", "Data Viz", "B2B"],
+      detailsURL: "#"
+    },
+    {
+      name: "E-commerce Redesign",
+      category: "Branding & Web",
+      description: "A complete redesign of an online fashion retailer's website to be more modern and mobile-first.",
+      imageURL: "https://images.unsplash.com/photo-1522201949107-6b3f5c5b1285?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDE5ODJ8MHwxfHNlYXJjaHw1fHxmYXNoaW9uJTIwZSUyMGNvbW1lcmNlfGVufDB8fHx8MTc2MTE5NDAxNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      tags: ["Web Design", "Branding", "Mobile-First"],
+      detailsURL: "#"
     }
   ],
    education: [
         {
-            degree: "B.Sc. in Computer Science",
-            institution: "State University",
-            startDate: "2014",
+            degree: "M.A. in Digital Media Design",
+            institution: "University of the Arts",
+            startDate: "2016",
             endDate: "2018",
         },
     ],
