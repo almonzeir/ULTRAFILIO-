@@ -120,7 +120,7 @@ export default function Testimonials() {
           {testimonialsData.map((testimonial, index) => {
             const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
             return (
-              <SwiperSlide key={index} className="self-stretch">
+              <SwiperSlide key={index} className="h-full">
                 <Card className="flex flex-col h-full bg-card text-card-foreground border-border/50">
                   <CardContent className="flex flex-col flex-grow p-6 text-left rtl:text-right">
                     <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
