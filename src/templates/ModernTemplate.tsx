@@ -435,15 +435,15 @@ function ExperienceItem({
     <div className={`relative sm:grid sm:grid-cols-2 sm:gap-10`}>
       <div
         aria-hidden
-        className="absolute left-4 sm:left-1/2 sm:-translate-x-1/2 top-2 h-3 w-3 rounded-full bg-[hsl(var(--brand))] ring-4 ring-[hsl(var(--bg-0))] shadow-[0_0_10px_hsl(var(--brand)/.7)]"
+        className="absolute left-4 sm:left-1/2 sm:-translate-x-1/2 top-2 h-3 w-3 rounded-full bg-brand ring-4 ring-bg-0 shadow-lg"
       />
       <div className={`${even ? "sm:pr-12" : "sm:order-2 sm:pl-12"}`}>
         <article className="glass rounded-2xl p-6 transition-transform hover:-translate-y-0.5">
-          <p className="mb-1 text-xs text-[hsl(var(--text-1))]">
+          <p className="mb-1 text-xs text-text-1">
             {exp.dates} • {exp.location}
           </p>
-          <h3 className="text-lg font-semibold text-[hsl(var(--brand))]">{exp.jobTitle}</h3>
-          <p className="mb-3 text-sm text-[hsl(var(--text-1))] flex items-center gap-1">
+          <h3 className="text-lg font-semibold text-brand">{exp.jobTitle}</h3>
+          <p className="mb-3 text-sm text-text-1 flex items-center gap-1">
             <Icon name="factory" /> {exp.company}
           </p>
           <ul className="list-disc list-inside space-y-1 text-sm">
