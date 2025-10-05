@@ -18,15 +18,16 @@ import {
 
 export default function PortfolioPage() {
   const [portfolioData, setPortfolioData] = React.useState<PortfolioData | null>(null);
-  const [chosenTemplate, setChosenTemplate] = React.useState<string>('modern'); // Renamed from 'template'
+  const [chosenTemplate, setChosenTemplate] = React.useState<string>('modern');
   const [loading, setLoading] = React.useState(true);
+  const [isEditing, setIsEditing] = React.useState(false); // New state for inline editing
   const { toast } = useToast();
   const router = useRouter();
 
   React.useEffect(() => {
     try {
       const storedPortfolioData = localStorage.getItem('portfolioData');
-      const storedChosenTemplate = localStorage.getItem('chosenTemplate'); // Renamed from 'selectedTemplate'
+      const storedChosenTemplate = localStorage.getItem('chosenTemplate');
 
       if (storedPortfolioData) {
         setPortfolioData(JSON.parse(storedPortfolioData));
