@@ -1,94 +1,151 @@
-import type { PortfolioData } from './types';
 
-// Helper component for icons to keep the main component clean
-const Icon = ({ d, className }: { d: string; className?: string }) => (
-  <svg viewBox="0 0 24 24" className={`w-5 h-5 ${className}`} fill="currentColor">
-    <path d={d} />
-  </svg>
+'use client';
+
+import React from 'react';
+import type { PortfolioData } from './types';
+import { Mail, Linkedin, Briefcase, MapPin, Award, CheckCircle, Code, Server, Settings, ExternalLink } from 'lucide-react';
+import Image from 'next/image';
+
+const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  <div className="section-title-wrap mb-10">
+    <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{children}</h2>
+  </div>
 );
 
-const MailIcon = () => <Icon d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM4 6v.51l8 4.51 8-4.51V6H4zM4 18h16V8.5l-8 4.5-8-4.5V18z" />;
-const LinkedInIcon = () => <Icon d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />;
-
-
 export default function GeneratedModernTemplate({ data }: { data: PortfolioData }) {
-  const accentColor = 'text-blue-600';
-  const accentBg = 'bg-blue-600';
-  const accentBgHover = 'hover:bg-blue-700';
+  const { personalInfo, about, experience, projects, education } = data;
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans text-gray-800">
-      <div className="max-w-screen-xl mx-auto lg:flex lg:gap-12 p-6 md:p-12">
-        {/* Left Sticky Column */}
-        <aside className="lg:w-1/3 lg:sticky lg:top-12 self-start mb-12 lg:mb-0">
-          <img src={data.personalInfo?.profilePhotoURL || 'https://placehold.co/96x96'} alt="Profile" className="w-24 h-24 rounded-full mb-4 object-cover" />
-          <h1 className="text-4xl font-bold text-gray-900">{data.personalInfo?.fullName || 'Your Name'}</h1>
-          <h2 className="text-xl font-medium text-gray-700 mt-1">{data.personalInfo?.title || 'Your Title'}</h2>
-          <p className="text-gray-600 mt-4 max-w-xs">
-            {data.personalInfo?.tagline || 'Your personal tagline or a brief introduction.'}
-          </p>
-          <nav className="mt-8 space-y-3">
-            <a href="#about" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
-              <span className="w-16 h-px bg-gray-400"></span>
-              <span>About</span>
-            </a>
-            <a href="#experience" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
-              <span className="w-16 h-px bg-gray-400"></span>
-              <span>Experience</span>
-            </a>
-            <a href="#projects" className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors">
-              <span className="w-16 h-px bg-gray-400"></span>
-              <span>Projects</span>
-            </a>
-          </nav>
-          <div className="mt-8 flex gap-4">
-            <a href={`mailto:${data.personalInfo?.email}`} className="text-gray-500 hover:text-blue-600 transition-colors"><MailIcon /></a>
-            <a href={data.personalInfo?.linkedInURL} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-600 transition-colors"><LinkedInIcon /></a>
-          </div>
-        </aside>
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
-        {/* Right Scrolling Column */}
-        <main className="lg:w-2/3">
-          <section id="about" className="mb-16 scroll-mt-24">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">About</h3>
-            <div className="space-y-4 text-gray-700 leading-relaxed">
-              {data.about?.extendedBio?.split('\n').map((paragraph, i) => <p key={i}>{paragraph}</p>) || <p>Your detailed bio goes here.</p>}
+      <div className="relative mx-auto max-w-screen-xl px-6 py-12 font-sans md:px-12 md:py-20 lg:px-24 lg:py-0">
+        <div className="lg:flex lg:justify-between lg:gap-16">
+          {/* Left Sticky Column */}
+          <header className="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-1/2 lg:flex-col lg:justify-between lg:py-24">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                {personalInfo.fullName}
+              </h1>
+              <h2 className="mt-3 text-lg font-medium tracking-tight text-foreground sm:text-xl">
+                {personalInfo.title}
+              </h2>
+              <p className="mt-4 max-w-xs leading-normal text-muted-foreground">
+                {personalInfo.tagline}
+              </p>
+              <nav className="nav hidden lg:block" aria-label="In-page navigation">
+                <ul className="mt-16 w-max space-y-4">
+                  <li><a className="group flex items-center py-3" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
+                  <li><a className="group flex items-center py-3" href="#experience"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Experience</span></a></li>
+                  <li><a className="group flex items-center py-3" href="#projects"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Projects</span></a></li>
+                </ul>
+              </nav>
             </div>
-          </section>
+            <ul className="ml-1 mt-8 flex items-center" aria-label="Social media">
+              {personalInfo.email && (
+                <li className="mr-5 shrink-0">
+                  <a className="block text-muted-foreground hover:text-foreground" href={`mailto:${personalInfo.email}`} target="_blank" rel="noreferrer noopener" aria-label="Email">
+                    <span className="sr-only">Email</span>
+                    <Mail className="h-6 w-6" />
+                  </a>
+                </li>
+              )}
+              {personalInfo.linkedInURL && (
+                <li className="mr-5 shrink-0">
+                  <a className="block text-muted-foreground hover:text-foreground" href={personalInfo.linkedInURL} target="_blank" rel="noreferrer noopener" aria-label="LinkedIn">
+                    <span className="sr-only">LinkedIn</span>
+                    <Linkedin className="h-6 w-6" />
+                  </a>
+                </li>
+              )}
+            </ul>
+          </header>
 
-          <section id="experience" className="mb-16 scroll-mt-24">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Work Experience</h3>
-            <div className="space-y-8">
-              {data.experience?.map((exp, i) => (
-                <div key={i} className="p-6 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="text-lg font-semibold text-gray-900">{exp.jobTitle}</h4>
-                      <p className="text-gray-700">{exp.company}</p>
+          {/* Right Scrolling Column */}
+          <main id="content" className="pt-24 lg:w-1/2 lg:py-24">
+            <section id="about" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="About me">
+              <SectionTitle>About</SectionTitle>
+              <div className="space-y-4 text-muted-foreground">
+                <p>{about.extendedBio}</p>
+              </div>
+               {about.skills && about.skills.length > 0 && (
+                <div className="mt-12">
+                    <h3 className="text-lg font-semibold mb-4 text-foreground">Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {about.skills.flatMap(s => s.tags).map((tag, i) => (
+                           <div key={i} className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">
+                             {tag}
+                           </div>
+                        ))}
                     </div>
-                    <p className="text-sm text-gray-500 whitespace-nowrap">{exp.dates}</p>
-                  </div>
-                  <ul className="mt-4 list-disc list-inside text-gray-600 space-y-1">
-                    {exp.responsibilities?.map((r, j) => <li key={j}>{r}</li>)}
-                  </ul>
                 </div>
-              ))}
-            </div>
-          </section>
+               )}
+            </section>
 
-          <section id="projects" className="scroll-mt-24">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Projects</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {data.projects?.map((project, i) => (
-                <a href={project.detailsURL} key={i} target="_blank" rel="noopener noreferrer" className="block p-6 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow group">
-                  <img src={project.imageURL || 'https://placehold.co/600x400'} alt={project.name} className="w-full h-40 object-cover rounded-md mb-4" />
-                  <h4 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{project.name}</h4>
-                  <p className="text-gray-600 text-sm mt-1">{project.description}</p>
-                </a>
-              ))}
-            </div>
-          </section>
-        </main>
+            <section id="experience" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="Work experience">
+              <SectionTitle>Experience</SectionTitle>
+              <ol className="group/list">
+                {experience.map((exp, i) => (
+                  <li key={i} className="mb-12">
+                    <div className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
+                      <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:block lg:group-hover:bg-card/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
+                      <header className="z-10 mb-2 mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:col-span-2" aria-label={exp.dates}>{exp.dates}</header>
+                      <div className="z-10 sm:col-span-6">
+                        <h3 className="font-medium leading-snug text-foreground">
+                          <div>
+                            <span className="inline-flex items-baseline font-medium leading-tight text-foreground group/link text-base">
+                              <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:block"></span>
+                              <span>{exp.jobTitle} · <span className="inline-block">{exp.company}</span></span>
+                            </span>
+                          </div>
+                        </h3>
+                        <p className="mt-2 text-sm leading-normal text-muted-foreground">{exp.responsibilities.join(' ')}</p>
+                        <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
+                            {exp.tags.map((tag, j) => (
+                               <li key={j} className="mr-1.5 mt-2">
+                                 <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
+                               </li>
+                            ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <section id="projects" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="Selected projects">
+              <SectionTitle>Projects</SectionTitle>
+               <ul className="group/list">
+                {projects.map((project, i) => (
+                    <li key={i} className="mb-12">
+                        <div className="group relative grid gap-4 pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
+                            <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:block lg:group-hover:bg-card/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
+                            <div className="z-10 sm:order-2 sm:col-span-6">
+                                <h3>
+                                    <a className="inline-flex items-baseline font-medium leading-tight text-foreground hover:text-primary focus-visible:text-primary group/link text-base" href={project.detailsURL} target="_blank" rel="noreferrer noopener" aria-label={`${project.name} (opens in a new tab)`}>
+                                        <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:block"></span>
+                                        <span>{project.name} <ExternalLink className="inline-block h-4 w-4 shrink-0 transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none ml-1 translate-y-px" /></span>
+                                    </a>
+                                </h3>
+                                <p className="mt-2 text-sm leading-normal text-muted-foreground">{project.description}</p>
+                                <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
+                                    {project.tags.map((tag, j) => (
+                                      <li key={j} className="mr-1.5 mt-2">
+                                          <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
+                                      </li>
+                                    ))}
+                                </ul>
+                            </div>
+                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={48} loading="lazy" />
+                        </div>
+                    </li>
+                ))}
+               </ul>
+            </section>
+          </main>
+        </div>
       </div>
     </div>
   );
