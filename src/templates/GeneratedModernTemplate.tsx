@@ -15,16 +15,48 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
 );
 
 export default function GeneratedModernTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects } = data;
+  const { personalInfo, about, experience, projects, education } = data;
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const sections = ['about', 'experience', 'projects'];
+      const navLinks = document.querySelectorAll('nav a');
+      let currentSection = '';
+
+      sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section && window.scrollY >= section.offsetTop - 150) {
+          currentSection = sectionId;
+        }
+      });
+
+      navLinks.forEach(link => {
+        const indicator = link.querySelector('.nav-indicator');
+        const text = link.querySelector('.nav-text');
+        if (link.getAttribute('href') === `#${currentSection}`) {
+          indicator?.classList.add('w-16', 'bg-primary');
+          indicator?.classList.remove('w-8', 'bg-border');
+          text?.classList.add('text-foreground');
+          text?.classList.remove('text-muted-foreground');
+        } else {
+          indicator?.classList.add('w-8', 'bg-border');
+          indicator?.classList.remove('w-16', 'bg-primary');
+          text?.classList.add('text-muted-foreground');
+          text?.classList.remove('text-foreground');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
-      {/* Background Gradient */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.2),rgba(255,255,255,0))]"></div>
 
-      <div className="mx-auto min-h-screen max-w-screen-xl px-6 py-12 font-sans md:px-12 md:py-20 lg:px-24 lg:py-0">
+      <div className="mx-auto min-h-screen max-w-screen-xl px-6 py-12 font-inter md:px-12 md:py-20 lg:px-24 lg:py-0">
         <div className="lg:flex lg:justify-between lg:gap-16">
-          {/* Left Sticky Column */}
           <header className="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-5/12 lg:flex-col lg:justify-between lg:py-24">
             <div>
               {personalInfo.profilePhotoURL && (
@@ -43,7 +75,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
               </p>
               <nav className="hidden lg:block" aria-label="In-page navigation">
                 <ul className="mt-16 w-max space-y-4">
-                  <li><a className="group flex items-center py-3 active" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
+                  <li><a className="group flex items-center py-3" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
                   <li><a className="group flex items-center py-3" href="#experience"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Experience</span></a></li>
                   <li><a className="group flex items-center py-3" href="#projects"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Projects</span></a></li>
                 </ul>
@@ -69,7 +101,6 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
             </ul>
           </header>
 
-          {/* Right Scrolling Column */}
           <main id="content" className="pt-24 lg:w-7/12 lg:py-24">
             <section id="about" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="About me">
               <SectionTitle>About</SectionTitle>
@@ -108,13 +139,15 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                           </div>
                         </h3>
                         <div className="text-muted-foreground mt-2 text-sm" dangerouslySetInnerHTML={{ __html: exp.responsibilities.map(r => `<p>${r}</p>`).join('') }} />
-                        <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
-                            {exp.tags.map((tag, j) => (
-                               <li key={j} className="mr-1.5 mt-2">
-                                 <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
-                               </li>
-                            ))}
-                        </ul>
+                        {exp.tags && exp.tags.length > 0 && (
+                          <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
+                              {exp.tags.map((tag, j) => (
+                                <li key={j} className="mr-1.5 mt-2">
+                                  <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
+                                </li>
+                              ))}
+                          </ul>
+                        )}
                       </div>
                     </div>
                   </li>
@@ -137,15 +170,17 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                                     </a>
                                 </h3>
                                 <p className="mt-2 text-sm leading-normal text-muted-foreground">{project.description}</p>
-                                <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
-                                    {project.tags.map((tag, j) => (
-                                      <li key={j} className="mr-1.5 mt-2">
-                                          <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
-                                      </li>
-                                    ))}
-                                </ul>
+                                {project.tags && project.tags.length > 0 && (
+                                  <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
+                                      {project.tags.map((tag, j) => (
+                                        <li key={j} className="mr-1.5 mt-2">
+                                            <div className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">{tag}</div>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                )}
                             </div>
-                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={125} style={{objectFit: "cover", width:"100%", height: "auto", aspectRatio: "16/10"}} loading="lazy" />
+                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={48} style={{objectFit: "cover", width:"100%", height: "auto", aspectRatio: "16/10"}} loading="lazy" />
                         </div>
                     </li>
                 ))}
@@ -154,7 +189,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
             
             <footer className="max-w-md pb-16 text-sm text-muted-foreground sm:pb-0">
                 <p>
-                    Coded in <a href="https://code.visualstudio.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Visual Studio Code</a> by yours truly. 
+                    Coded in <a href="https://code.visualstudio.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Visual Studio Code</a>.
                     Built with <a href="https://nextjs.org/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Next.js</a> and <a href="https://tailwindcss.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Tailwind CSS</a>, 
                     deployed with <a href="https://firebase.google.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Firebase</a>. 
                     All text is set in the <a href="https://rsms.me/inter/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Inter</a> typeface.
