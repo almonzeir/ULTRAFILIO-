@@ -57,7 +57,7 @@ export default function AIBuildingPage() {
           title: 'Missing Information',
           description: 'Could not find CV or template. Please start over.',
         });
-        router.push('/upload-cv');
+        router.push('/create');
         return;
       }
 
@@ -95,7 +95,7 @@ export default function AIBuildingPage() {
               variant: 'destructive',
             });
           }
-          router.push('/upload-cv');
+          router.push('/create');
           return;
         }
       }
@@ -106,7 +106,7 @@ export default function AIBuildingPage() {
           title: 'Extraction Error',
           description: 'Could not extract data from your CV.',
         });
-        router.push('/upload-cv');
+        router.push('/create');
         return;
       }
 
