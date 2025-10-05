@@ -3,28 +3,35 @@
 
 import React from 'react';
 import type { PortfolioData } from './types';
-import { Mail, Linkedin, Briefcase, MapPin, Award, CheckCircle, Code, Server, Settings, ExternalLink } from 'lucide-react';
+import { Mail, Linkedin, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div className="section-title-wrap mb-10">
-    <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{children}</h2>
+  <div className="sticky top-0 z-20 -mx-6 mb-4 w-screen bg-background/75 px-6 py-5 backdrop-blur md:-mx-12 md:px-12 lg:sr-only lg:relative lg:top-auto lg:mx-auto lg:w-full lg:px-0 lg:py-0 lg:opacity-0">
+    <h2 className="text-sm font-bold uppercase tracking-widest text-foreground lg:sr-only">
+      {children}
+    </h2>
   </div>
 );
 
 export default function GeneratedModernTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects, education } = data;
+  const { personalInfo, about, experience, projects } = data;
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/20">
       {/* Background Gradient */}
-      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.2),rgba(255,255,255,0))]"></div>
 
-      <div className="relative mx-auto max-w-screen-xl px-6 py-12 font-sans md:px-12 md:py-20 lg:px-24 lg:py-0">
+      <div className="mx-auto min-h-screen max-w-screen-xl px-6 py-12 font-sans md:px-12 md:py-20 lg:px-24 lg:py-0">
         <div className="lg:flex lg:justify-between lg:gap-16">
           {/* Left Sticky Column */}
-          <header className="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-1/2 lg:flex-col lg:justify-between lg:py-24">
+          <header className="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-5/12 lg:flex-col lg:justify-between lg:py-24">
             <div>
+              {personalInfo.profilePhotoURL && (
+                 <div className="relative w-28 h-28 rounded-full overflow-hidden mb-4 border-2 border-primary/20 shadow-lg">
+                    <Image src={personalInfo.profilePhotoURL} alt={personalInfo.fullName} fill className="object-cover"/>
+                 </div>
+              )}
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
                 {personalInfo.fullName}
               </h1>
@@ -34,9 +41,9 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
               <p className="mt-4 max-w-xs leading-normal text-muted-foreground">
                 {personalInfo.tagline}
               </p>
-              <nav className="nav hidden lg:block" aria-label="In-page navigation">
+              <nav className="hidden lg:block" aria-label="In-page navigation">
                 <ul className="mt-16 w-max space-y-4">
-                  <li><a className="group flex items-center py-3" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
+                  <li><a className="group flex items-center py-3 active" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
                   <li><a className="group flex items-center py-3" href="#experience"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Experience</span></a></li>
                   <li><a className="group flex items-center py-3" href="#projects"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Projects</span></a></li>
                 </ul>
@@ -63,15 +70,15 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
           </header>
 
           {/* Right Scrolling Column */}
-          <main id="content" className="pt-24 lg:w-1/2 lg:py-24">
+          <main id="content" className="pt-24 lg:w-7/12 lg:py-24">
             <section id="about" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="About me">
               <SectionTitle>About</SectionTitle>
-              <div className="space-y-4 text-muted-foreground">
+              <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>{about.extendedBio}</p>
               </div>
                {about.skills && about.skills.length > 0 && (
                 <div className="mt-12">
-                    <h3 className="text-lg font-semibold mb-4 text-foreground">Skills</h3>
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-foreground mb-4">Skills</h3>
                     <div className="flex flex-wrap gap-2">
                         {about.skills.flatMap(s => s.tags).map((tag, i) => (
                            <div key={i} className="flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium leading-5 text-primary">
@@ -96,11 +103,11 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                           <div>
                             <span className="inline-flex items-baseline font-medium leading-tight text-foreground group/link text-base">
                               <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:block"></span>
-                              <span>{exp.jobTitle} · <span className="inline-block">{exp.company}</span></span>
+                              <span>{exp.jobTitle} · <span className="inline-block font-normal text-muted-foreground">{exp.company}</span></span>
                             </span>
                           </div>
                         </h3>
-                        <p className="mt-2 text-sm leading-normal text-muted-foreground">{exp.responsibilities.join(' ')}</p>
+                        <div className="text-muted-foreground mt-2 text-sm" dangerouslySetInnerHTML={{ __html: exp.responsibilities.map(r => `<p>${r}</p>`).join('') }} />
                         <ul className="mt-2 flex flex-wrap" aria-label="Technologies used">
                             {exp.tags.map((tag, j) => (
                                <li key={j} className="mr-1.5 mt-2">
@@ -138,15 +145,27 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                                     ))}
                                 </ul>
                             </div>
-                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={48} loading="lazy" />
+                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={125} style={{objectFit: "cover", width:"100%", height: "auto", aspectRatio: "16/10"}} loading="lazy" />
                         </div>
                     </li>
                 ))}
                </ul>
             </section>
+            
+            <footer className="max-w-md pb-16 text-sm text-muted-foreground sm:pb-0">
+                <p>
+                    Coded in <a href="https://code.visualstudio.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Visual Studio Code</a> by yours truly. 
+                    Built with <a href="https://nextjs.org/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Next.js</a> and <a href="https://tailwindcss.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Tailwind CSS</a>, 
+                    deployed with <a href="https://firebase.google.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Firebase</a>. 
+                    All text is set in the <a href="https://rsms.me/inter/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Inter</a> typeface.
+                </p>
+            </footer>
+
           </main>
         </div>
       </div>
     </div>
   );
 }
+
+    
