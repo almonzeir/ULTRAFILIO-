@@ -46,7 +46,7 @@ export default function ChooseTemplatePage() {
   const handleContinue = () => {
     if (!selected) return;
     localStorage.setItem('selectedTemplate', selected);
-    router.push('/ai-building');
+    router.push('/portfolio');
   };
 
   return (

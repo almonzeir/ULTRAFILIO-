@@ -6,6 +6,10 @@ import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
+import { addDoc, collection } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '@/firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 const mockParsedData: PortfolioData = {
   personalInfo: {
@@ -180,26 +184,67 @@ export default function CreatePortfolioPage() {
     setIsParsing(true);
     toast({
       title: 'Processing your CV...',
-      description: 'This may take a moment. We are using a mock parser for this demo.',
+      description: 'This may take a moment. We are parsing your CV and uploading your photo.',
     });
 
-    // Simulate parsing delay
-    setTimeout(() => {
-        let finalData = { ...mockParsedData };
-        if (photoFile) {
-            const photoReader = new FileReader();
-            photoReader.readAsDataURL(photoFile);
-            photoReader.onload = () => {
-                const photoDataUri = photoReader.result as string;
-                finalData.personalInfo.profilePhotoURL = photoDataUri;
-                handleDataAndNavigate(finalData);
-                setIsParsing(false);
+    try {
+      // 1. Send CV to our API route for parsing
+      const cvFormData = new FormData();
+      cvFormData.append('cv', cvFile);
+
+      const parseResponse = await fetch('/api/parse-cv', {
+        method: 'POST',
+        body: cvFormData,
+      });
+
+      if (!parseResponse.ok) {
+        throw new Error('Failed to parse CV');
+      }
+
+      const parsedCvData: PortfolioData = await parseResponse.json();
+
+      let photoURL = '';
+      if (photoFile) {
+        // 2. Upload photo to Firebase Storage
+        const storageRef = ref(storage, `profile_photos/${uuidv4()}-${photoFile.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, photoFile);
+
+        await new Promise<void>((resolve, reject) => {
+          uploadTask.on('state_changed',
+            (snapshot) => {
+              // Optional: handle progress
+            },
+            (error) => {
+              console.error('Photo upload failed:', error);
+              reject(error);
+            },
+            async () => {
+              photoURL = await getDownloadURL(uploadTask.snapshot.ref);
+              resolve();
             }
-        } else {
-            handleDataAndNavigate(finalData);
-            setIsParsing(false);
-        }
-    }, 2000);
+          );
+        });
+      }
+
+      // Update portfolio data with photo URL
+      parsedCvData.personalInfo.profilePhotoURL = photoURL;
+
+      // 3. Save portfolio data to Firestore
+      const docRef = await addDoc(collection(db, 'portfolios'), parsedCvData);
+
+      // 4. Navigate to the dynamic portfolio page
+      router.push(`/portfolio/${docRef.id}`);
+
+    } catch (error) {
+      console.error('Upload and save failed:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Oh no! Something went wrong.',
+        description: 'Could not process your request. Please try again or fill the form manually.',
+      });
+    } finally {
+      setIsParsing(false);
+    }
   };
 
   if (showManualForm) {
