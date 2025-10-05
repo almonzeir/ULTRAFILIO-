@@ -19,7 +19,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
 
   React.useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'experience', 'projects'];
+      const sections = ['about', 'experience', 'projects', 'education'];
       const navLinks = document.querySelectorAll('nav a');
       let currentSection = '';
 
@@ -48,6 +48,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Run on mount to set initial state
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -78,6 +79,7 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                   <li><a className="group flex items-center py-3" href="#about"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">About</span></a></li>
                   <li><a className="group flex items-center py-3" href="#experience"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Experience</span></a></li>
                   <li><a className="group flex items-center py-3" href="#projects"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Projects</span></a></li>
+                  <li><a className="group flex items-center py-3" href="#education"><span className="nav-indicator mr-4 h-px w-8 bg-border transition-all group-hover:w-16 group-hover:bg-primary motion-reduce:transition-none"></span><span className="nav-text text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground">Education</span></a></li>
                 </ul>
               </nav>
             </div>
@@ -180,13 +182,37 @@ export default function GeneratedModernTemplate({ data }: { data: PortfolioData 
                                   </ul>
                                 )}
                             </div>
-                            <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={48} style={{objectFit: "cover", width:"100%", height: "auto", aspectRatio: "16/10"}} loading="lazy" />
+                            {project.imageURL && <Image src={project.imageURL} alt={project.name} className="rounded border-2 border-border/10 transition group-hover:border-border/30 sm:order-1 sm:col-span-2 sm:translate-y-1" width={200} height={48} style={{objectFit: "cover", width:"100%", height: "auto", aspectRatio: "16/10"}} loading="lazy" />}
                         </div>
                     </li>
                 ))}
                </ul>
             </section>
             
+            <section id="education" className="mb-16 scroll-mt-16 md:mb-24 lg:mb-36 lg:scroll-mt-24" aria-label="Education">
+              <SectionTitle>Education</SectionTitle>
+              <ol className="group/list">
+                {education.map((edu, i) => (
+                  <li key={i} className="mb-12">
+                    <div className="group relative grid pb-1 transition-all sm:grid-cols-8 sm:gap-8 md:gap-4 lg:hover:!opacity-100 lg:group-hover/list:opacity-50">
+                      <div className="absolute -inset-x-4 -inset-y-4 z-0 hidden rounded-md transition motion-reduce:transition-none lg:block lg:group-hover:bg-card/50 lg:group-hover:shadow-[inset_0_1px_0_0_rgba(148,163,184,0.1)] lg:group-hover:drop-shadow-lg"></div>
+                      <header className="z-10 mb-2 mt-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:col-span-2" aria-label={`${edu.startDate} to ${edu.endDate}`}>{edu.startDate} — {edu.endDate}</header>
+                      <div className="z-10 sm:col-span-6">
+                        <h3 className="font-medium leading-snug text-foreground">
+                          <div>
+                            <span className="inline-flex items-baseline font-medium leading-tight text-foreground group/link text-base">
+                              <span className="absolute -inset-x-4 -inset-y-2.5 hidden rounded md:block"></span>
+                              <span>{edu.degree} · <span className="inline-block font-normal text-muted-foreground">{edu.institution}</span></span>
+                            </span>
+                          </div>
+                        </h3>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
             <footer className="max-w-md pb-16 text-sm text-muted-foreground sm:pb-0">
                 <p>
                     Coded in <a href="https://code.visualstudio.com/" className="font-medium text-foreground hover:text-primary focus-visible:text-primary" target="_blank" rel="noreferrer">Visual Studio Code</a>.

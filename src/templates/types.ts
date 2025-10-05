@@ -1,3 +1,4 @@
+
 export interface PortfolioData {
   personalInfo: {
     fullName: string;
@@ -38,4 +39,12 @@ export interface PortfolioData {
     tags: string[];
     detailsURL: string;
   }[];
+   education: {
+    degree: string;
+    institution: string;
+    startDate: string;
+    endDate: string;
+  }[];
 }
+
+    
