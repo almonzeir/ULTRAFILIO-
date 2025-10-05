@@ -1,5 +1,4 @@
 import type {Config} from 'tailwindcss';
-const plugin = require('tailwindcss/plugin');
 
 export default {
   darkMode: ['class'],
@@ -122,11 +121,5 @@ export default {
   },
   plugins: [
     require('tailwindcss-animate'),
-    plugin(function({ addUtilities }) {
-      addUtilities({
-        '.ps-4': { paddingInlineStart: '1rem' },
-        '.-ms-4': { marginInlineStart: '-1rem' },
-      })
-    }),
   ],
 } satisfies Config;

@@ -2,22 +2,23 @@
 
 import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/carousel';
-import Autoplay from 'embla-carousel-autoplay';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { useEffect, useState, useRef } from 'react';
 
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation } from 'swiper/modules';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+
 export default function Testimonials() {
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['testimonials'] | null>(null);
-  const carouselRef = useRef(null);
 
   useEffect(() => {
     const fetchDictionary = async () => {
@@ -27,7 +28,18 @@ export default function Testimonials() {
     fetchDictionary();
   }, [language]);
 
-  if (!dict) return null;
+  if (!dict) {
+    return (
+      <section className="py-24 sm:py-32 bg-foreground text-background dark:bg-white dark:text-black">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="h-8 w-48 mx-auto bg-gray-600/30 rounded animate-pulse" />
+            <div className="h-6 w-80 mx-auto mt-6 bg-gray-500/30 rounded animate-pulse" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const testimonialsData = [
     {
@@ -77,56 +89,65 @@ export default function Testimonials() {
             {dict.subtitle}
           </p>
         </div>
-        <Carousel
-          ref={carouselRef}
-          opts={{
-            align: 'start',
-            loop: true,
-            direction: language === 'ar' ? 'rtl' : 'ltr',
+
+        <Swiper
+          key={language} // Re-initialize on language change to apply direction
+          dir={language === 'ar' ? 'rtl' : 'ltr'}
+          modules={[Autoplay, Navigation]}
+          spaceBetween={30}
+          slidesPerView={1}
+          loop={true}
+          autoplay={{
+            delay: 4000,
+            disableOnInteraction: true,
           }}
-          plugins={[
-            Autoplay({
-              delay: 4000,
-              stopOnInteraction: true,
-            }),
-          ]}
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+              spaceBetween: 20,
+            },
+            768: {
+              slidesPerView: 2,
+              spaceBetween: 30,
+            },
+            1024: {
+              slidesPerView: 3,
+              spaceBetween: 40,
+            },
+          }}
           className="w-full mt-16"
         >
-          <CarouselContent>
-            {testimonialsData.map((testimonial, index) => {
-              const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
-              return (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="h-full p-1">
-                    <Card className="flex flex-col h-full bg-card text-card-foreground border-border/50">
-                      <CardContent className="flex flex-col flex-grow p-6">
-                        <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
-                          <p>“{testimonial.quote}”</p>
-                        </blockquote>
-                        <figcaption className="mt-6 flex items-center gap-x-4">
-                          {avatar && (
-                            <Image
-                              className="h-12 w-12 rounded-full bg-muted object-cover"
-                              src={avatar.imageUrl}
-                              alt={testimonial.name}
-                              data-ai-hint={avatar.imageHint}
-                              width={48}
-                              height={48}
-                            />
-                          )}
-                          <div>
-                            <div className="font-semibold">{testimonial.name}</div>
-                            <div className="text-sm text-muted-foreground">{testimonial.title}</div>
-                          </div>
-                        </figcaption>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              );
-            })}
-          </CarouselContent>
-        </Carousel>
+          {testimonialsData.map((testimonial, index) => {
+            const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
+            return (
+              <SwiperSlide key={index} className="h-full">
+                <Card className="flex flex-col h-full bg-card text-card-foreground border-border/50">
+                  <CardContent className="flex flex-col flex-grow p-6 text-left rtl:text-right">
+                    <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
+                      <p>“{testimonial.quote}”</p>
+                    </blockquote>
+                    <figcaption className="mt-6 flex items-center gap-x-4">
+                      {avatar && (
+                        <Image
+                          className="h-12 w-12 rounded-full bg-muted object-cover"
+                          src={avatar.imageUrl}
+                          alt={testimonial.name}
+                          data-ai-hint={avatar.imageHint}
+                          width={48}
+                          height={48}
+                        />
+                      )}
+                      <div>
+                        <div className="font-semibold">{testimonial.name}</div>
+                        <div className="text-sm text-muted-foreground">{testimonial.title}</div>
+                      </div>
+                    </figcaption>
+                  </CardContent>
+                </Card>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
       </div>
     </section>
   );
