@@ -56,7 +56,7 @@
     "free": {
       "title": "مجانًا",
       "description": "للمشاريع الشخصية والبدء.",
-      "price": "٠ د.إ",
+      "price": "$0",
       "period": "للأبد",
       "features": {
         "generate": "إنشاء معرض أعمال",
