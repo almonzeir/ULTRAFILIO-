@@ -1,54 +1,61 @@
-// types.ts
+export interface PersonalInfo {
+  fullName: string;
+  portfolioNameAbbr: string;
+  title: string;
+  tagline: string;
+  email: string;
+  linkedInURL: string;
+  location: string;
+  profilePhotoURL: string;
+}
 
-export interface Contact {
-    email: string;
-    phone: string;
-    location: string;
-    website: string;
-    linkedin: string;
-    github: string;
+export interface Stat {
+  icon: string;
+  value: string;
+  label: string;
+}
+
+export interface SkillCategory {
+  category: string;
+  icon: string;
+  tags: string[];
+}
+
+export interface About {
+  extendedBio: string;
+  stats: Stat[];
+  skills: SkillCategory[];
 }
 
 export interface Experience {
-    role: string;
-    company: string;
-    location: string;
-    startDate: string;
-    endDate: string;
-    bullets: string[];
+  jobTitle: string;
+  company: string;
+  dates: string;
+  location: string;
+  responsibilities: string[];
+  tags: string[];
 }
 
 export interface Project {
-    name: string;
-    description: string;
-    tech: string[];
-    links: { url: string }[];
-    impact: string;
+  name: string;
+  category: string;
+  description: string;
+  imageURL: string;
+  tags: string[];
+  detailsURL: string;
 }
 
 export interface Education {
     degree: string;
-    field: string;
     institution: string;
     startDate: string;
     endDate: string;
-    notes: string;
 }
 
 export interface PortfolioData {
-  person: {
-    fullName: string;
-    headline: string;
-    summary: string;
-  };
-  contact: Contact;
+  personalInfo: PersonalInfo;
+  about: About;
   experience: Experience[];
   projects: Project[];
   education: Education[];
-  skills: string[];
-  certifications: { name: string; issuer: string; date: string }[];
-  awards: { name: string; issuer: string; date: string }[];
-  languages: { name: string; level: string }[];
-  interests: string[];
-  photoUrl?: string | null;
 }

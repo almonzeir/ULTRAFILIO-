@@ -12,12 +12,10 @@ export default function PortfolioPage() {
   const { toast } = useToast();
   const [template, setTemplate] = useState<string | null>(null);
   const [userData, setUserData] = useState<PortfolioData | null>(null);
-  const [userPhoto, setUserPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     const selectedTemplate = localStorage.getItem('selectedTemplate');
     const data = localStorage.getItem('portfolioData');
-    const photo = localStorage.getItem('userPhoto');
 
     if (!selectedTemplate || !data) {
       toast({
@@ -31,30 +29,60 @@ export default function PortfolioPage() {
     
     setTemplate(selectedTemplate);
     setUserData(JSON.parse(data));
-    if (photo) {
-      setUserPhoto(photo);
-    }
+    
   }, [router, toast]);
 
   const renderTemplate = () => {
     if (!template || !userData) {
       return (
-        <div className="text-center">
+        <div className="text-center p-20">
             <h1 className="text-2xl font-bold">Loading Portfolio...</h1>
             <p>Please wait a moment.</p>
         </div>
       );
     }
-
-    const dataWithPhoto = { ...userData, photoUrl: userPhoto };
+    
+    // The photo URL is now part of the main data object in the new structure
+    // const dataWithPhoto = { ...userData, photoUrl: userPhoto };
 
     switch (template) {
       case 'modern':
-        return <ModernTemplate data={dataWithPhoto} />;
+        return <ModernTemplate data={userData} />;
       case 'minimalist':
-        return <MinimalistTemplate data={dataWithPhoto} />;
+        // This template would need to be updated to support the new data structure
+        // For now, we pass a simplified version of the data
+        const minimalistData = {
+            name: userData.personalInfo.fullName,
+            title: userData.personalInfo.title,
+            summary: userData.personalInfo.tagline,
+            experience: userData.experience.map(e => ({
+                role: e.jobTitle,
+                company: e.company,
+                start: e.dates.split('–')[0],
+                end: e.dates.split('–')[1],
+                description: e.responsibilities.join(' '),
+            })),
+            projects: [], // Minimalist template doesn't show them
+            skills: [], // Minimalist template doesn't show them
+        };
+        // @ts-ignore
+        return <MinimalistTemplate data={minimalistData} />;
       case 'basic':
-        return <BasicTemplate data={dataWithPhoto} />;
+        // This template would need to be updated to support the new data structure
+         const basicData = {
+            name: userData.personalInfo.fullName,
+            title: userData.personalInfo.title,
+            summary: userData.personalInfo.tagline,
+            experience: userData.experience.map(e => ({
+                role: e.jobTitle,
+                company: e.company,
+                start: e.dates.split('–')[0],
+                end: e.dates.split('–')[1],
+                description: e.responsibilities.join(' '),
+            })),
+        };
+        // @ts-ignore
+        return <BasicTemplate data={basicData} />;
       default:
         return <p>Unknown template selected.</p>;
     }
