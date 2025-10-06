@@ -62,59 +62,57 @@ export default function CreatePortfolioPage() {
   }, [language]);
 
   const handleManualFormSubmit = (formData: any) => {
+    // This function now receives structured data from react-hook-form
     const portfolioData: PortfolioData = {
       personalInfo: {
-        fullName: formData.name,
-        portfolioNameAbbr: formData.name?.charAt(0) || '',
-        title: formData.title,
+        fullName: formData.fullName,
+        portfolioNameAbbr: formData.fullName.split(' ').map((n:string) => n[0]).join('').toUpperCase(),
+        title: formData.professionalTitle,
         tagline: formData.summary,
         email: formData.email,
-        linkedInURL: formData.linkedin,
+        phone: formData.phone,
+        website: formData.website,
+        linkedinURL: formData.linkedin,
+        githubURL: formData.github,
         location: formData.location,
         profilePhotoURL: '', // Manual form doesn't handle photo upload yet
       },
       about: {
-        extendedBio: "Manually entered profile.",
+        extendedBio: formData.summary,
         stats: [],
         skills: formData.skills ? formData.skills.split(',').map((s: string) => ({ category: "General", icon: "code", tags: [s.trim()] })) : []
       },
-      experience: formData.exp_role ? [
-        {
-          jobTitle: formData.exp_role,
-          company: formData.exp_company || '',
-          location: '',
-          dates: `${formData.exp_start || ''} - ${formData.exp_end || ''}`,
-          responsibilities: (formData.exp_description || '').split('\n').filter((b: string) => b),
-          tags: []
-        },
-      ] : [],
-      education: formData.edu_degree ? [
-        {
-          degree: formData.edu_degree,
-          institution: formData.edu_institution || '',
-          startDate: formData.edu_start_year || '',
-          endDate: formData.edu_end_year || '',
-        },
-      ] : [],
-      projects: formData.proj_title ? [
-        {
-          name: formData.proj_title,
-          description: formData.proj_description || '',
-          category: 'General',
-          imageURL: '',
-          tags: (formData.proj_tech || '').split(',').map((t: string) => t.trim()).filter(Boolean),
-          detailsURL: formData.proj_link || '#',
-        },
-      ] : [],
+      experience: formData.experience.map((exp: any) => ({
+        jobTitle: exp.jobTitle,
+        company: exp.company,
+        location: '', // Not in form
+        dates: `${exp.startDate || ''} - ${exp.endDate || 'Present'}`,
+        responsibilities: exp.description ? exp.description.split('\n').filter(Boolean) : [],
+        tags: []
+      })).filter((exp: any) => exp.jobTitle && exp.company),
+      education: formData.education.map((edu: any) => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        startDate: edu.startYear,
+        endDate: edu.endYear,
+      })).filter((edu: any) => edu.degree && edu.institution),
+      projects: formData.projects.map((proj: any) => ({
+        name: proj.title,
+        description: proj.description,
+        category: 'General',
+        imageURL: '',
+        tags: proj.technologies ? proj.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+        detailsURL: proj.link || '#',
+      })).filter((proj: any) => proj.name),
     };
+    
     try {
       localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
       localStorage.setItem('chosenTemplate', 'modern'); // Default template for manual entry
 
-      // Create a dummy uploadMeta for manual entry to satisfy the check on choose-template page
       const dummyUploadMeta: UploadMeta = {
-        cvFileUrl: 'manual-entry', // Placeholder
-        cvFileType: 'pdf', // Placeholder
+        cvFileUrl: 'manual-entry',
+        cvFileType: 'pdf', 
         fileSizeBytes: 0,
       };
       localStorage.setItem('uploadMeta', JSON.stringify(dummyUploadMeta));
@@ -190,7 +188,11 @@ export default function CreatePortfolioPage() {
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">
-          <ManualForm onSubmit={handleManualFormSubmit} dict={dict.manualForm} />
+          <ManualForm 
+            onSubmit={handleManualFormSubmit} 
+            onBack={() => setShowManualForm(false)} 
+            dict={dict.manualForm}
+          />
         </main>
       </div>
     );
