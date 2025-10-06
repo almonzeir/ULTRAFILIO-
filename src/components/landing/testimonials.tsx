@@ -94,6 +94,7 @@ export default function Testimonials() {
           key={language} // Re-initialize on language change to apply direction
           dir={language === 'ar' ? 'rtl' : 'ltr'}
           modules={[Autoplay, Navigation]}
+          autoHeight={true} // Let Swiper manage the container height
           spaceBetween={30}
           slidesPerView={1}
           loop={true}
@@ -115,14 +116,16 @@ export default function Testimonials() {
               spaceBetween: 40,
             },
           }}
-          className="w-full mt-16 h-full"
+          className="w-full mt-16"
         >
           {testimonialsData.map((testimonial, index) => {
             const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
             return (
-              <SwiperSlide key={index} className="self-stretch h-full">
+              <SwiperSlide key={index} className="h-full">
+                {/* The card is now a flex container that fills the slide's height */}
                 <Card className="h-full flex flex-col">
                   <CardContent className="flex flex-col flex-grow p-6 text-left rtl:text-right">
+                    {/* The blockquote will grow to push the figcaption to the bottom */}
                     <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
                       <p>“{testimonial.quote}”</p>
                     </blockquote>
