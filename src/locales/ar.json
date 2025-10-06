@@ -1,3 +1,4 @@
+
 {
   "header": {
     "features": "الميزات",
@@ -130,6 +131,99 @@
       "title": "قانوني",
       "privacy": "سياسة الخصوصية",
       "terms": "شروط الخدمة"
+    }
+  },
+  "createPage": {
+    "authPrompt": {
+      "title": "أنشئ حسابًا",
+      "description": "لبدء إنشاء معرض أعمالك، يرجى تسجيل الدخول أو إنشاء حساب أولاً. هذا يضمن حفظ عملك وأمانه.",
+      "login": "تسجيل الدخول",
+      "signup": "إنشاء حساب"
+    },
+    "title": "أنشئ معرض أعمالك",
+    "subtitle": "اختر كيف ترغب في بدء بناء معرض أعمالك.",
+    "uploadCard": {
+      "title": "ارفع سيرتك الذاتية / استئناف",
+      "description": "ارفع سيرتك الذاتية وسنقوم تلقائيًا بإنشاء معرض أعمالك.",
+      "dropzone": {
+        "label": "انقر للتحميل أو اسحب وأفلت",
+        "hint": "PDF, DOC, DOCX (بحد أقصى 15 ميجابايت)"
+      },
+      "photoLabel": "صورة الملف الشخصي (موصى به)",
+      "continueButton": "متابعة",
+      "processingButton": "جاري المعالجة..."
+    },
+    "manualCard": {
+      "title": "املأ التفاصيل يدويًا",
+      "description": "ليس لديك سيرة ذاتية؟ املأ معلوماتك لبناء معرض أعمالك.",
+      "button": "ابدأ النموذج اليدوي"
+    },
+    "manualForm": {
+      "step1": {
+        "title": "الخطوة 1: المعلومات الشخصية",
+        "fullName": "الاسم الكامل",
+        "professionalTitle": "المسمى الوظيفي",
+        "summary": "نبذة مختصرة / ملخص (بحد أقصى 250 حرفًا)",
+        "location": "الموقع (المدينة، الدولة)",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "website": "الموقع الإلكتروني / معرض الأعمال",
+        "profilePicture": "صورة الملف الشخصي (اختياري)",
+        "nextButton": "الخطوة التالية ← الخبرة"
+      },
+      "step2": {
+        "title": "الخطوة 2: الخبرة، التعليم، المهارات",
+        "experience": {
+          "title": "الخبرة",
+          "jobTitle": "المسمى الوظيفي",
+          "companyName": "اسم الشركة",
+          "startDate": "تاريخ البدء",
+          "endDate": "تاريخ الانتهاء (أو 'الحالي')",
+          "description": "الوصف"
+        },
+        "education": {
+          "title": "التعليم",
+          "degree": "الشهادة",
+          "institution": "المؤسسة",
+          "startYear": "سنة البدء",
+          "endYear": "سنة الانتهاء",
+          "additionalInfo": "معلومات إضافية"
+        },
+        "skills": {
+          "title": "المهارات",
+          "placeholder": "مهارات مفصولة بفواصل (مثل React، Node.js، Python)"
+        },
+        "backButton": "→ رجوع",
+        "nextButton": "الخطوة التالية ← المشاريع"
+      },
+      "step3": {
+        "title": "الخطوة 3: المشاريع، الشهادات، اللغات",
+        "projects": {
+          "title": "المشاريع",
+          "projectTitle": "عنوان المشروع",
+          "description": "الوصف",
+          "technologies": "التقنيات المستخدمة (مفصولة بفواصل)",
+          "link": "الرابط"
+        },
+        "certifications": {
+          "title": "الشهادات (اختياري)",
+          "certificateName": "اسم الشهادة",
+          "organization": "المنظمة",
+          "year": "السنة"
+        },
+        "languages": {
+          "title": "اللغات (اختياري)",
+          "language": "اللغة",
+          "proficiency": {
+            "beginner": "مبتدئ",
+            "intermediate": "متوسط",
+            "advanced": "متقدم",
+            "native": "لغة أم"
+          }
+        },
+        "backButton": "→ رجوع",
+        "submitButton": "أنشئ معرض أعمالي"
+      }
     }
   }
 }

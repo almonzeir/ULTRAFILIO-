@@ -1,15 +1,18 @@
+
 'use client';
 
 import * as React from 'react';
 import { UploadCloud, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { Dictionary } from '@/lib/dictionaries';
 
 interface UploadCVCardProps {
     onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
-    isParsing: boolean; // Renamed to isProcessing for clarity
+    isParsing: boolean;
+    dict: Dictionary['createPage']['uploadCard'];
 }
 
-export default function UploadCVCard({ onContinue, isParsing: isProcessing }: UploadCVCardProps) {
+export default function UploadCVCard({ onContinue, isParsing: isProcessing, dict }: UploadCVCardProps) {
   const [cvFile, setCvFile] = React.useState<File | null>(null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
@@ -69,8 +72,8 @@ export default function UploadCVCard({ onContinue, isParsing: isProcessing }: Up
   return (
     <div className="p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-100 dark:border-gray-800 flex flex-col justify-between">
       <div>
-        <h2 className="text-3xl font-semibold mb-4">Upload Your CV / Resume</h2>
-        <p className="text-gray-500 dark:text-gray-400 mb-8">Upload your CV and we’ll automatically generate your portfolio.</p>
+        <h2 className="text-3xl font-semibold mb-4">{dict.title}</h2>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">{dict.description}</p>
         <input
           type="file"
           ref={cvFileInputRef}
@@ -87,13 +90,13 @@ export default function UploadCVCard({ onContinue, isParsing: isProcessing }: Up
             <p className="text-gray-700 dark:text-gray-300 font-medium">{cvFile.name}</p>
           ) : (
             <>
-              <p className="text-gray-600 dark:text-gray-400">Click to upload or drag & drop</p>
-              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">PDF, DOC, DOCX (max 15MB)</p>
+              <p className="text-gray-600 dark:text-gray-400">{dict.dropzone.label}</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{dict.dropzone.hint}</p>
             </>
           )}
         </div>
         <div className="mt-8">
-          <label className="block text-gray-700 dark:text-gray-300 mb-3 font-medium">Profile Picture (Recommended)</label>
+          <label className="block text-gray-700 dark:text-gray-300 mb-3 font-medium">{dict.photoLabel}</label>
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden flex items-center justify-center">
                 {photoPreview ? (
@@ -112,9 +115,9 @@ export default function UploadCVCard({ onContinue, isParsing: isProcessing }: Up
         {isProcessing ? (
             <>
                 <Loader2 className="animate-spin" />
-                Processing...
+                {dict.processingButton}
             </>
-        ) : "Continue"}
+        ) : dict.continueButton}
       </button>
     </div>
   );

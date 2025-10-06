@@ -1,3 +1,4 @@
+
 {
   "header": {
     "features": "Features",
@@ -130,6 +131,99 @@
       "title": "Legal",
       "privacy": "Privacy Policy",
       "terms": "Terms of Service"
+    }
+  },
+  "createPage": {
+    "authPrompt": {
+      "title": "Create an Account",
+      "description": "To start building your portfolio, please log in or create an account first. This ensures your work is saved and secure.",
+      "login": "Login",
+      "signup": "Sign Up"
+    },
+    "title": "Create Your Portfolio",
+    "subtitle": "Choose how you’d like to start building your portfolio.",
+    "uploadCard": {
+      "title": "Upload Your CV / Resume",
+      "description": "Upload your CV and we’ll automatically generate your portfolio.",
+      "dropzone": {
+        "label": "Click to upload or drag & drop",
+        "hint": "PDF, DOC, DOCX (max 15MB)"
+      },
+      "photoLabel": "Profile Picture (Recommended)",
+      "continueButton": "Continue",
+      "processingButton": "Processing..."
+    },
+    "manualCard": {
+      "title": "Fill Your Details Manually",
+      "description": "Don’t have a CV? Fill in your information to build your portfolio.",
+      "button": "Start Manual Form"
+    },
+    "manualForm": {
+      "step1": {
+        "title": "Step 1: Personal Information",
+        "fullName": "Full Name",
+        "professionalTitle": "Professional Title",
+        "summary": "Short Bio / Summary (max 250 chars)",
+        "location": "Location (City, Country)",
+        "email": "Email",
+        "phone": "Phone",
+        "website": "Website / Portfolio",
+        "profilePicture": "Profile Picture (Optional)",
+        "nextButton": "Next Step → Experience"
+      },
+      "step2": {
+        "title": "Step 2: Experience, Education, Skills",
+        "experience": {
+          "title": "Experience",
+          "jobTitle": "Job Title",
+          "companyName": "Company Name",
+          "startDate": "Start Date",
+          "endDate": "End Date (or Present)",
+          "description": "Description"
+        },
+        "education": {
+          "title": "Education",
+          "degree": "Degree",
+          "institution": "Institution",
+          "startYear": "Start Year",
+          "endYear": "End Year",
+          "additionalInfo": "Additional Info"
+        },
+        "skills": {
+          "title": "Skills",
+          "placeholder": "Comma-separated skills (e.g., React, Node.js, Python)"
+        },
+        "backButton": "← Back",
+        "nextButton": "Next Step → Projects"
+      },
+      "step3": {
+        "title": "Step 3: Projects, Certificates, Languages",
+        "projects": {
+          "title": "Projects",
+          "projectTitle": "Project Title",
+          "description": "Description",
+          "technologies": "Technologies Used (comma-separated)",
+          "link": "Link"
+        },
+        "certifications": {
+          "title": "Certifications (Optional)",
+          "certificateName": "Certificate Name",
+          "organization": "Organization",
+          "year": "Year"
+        },
+        "languages": {
+          "title": "Languages (Optional)",
+          "language": "Language",
+          "proficiency": {
+            "beginner": "Beginner",
+            "intermediate": "Intermediate",
+            "advanced": "Advanced",
+            "native": "Native"
+          }
+        },
+        "backButton": "← Back",
+        "submitButton": "Generate My Portfolio"
+      }
     }
   }
 }
