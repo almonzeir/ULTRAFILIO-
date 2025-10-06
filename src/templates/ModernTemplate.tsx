@@ -138,7 +138,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
 
               <div className="order-1 md:order-2 flex justify-center">
                 <div className="relative">
-                  <div className="absolute -inset-1 rounded-full bg-[conic-gradient(from_210deg,theme(colors.brand.500/0.55),theme(colors.brand-2.500/0.55))] blur-xl" />
+                  <div className="absolute -inset-1 rounded-full bg-[conic-gradient(from_210deg,hsl(var(--brand)/0.55),hsl(var(--brand-2)/0.55))] blur-xl" />
                   <img
                     src={data.personalInfo.profilePhotoURL}
                     alt={`Portrait of ${data.personalInfo.fullName}`}
