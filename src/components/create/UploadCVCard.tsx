@@ -5,6 +5,7 @@ import * as React from 'react';
 import { UploadCloud, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/dictionaries';
+import { cn } from '@/lib/utils';
 
 interface UploadCVCardProps {
     onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
@@ -16,41 +17,60 @@ export default function UploadCVCard({ onContinue, isParsing: isProcessing, dict
   const [cvFile, setCvFile] = React.useState<File | null>(null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
 
   const cvFileInputRef = React.useRef<HTMLInputElement>(null);
   const photoFileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, fileType: 'cv' | 'photo') => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const maxSize = fileType === 'cv' ? 15 * 1024 * 1024 : 10 * 1024 * 1024;
-      const acceptedTypes = fileType === 'cv' 
-        ? ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
-        : ['image/jpeg', 'image/png', 'image/webp'];
+  const handleFile = (file: File | null, fileType: 'cv' | 'photo') => {
+    if (!file) return;
 
-      if (file.size > maxSize) {
-        toast({ variant: 'destructive', title: 'File too large', description: `Please select a file smaller than ${maxSize / 1024 / 1024}MB.` });
-        return;
-      }
+    const maxSize = fileType === 'cv' ? 15 * 1024 * 1024 : 10 * 1024 * 1024;
+    const acceptedTypes = fileType === 'cv' 
+      ? ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+      : ['image/jpeg', 'image/png', 'image/webp'];
 
-      if (!acceptedTypes.includes(file.type)) {
-         toast({ variant: 'destructive', title: 'Invalid file type', description: fileType === 'cv' ? 'Please upload a PDF or DOCX file.' : 'Please upload a JPG, PNG, or WebP file.' });
-        return;
-      }
-
-      if (fileType === 'cv') {
-        setCvFile(file);
-      } else {
-        setPhotoFile(file);
-        // Create a preview URL for the photo
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPhotoPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
+    if (file.size > maxSize) {
+      toast({ variant: 'destructive', title: 'File too large', description: `Please select a file smaller than ${maxSize / 1024 / 1024}MB.` });
+      return;
     }
+
+    if (!acceptedTypes.includes(file.type)) {
+       toast({ variant: 'destructive', title: 'Invalid file type', description: fileType === 'cv' ? 'Please upload a PDF, DOC, or DOCX file.' : 'Please upload a JPG, PNG, or WebP file.' });
+      return;
+    }
+
+    if (fileType === 'cv') {
+      setCvFile(file);
+    } else {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, fileType: 'cv' | 'photo') => {
+    handleFile(event.target.files?.[0] || null, fileType);
+  };
+  
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    handleFile(event.dataTransfer.files?.[0] || null, 'cv');
   };
 
   const handleDropAreaClick = () => {
@@ -83,7 +103,12 @@ export default function UploadCVCard({ onContinue, isParsing: isProcessing, dict
         />
         <div 
           onClick={handleDropAreaClick}
-          className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl py-16 text-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-300 cursor-pointer flex flex-col items-center justify-center"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={cn("border-2 border-dashed rounded-xl py-16 text-center hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors duration-300 cursor-pointer flex flex-col items-center justify-center", 
+            isDragging ? "border-primary bg-primary/10" : "border-gray-300 dark:border-gray-700"
+          )}
         >
           <UploadCloud className="w-10 h-10 text-gray-400 mb-4" />
           {cvFile ? (
