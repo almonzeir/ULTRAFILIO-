@@ -6,15 +6,8 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
-import { useEffect, useState, useRef } from 'react';
-
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation } from 'swiper/modules';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function Testimonials() {
   const { language } = useLanguage();
@@ -60,72 +53,56 @@ export default function Testimonials() {
       title: dict.testimonial3.title,
       avatarId: 'testimonial-avatar-3',
     },
-    {
-      quote: dict.testimonial4.quote,
-      name: 'Kenji T.',
-      title: dict.testimonial4.title,
-      avatarId: 'testimonial-avatar-4',
-    },
-    {
-      quote: dict.testimonial5.quote,
-      name: 'Maria G.',
-      title: dict.testimonial5.title,
-      avatarId: 'testimonial-avatar-5',
-    },
-    {
-      quote: dict.testimonial6.quote,
-      name: 'David L.',
-      title: dict.testimonial6.title,
-      avatarId: 'testimonial-avatar-6',
-    },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        ease: 'easeOut',
+      },
+    },
+  };
+
   return (
-    <section className="py-24 sm:py-32 bg-foreground text-background dark:bg-white dark:text-black">
+    <motion.section
+      className="py-24 sm:py-32 bg-foreground text-background dark:bg-white dark:text-black"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      variants={containerVariants}
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
+        <motion.div className="mx-auto max-w-2xl text-center" variants={itemVariants}>
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">{dict.title}</h2>
           <p className="mt-6 text-lg leading-8 text-muted-foreground dark:text-gray-600">
             {dict.subtitle}
           </p>
-        </div>
+        </motion.div>
 
-        <Swiper
-          key={language} // Re-initialize on language change to apply direction
-          dir={language === 'ar' ? 'rtl' : 'ltr'}
-          modules={[Autoplay, Navigation]}
-          autoHeight={true} // Let Swiper manage the container height
-          spaceBetween={30}
-          slidesPerView={1}
-          loop={true}
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: true,
-          }}
-          breakpoints={{
-            640: {
-              slidesPerView: 1,
-              spaceBetween: 20,
-            },
-            768: {
-              slidesPerView: 2,
-              spaceBetween: 30,
-            },
-            1024: {
-              slidesPerView: 3,
-              spaceBetween: 40,
-            },
-          }}
-          className="w-full mt-16"
+        <motion.div
+          className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+          variants={containerVariants}
         >
           {testimonialsData.map((testimonial, index) => {
             const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
             return (
-              <SwiperSlide key={index} className="h-full">
-                {/* The card is now a flex container that fills the slide's height */}
+              <motion.div key={index} variants={itemVariants}>
                 <Card className="h-full flex flex-col">
                   <CardContent className="flex flex-col flex-grow p-6 text-left rtl:text-right">
-                    {/* The blockquote will grow to push the figcaption to the bottom */}
                     <blockquote className="flex-grow text-lg leading-7 tracking-tight text-card-foreground">
                       <p>“{testimonial.quote}”</p>
                     </blockquote>
@@ -147,11 +124,11 @@ export default function Testimonials() {
                     </figcaption>
                   </CardContent>
                 </Card>
-              </SwiperSlide>
+              </motion.div>
             );
           })}
-        </Swiper>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
