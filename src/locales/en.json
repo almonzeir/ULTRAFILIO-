@@ -259,5 +259,17 @@
     "successMessage": "Password reset email sent! Please check your inbox.",
     "rememberPassword": "Remember your password?",
     "loginLink": "Login"
+  },
+  "chooseTemplatePage": {
+    "title": "Choose a Template",
+    "subtitle": "Select a design for your portfolio. You can customize colors later.",
+    "modernTitle": "Modern Template",
+    "modernDesc": "Sleek and stylish layout with bold typography and smooth spacing.",
+    "minimalistTitle": "Minimalist Template",
+    "minimalistDesc": "Clean and simple, focusing purely on your content.",
+    "basicTitle": "Basic Template",
+    "basicDesc": "A straightforward, classic resume-style layout.",
+    "generateButton": "Generate My Portfolio",
+    "backButton": "Back"
   }
 }
