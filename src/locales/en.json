@@ -168,6 +168,8 @@
         "email": "Email",
         "phone": "Phone",
         "website": "Website / Portfolio",
+        "linkedin": "LinkedIn URL",
+        "github": "GitHub URL",
         "profilePicture": "Profile Picture (Optional)",
         "nextButton": "Next Step → Experience"
       },
@@ -237,7 +239,9 @@
     "orContinueWith": "Or continue with",
     "googleButton": "Login with Google",
     "noAccount": "Don't have an account?",
-    "signupLink": "Sign up"
+    "signupLink": "Sign up",
+    "verificationSent": "Verification email sent! Please check your inbox and click the link to verify your account before logging in.",
+    "verifyEmailError": "Please verify your email before logging in. A new verification email has been sent."
   },
   "signupPage": {
     "title": "Sign Up",

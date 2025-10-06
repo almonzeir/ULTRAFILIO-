@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,6 +19,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   updateProfile,
+  sendEmailVerification,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import Header from '@/components/layout/header';
@@ -58,12 +59,17 @@ export default function SignupForm() {
       );
       const user = userCredential.user;
       await updateProfile(user, { displayName });
+      
+      await sendEmailVerification(user);
+
       await setDoc(doc(firestore, 'users', user.uid), {
         displayName,
         email: user.email,
         photoURL: user.photoURL,
       });
-      router.push('/create');
+
+      router.push('/login?message=verification-sent');
+
     } catch (error: any) {
       setError(error.message);
     }

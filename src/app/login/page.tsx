@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,13 +24,16 @@ import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const { auth, user } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['loginPage'] | null>(null);
 
@@ -48,13 +51,25 @@ export default function LoginForm() {
     }
   }, [user, router]);
 
+  useEffect(() => {
+    const verificationMessage = searchParams.get('message');
+    if (verificationMessage === 'verification-sent' && dict) {
+      setMessage(dict.verificationSent);
+    }
+  }, [searchParams, dict]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     if (!auth) return;
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      if (!userCredential.user.emailVerified) {
+        setError(dict?.verifyEmailError || "Please verify your email before logging in.");
+        await auth.signOut(); // Sign out user until they are verified
+        return;
+      }
       router.push('/create');
     } catch (error: any) {
       setError(error.message);
@@ -92,6 +107,13 @@ export default function LoginForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {message && (
+              <Alert className="mb-4 bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700">
+                <AlertDescription className="text-green-800 dark:text-green-200">
+                  {message}
+                </AlertDescription>
+              </Alert>
+            )}
             <form onSubmit={handleEmailLogin}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
