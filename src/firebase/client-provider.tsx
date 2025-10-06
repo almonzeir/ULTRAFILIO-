@@ -1,17 +1,19 @@
 'use client';
 
-import { initializeFirebase } from '.';
+// This file is now deprecated and no longer needed due to the new singleton pattern.
+// Its functionality is handled by the direct imports in `src/firebase/index.ts`.
+// You may remove this file from your project.
+import { firebaseApp, firestore, auth } from '.';
 import { FirebaseProvider } from './provider';
 
-// This provider is intended to be used in the root layout of the app.
-// It ensures that Firebase is initialized only once on the client.
+/**
+ * @deprecated This provider is no longer necessary. Firebase is initialized via a singleton in src/firebase/index.ts.
+ */
 export function FirebaseClientProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { firebaseApp, firestore, auth } = initializeFirebase();
-
   return (
     <FirebaseProvider
       firebaseApp={firebaseApp}

@@ -2,26 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import type { User } from 'firebase/auth';
-import { useAuth } from '../provider';
-import type { Auth } from 'firebase/auth';
+// Import the singleton auth instance directly.
+import { auth } from '@/firebase';
 
 export function useUser() {
-  const auth = useAuth();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
+    // The auth object is stable and imported directly.
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [auth]);
+  }, []); // The dependency array is now empty because 'auth' is a stable module import.
 
+  // We still return the auth object for convenience in components.
   return { user, auth, loading };
 }

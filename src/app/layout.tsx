@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from '@/components/theme-provider';
 import { LanguageProvider } from '@/context/language-context';
 import './globals.css';
-import { FirebaseClientProvider } from '@/firebase/client-provider';
+// FirebaseClientProvider is no longer needed at the root.
+// The new singleton pattern handles initialization.
 
 export const metadata: Metadata = {
   title: 'UltraFolio',
@@ -30,9 +31,8 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <FirebaseClientProvider>
-              {children}
-            </FirebaseClientProvider>
+            {/* FirebaseClientProvider is removed from here */}
+            {children}
             <Toaster />
           </ThemeProvider>
         </LanguageProvider>

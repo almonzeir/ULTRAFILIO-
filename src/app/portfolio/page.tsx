@@ -37,7 +37,7 @@ export default function PortfolioPage() {
           title: 'Portfolio Data Not Found',
           description: 'Please create your portfolio first.',
         });
-        router.push('/upload-cv'); // Redirect to upload-cv
+        router.push('/create'); // Redirect to create page
         return;
       }
 
@@ -54,7 +54,7 @@ export default function PortfolioPage() {
         title: 'Error Loading Data',
         description: 'There was a problem loading your portfolio. Please try creating it again.',
       });
-      router.push('/upload-cv'); // Redirect to upload-cv
+      router.push('/create'); // Redirect to create page
       return;
     }
     setLoading(false);
