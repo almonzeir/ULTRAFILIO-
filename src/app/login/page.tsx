@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/firebase';
+import { useUser } from '@/firebase';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -25,7 +25,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const auth = useAuth();
+  const { auth } = useUser();
   const router = useRouter();
 
   const handleEmailLogin = async (e: React.FormEvent) => {

@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, useFirestore } from '@/firebase';
+import { useFirestore, useUser } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -28,7 +28,7 @@ export default function SignupForm() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const auth = useAuth();
+  const { auth } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
 
