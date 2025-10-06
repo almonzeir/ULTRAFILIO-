@@ -113,22 +113,17 @@ export default function ChooseTemplatePage() {
           <div className="flex items-center justify-center gap-4 mt-16">
             <Button
               variant="outline"
-              onClick={() => router.push('/create')}
+              onClick={() => router.back()}
             >
               <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
               <span className="mx-2">{dict.backButton}</span>
             </Button>
-            <button
+            <Button
               onClick={handleContinue}
               disabled={!selected}
-              className={`px-8 py-3 rounded-xl text-white font-semibold transition ${
-                selected
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 hover:scale-105'
-                  : 'bg-gray-300 dark:bg-gray-700 cursor-not-allowed'
-              }`}
             >
               {dict.generateButton} →
-            </button>
+            </Button>
           </div>
         </div>
       </main>
