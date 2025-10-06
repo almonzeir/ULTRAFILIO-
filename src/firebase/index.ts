@@ -10,9 +10,10 @@ import { useCollection } from './firestore/use-collection';
 import { useDoc } from './firestore/use-doc';
 import { useUser } from './auth/use-user';
 
-let db: Firestore;
-let storage: FirebaseStorage;
+let firebaseApp: FirebaseApp;
 let auth: Auth;
+let firestore: Firestore;
+let storage: FirebaseStorage;
 
 export function initializeFirebase(): {
   firebaseApp: FirebaseApp;
@@ -20,18 +21,28 @@ export function initializeFirebase(): {
   auth: Auth;
   storage: FirebaseStorage;
 } {
-  const firebaseApp = !getApps().length
-    ? initializeApp(firebaseConfig)
-    : getApp();
-  db = getFirestore(firebaseApp);
-  auth = getAuth(firebaseApp);
-  storage = getStorage(firebaseApp); // Initialize Firebase Storage
+  if (!getApps().length) {
+    firebaseApp = initializeApp(firebaseConfig);
+    auth = getAuth(firebaseApp);
+    firestore = getFirestore(firebaseApp);
+    storage = getStorage(firebaseApp);
+  } else {
+    firebaseApp = getApp();
+    auth = getAuth(firebaseApp);
+    firestore = getFirestore(firebaseApp);
+    storage = getStorage(firebaseApp);
+  }
 
-  return { firebaseApp, firestore: db, auth, storage };
+  return { firebaseApp, firestore, auth, storage };
 }
 
-// Export db, storage, and auth directly
-export { db, storage, auth };
+// Export db, storage, and auth as direct exports for legacy usage if any
+const {
+  firestore: db,
+  storage: appStorage,
+  auth: appAuth,
+} = initializeFirebase();
+export { db, appStorage as storage, appAuth as auth };
 
 export * from './provider';
 export { FirebaseProvider, useCollection, useDoc, useUser };
