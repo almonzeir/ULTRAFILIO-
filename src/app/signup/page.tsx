@@ -49,7 +49,7 @@ export default function SignupForm() {
         email: user.email,
         photoURL: user.photoURL,
       });
-      router.push('/');
+      router.push('/create');
     } catch (error: any) {
       setError(error.message);
     }
@@ -70,7 +70,7 @@ export default function SignupForm() {
         },
         { merge: true }
       );
-      router.push('/');
+      router.push('/create');
     } catch (error: any) {
       setError(error.message);
     }

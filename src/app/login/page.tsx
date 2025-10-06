@@ -34,7 +34,7 @@ export default function LoginForm() {
     if (!auth) return;
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.push('/');
+      router.push('/create');
     } catch (error: any) {
       setError(error.message);
     }
@@ -45,7 +45,7 @@ export default function LoginForm() {
     const provider = new GoogleAuthProvider();
     try {
       await signInWithPopup(auth, provider);
-      router.push('/');
+      router.push('/create');
     } catch (error: any) {
       setError(error.message);
     }
