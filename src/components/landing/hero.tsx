@@ -73,7 +73,7 @@ export default function Hero() {
             className="mt-10 flex items-center justify-center gap-x-6"
             variants={itemVariants}
           >
-            <Link href="/create">
+            <Link href="/signup">
               <Button size="lg" className="btn-special">
                 <Rocket className="mr-2 h-5 w-5" />
                 {dict.ctaFree}
