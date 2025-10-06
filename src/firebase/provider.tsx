@@ -40,6 +40,24 @@ export function FirebaseProvider({
 
 // These hooks will now return the stable, singleton instances.
 export const useFirebase = () => useContext(FirebaseContext);
-export const useFirebaseApp = () => useContext(FirebaseContext).firebaseApp;
-export const useFirestore = () => useContext(FirebaseContext).firestore;
-export const useAuth = () => useContext(FirebaseContext).auth;
+export const useFirebaseApp = () => {
+    const context = useContext(FirebaseContext);
+    if (!context) {
+        throw new Error('useFirebaseApp must be used within a FirebaseProvider');
+    }
+    return context.firebaseApp;
+}
+export const useFirestore = () => {
+    const context = useContext(FirebaseContext);
+    if (!context) {
+        throw new Error('useFirestore must be used within a FirebaseProvider');
+    }
+    return context.firestore;
+};
+export const useAuth = () => {
+    const context = useContext(FirebaseContext);
+    if (!context) {
+        throw new Error('useAuth must be used within a FirebaseProvider');
+    }
+    return context.auth;
+};

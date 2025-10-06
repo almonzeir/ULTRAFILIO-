@@ -35,4 +35,3 @@ export const appStorage = storage;
 export * from './auth/use-user';
 export * from './firestore/use-collection';
 export * from './firestore/use-doc';
-export * from './provider'; // Keep provider exports for any components that might still use them temporarily, though they are now deprecated.
