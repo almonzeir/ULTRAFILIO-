@@ -208,6 +208,11 @@
   .hero-mask {
     pointer-events:none; position:absolute; inset:0; -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%); mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
   }
+
+  /* Swiper equal height fix */
+  .h-full .swiper-wrapper {
+      display: flex;
+  }
 }
 
 @layer utilities {
