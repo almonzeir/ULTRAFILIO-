@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, PlusCircle, Trash2 } from 'lucide-react';
 import type { Dictionary } from '@/lib/dictionaries';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 // Zod Schema for validation
 const experienceSchema = z.object({
@@ -34,6 +35,18 @@ const projectSchema = z.object({
   link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 });
 
+const certificateSchema = z.object({
+    name: z.string().min(1, 'Certificate name is required'),
+    organization: z.string().optional(),
+    year: z.string().optional(),
+});
+
+const languageSchema = z.object({
+    language: z.string().min(1, 'Language is required'),
+    proficiency: z.string().min(1, 'Proficiency is required'),
+});
+
+
 const formSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
   professionalTitle: z.string().min(2, 'Title is required'),
@@ -48,6 +61,8 @@ const formSchema = z.object({
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
   projects: z.array(projectSchema),
+  certifications: z.array(certificateSchema),
+  languages: z.array(languageSchema),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -84,6 +99,8 @@ export default function ManualForm({
       experience: [{ jobTitle: '', company: '', startDate: '', endDate: '', description: '' }],
       education: [{ degree: '', institution: '', startYear: '', endYear: '' }],
       projects: [{ title: '', description: '', technologies: '', link: '' }],
+      certifications: [{ name: '', organization: '', year: ''}],
+      languages: [{ language: '', proficiency: 'Intermediate'}]
     },
   });
 
@@ -102,6 +119,17 @@ export default function ManualForm({
     append: appendProject,
     remove: removeProject,
   } = useFieldArray({ control, name: 'projects' });
+  const {
+      fields: certificationFields,
+      append: appendCertification,
+      remove: removeCertification,
+  } = useFieldArray({ control, name: 'certifications' });
+  const {
+      fields: languageFields,
+      append: appendLanguage,
+      remove: removeLanguage,
+  } = useFieldArray({ control, name: 'languages' });
+
 
   const nextStep = async () => {
     const fieldsToValidate: (keyof FormData)[] =
@@ -260,6 +288,42 @@ export default function ManualForm({
                         <PlusCircle className="mr-2 h-4 w-4"/> Add Project
                     </Button>
                 </div>
+
+                {/* Certifications */}
+                <div className="mb-8">
+                    <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
+                    {certificationFields.map((field, index) => (
+                        <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
+                            <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
+                            <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
+                            <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
+                            <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                                <Trash2 className="h-4 w-4"/>
+                            </Button>
+                        </div>
+                    ))}
+                    <Button type="button" variant="outline" onClick={() => appendCertification({ name: '', organization: '', year: '' })}>
+                        <PlusCircle className="mr-2 h-4 w-4"/> Add Certification
+                    </Button>
+                </div>
+
+                {/* Languages */}
+                <div className="mb-8">
+                    <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
+                    {languageFields.map((field, index) => (
+                        <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                            <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
+                             <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
+                            <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                                <Trash2 className="h-4 w-4"/>
+                            </Button>
+                        </div>
+                    ))}
+                    <Button type="button" variant="outline" onClick={() => appendLanguage({ language: '', proficiency: 'Intermediate' })}>
+                        <PlusCircle className="mr-2 h-4 w-4"/> Add Language
+                    </Button>
+                </div>
+
 
                 <div className="mt-10 flex justify-between">
                     <Button onClick={prevStep} type="button" variant="outline">{dict.step3.backButton}</Button>

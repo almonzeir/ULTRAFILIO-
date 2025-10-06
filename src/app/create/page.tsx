@@ -104,6 +104,8 @@ export default function CreatePortfolioPage() {
         tags: proj.technologies ? proj.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
         detailsURL: proj.link || '#',
       })).filter((proj: any) => proj.name),
+      certifications: formData.certifications.map((cert: any) => `${cert.name}${cert.organization ? ` - ${cert.organization}` : ''}${cert.year ? ` (${cert.year})` : ''}`).filter(Boolean),
+      languages: formData.languages.map((lang: any) => ({ name: lang.language, level: lang.proficiency })).filter((lang: any) => lang.name),
     };
     
     try {

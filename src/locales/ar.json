@@ -215,6 +215,7 @@
           "title": "اللغات (اختياري)",
           "language": "اللغة",
           "proficiency": {
+            "level": "مستوى الإتقان",
             "beginner": "مبتدئ",
             "intermediate": "متوسط",
             "advanced": "متقدم",

@@ -215,6 +215,7 @@
           "title": "Languages (Optional)",
           "language": "Language",
           "proficiency": {
+            "level": "Proficiency Level",
             "beginner": "Beginner",
             "intermediate": "Intermediate",
             "advanced": "Advanced",
