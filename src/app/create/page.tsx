@@ -6,6 +6,10 @@ import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/firebase';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
 
 // Define UploadMeta type based on the prompt
 interface UploadMeta {
@@ -15,11 +19,32 @@ interface UploadMeta {
   fileSizeBytes: number;
 }
 
+const AuthPrompt = () => (
+  <section className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-black dark:to-gray-900 text-gray-900 dark:text-white px-6 py-20 flex items-center justify-center">
+    <div className="max-w-md mx-auto text-center p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
+      <h1 className="text-3xl font-bold font-display tracking-tight mb-4">Create an Account</h1>
+      <p className="text-gray-600 dark:text-gray-400 mb-8">
+        To start building your portfolio, please log in or create an account first. This ensures your work is saved and secure.
+      </p>
+      <div className="flex justify-center gap-4">
+        <Button asChild>
+          <Link href="/login">Login</Link>
+        </Button>
+        <Button asChild variant="outline">
+          <Link href="/signup">Sign Up</Link>
+        </Button>
+      </div>
+    </div>
+  </section>
+);
+
+
 export default function CreatePortfolioPage() {
   const [showManualForm, setShowManualForm] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { user, loading } = useUser();
 
   const handleManualFormSubmit = (formData: any) => {
     const portfolioData: PortfolioData = {
@@ -132,6 +157,18 @@ export default function CreatePortfolioPage() {
       setIsProcessing(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPrompt />;
+  }
 
   if (showManualForm) {
     return <ManualForm onSubmit={handleManualFormSubmit} />;
