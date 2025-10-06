@@ -225,5 +225,38 @@
         "submitButton": "Generate My Portfolio"
       }
     }
+  },
+  "loginPage": {
+    "title": "Login",
+    "description": "Enter your email below to login to your account",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Login",
+    "orContinueWith": "Or continue with",
+    "googleButton": "Login with Google",
+    "noAccount": "Don't have an account?",
+    "signupLink": "Sign up"
+  },
+  "signupPage": {
+    "title": "Sign Up",
+    "description": "Enter your information to create an account",
+    "displayName": "Display Name",
+    "email": "Email",
+    "password": "Password",
+    "createButton": "Create an account",
+    "orContinueWith": "Or continue with",
+    "googleButton": "Sign up with Google",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Login"
+  },
+  "forgotPasswordPage": {
+    "title": "Forgot Password",
+    "description": "Enter your email and we'll send you a link to reset your password.",
+    "email": "Email",
+    "sendButton": "Send Reset Link",
+    "successMessage": "Password reset email sent! Please check your inbox.",
+    "rememberPassword": "Remember your password?",
+    "loginLink": "Login"
   }
 }

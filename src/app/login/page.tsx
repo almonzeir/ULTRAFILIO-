@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -20,13 +20,34 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import Header from '@/components/layout/header';
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { auth } = useUser();
+  const { auth, user } = useUser();
   const router = useRouter();
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['loginPage'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.loginPage);
+    };
+    fetchDictionary();
+  }, [language]);
+
+  useEffect(() => {
+    if (user) {
+      router.push('/create');
+    }
+  }, [user, router]);
+
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,22 +72,30 @@ export default function LoginForm() {
     }
   };
 
+  if (!dict) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow flex items-center justify-center">
         <Card className="mx-auto max-w-sm w-full">
           <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
+            <CardTitle className="text-2xl">{dict.title}</CardTitle>
             <CardDescription>
-              Enter your email below to login to your account
+              {dict.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleEmailLogin}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{dict.email}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -78,12 +107,12 @@ export default function LoginForm() {
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">{dict.password}</Label>
                     <Link
                       href="/forgot-password"
                       className="ml-auto inline-block text-sm underline"
                     >
-                      Forgot your password?
+                      {dict.forgotPassword}
                     </Link>
                   </div>
                   <Input
@@ -96,7 +125,7 @@ export default function LoginForm() {
                 </div>
                 {error && <p className="text-destructive text-sm">{error}</p>}
                 <Button type="submit" className="w-full">
-                  Login
+                  {dict.loginButton}
                 </Button>
               </div>
             </form>
@@ -106,7 +135,7 @@ export default function LoginForm() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
+                  {dict.orContinueWith}
                 </span>
               </div>
             </div>
@@ -115,12 +144,12 @@ export default function LoginForm() {
               className="w-full"
               onClick={handleGoogleLogin}
             >
-              Login with Google
+              {dict.googleButton}
             </Button>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
+              {dict.noAccount}{' '}
               <Link href="/signup" className="underline">
-                Sign up
+                {dict.signupLink}
               </Link>
             </div>
           </CardContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -22,6 +22,11 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import Header from '@/components/layout/header';
+import { useLanguage } from '@/context/language-context';
+import { getDictionary } from '@/lib/dictionaries';
+import type { Dictionary } from '@/lib/dictionaries';
+import { Loader2 } from 'lucide-react';
+
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
@@ -31,6 +36,16 @@ export default function SignupForm() {
   const { auth } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const { language } = useLanguage();
+  const [dict, setDict] = useState<Dictionary['signupPage'] | null>(null);
+
+  useEffect(() => {
+    const fetchDictionary = async () => {
+      const dictionary = await getDictionary(language);
+      setDict(dictionary.signupPage);
+    };
+    fetchDictionary();
+  }, [language]);
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,22 +91,30 @@ export default function SignupForm() {
     }
   };
 
+  if (!dict) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Header />
       <main className="flex-grow flex items-center justify-center">
         <Card className="mx-auto max-w-sm w-full">
           <CardHeader>
-            <CardTitle className="text-2xl">Sign Up</CardTitle>
+            <CardTitle className="text-2xl">{dict.title}</CardTitle>
             <CardDescription>
-              Enter your information to create an account
+              {dict.description}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleEmailSignup}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="display-name">Display Name</Label>
+                  <Label htmlFor="display-name">{dict.displayName}</Label>
                   <Input
                     id="display-name"
                     type="text"
@@ -102,7 +125,7 @@ export default function SignupForm() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{dict.email}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -113,7 +136,7 @@ export default function SignupForm() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{dict.password}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -124,7 +147,7 @@ export default function SignupForm() {
                 </div>
                 {error && <p className="text-destructive text-sm">{error}</p>}
                 <Button type="submit" className="w-full">
-                  Create an account
+                  {dict.createButton}
                 </Button>
               </div>
             </form>
@@ -134,7 +157,7 @@ export default function SignupForm() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
+                  {dict.orContinueWith}
                 </span>
               </div>
             </div>
@@ -143,12 +166,12 @@ export default function SignupForm() {
               className="w-full"
               onClick={handleGoogleSignup}
             >
-              Sign up with Google
+              {dict.googleButton}
             </Button>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{' '}
+              {dict.hasAccount}{' '}
               <Link href="/login" className="underline">
-                Login
+                {dict.loginLink}
               </Link>
             </div>
           </CardContent>
