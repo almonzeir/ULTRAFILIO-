@@ -2,7 +2,8 @@
 'use client';
 
 import * as React from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import GeneratedModernTemplate from '@/templates/GeneratedModernTemplate';
 import MinimalistTemplate from '@/templates/MinimalistTemplate';
 import BasicTemplate from '@/templates/BasicTemplate';
@@ -11,10 +12,18 @@ import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/firebase';
 
+const templateMap: { [key: string]: React.ComponentType<{ data: PortfolioData }> } = {
+  modern: GeneratedModernTemplate,
+  minimalist: MinimalistTemplate,
+  basic: BasicTemplate,
+};
+
 export default function PortfolioPage() {
     const { portfolioId } = useParams();
+    const searchParams = useSearchParams();
+    const templateFromUrl = searchParams.get('template');
     const [portfolioData, setPortfolioData] = React.useState<PortfolioData | null>(null);
-    const [template, setTemplate] = React.useState<string>('modern');
+    const [TemplateComponent, setTemplateComponent] = React.useState<React.ComponentType<{ data: PortfolioData }> | null>(null);
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const { toast } = useToast();
@@ -32,8 +41,6 @@ export default function PortfolioPage() {
             
             if (docSnap.exists()) {
               setPortfolioData(docSnap.data() as PortfolioData);
-              // You might want to store the template choice in the document as well
-              // For now, we'll just use the default 'modern'
             } else {
               setError('No such portfolio found!');
             }
@@ -53,11 +60,16 @@ export default function PortfolioPage() {
 
     }, [portfolioId, toast]);
 
-    const TemplateComponent = {
-        modern: GeneratedModernTemplate,
-        minimalist: MinimalistTemplate,
-        basic: BasicTemplate,
-    }[template];
+    React.useEffect(() => {
+      if (templateFromUrl) {
+        if (templateFromUrl.startsWith('AIGenerated_')) {
+          const Component = dynamic(() => import(`@/templates/generated/${templateFromUrl.replace('.tsx', '')}`), { ssr: false });
+          setTemplateComponent(() => Component);
+        } else {
+          setTemplateComponent(() => templateMap[templateFromUrl]);
+        }
+      }
+    }, [templateFromUrl]);
 
     if (loading) {
         return (

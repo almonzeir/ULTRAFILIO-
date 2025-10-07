@@ -1,7 +1,7 @@
 
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Card } from '@/components/ui/card';
 import Image from 'next/image';
@@ -31,11 +31,20 @@ const templates = [
     descKey: 'basicDesc',
     imageUrl: '/placeholders/template-basic.jpg',
   },
+  {
+    id: 'ai-generated',
+    titleKey: 'aiGeneratedTitle',
+    descKey: 'aiGeneratedDesc',
+    imageUrl: '/placeholders/template-ai.jpg',
+  },
 ];
 
 export default function ChooseTemplatePage() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const portfolioId = searchParams.get('portfolioId');
   const { toast } = useToast();
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['chooseTemplatePage'] | null>(null);
@@ -48,25 +57,50 @@ export default function ChooseTemplatePage() {
     fetchDictionary();
   }, [language]);
 
-
   useEffect(() => {
-    // Check for uploadMeta instead of cvFile
-    const uploadMeta = localStorage.getItem('uploadMeta');
-    if (!uploadMeta) {
+    if (!portfolioId) {
       toast({
         variant: 'destructive',
-        title: 'CV not found!',
-        description: 'Please upload your CV before choosing a template.',
+        title: 'Portfolio not found!',
+        description: 'Please create a portfolio first.',
       });
-      router.push('/create'); // Redirect to the consolidated upload page
+      router.push('/create');
     }
-  }, [router, toast]);
+  }, [portfolioId, router, toast]);
+
+  const handleGenerateAITemplate = async () => {
+    if (!portfolioId) return;
+    setIsGenerating(true);
+    toast({ title: 'Generating AI Template', description: 'Please wait while we create your unique design...' });
+
+    try {
+      const response = await fetch('/api/template/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ portfolioId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate AI template.');
+      }
+
+      const { templateName } = await response.json();
+      router.push(`/portfolio/${portfolioId}?template=${templateName}`);
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const handleContinue = () => {
-    if (!selected) return;
-    // Persist chosenTemplate
-    localStorage.setItem('chosenTemplate', selected);
-    router.push('/ai-building');
+    if (!selected || !portfolioId) return;
+    if (selected === 'ai-generated') {
+      handleGenerateAITemplate();
+    } else {
+      router.push(`/portfolio/${portfolioId}?template=${selected}`);
+    }
   };
 
   if (!dict) {

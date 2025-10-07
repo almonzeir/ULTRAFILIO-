@@ -9,11 +9,11 @@ import { cn } from '@/lib/utils';
 
 interface UploadCVCardProps {
     onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
-    isParsing: boolean;
+    isProcessing: boolean;
     dict: Dictionary['createPage']['uploadCard'];
 }
 
-export default function UploadCVCard({ onContinue, isParsing: isProcessing, dict }: UploadCVCardProps) {
+export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadCVCardProps) {
   const [cvFile, setCvFile] = React.useState<File | null>(null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);

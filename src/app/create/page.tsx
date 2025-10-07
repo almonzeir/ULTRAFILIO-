@@ -16,14 +16,6 @@ import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 
-// Define UploadMeta type based on the prompt
-interface UploadMeta {
-  cvFileUrl: string;
-  cvFileType: 'pdf' | 'doc' | 'docx';
-  profilePhotoURL?: string;
-  fileSizeBytes: number;
-}
-
 const AuthPrompt = ({ dict }: { dict: Dictionary['createPage']['authPrompt'] }) => (
   <section className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-black dark:to-gray-900 text-gray-900 dark:text-white px-6 py-20 flex items-center justify-center">
     <div className="max-w-md mx-auto text-center p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
@@ -109,16 +101,9 @@ export default function CreatePortfolioPage() {
     };
     
     try {
+      // This is a simplified flow for manual entry. A real app might save this to a DB too.
       localStorage.setItem('portfolioData', JSON.stringify(portfolioData));
-      localStorage.setItem('chosenTemplate', 'modern'); // Default template for manual entry
-
-      const dummyUploadMeta: UploadMeta = {
-        cvFileUrl: 'manual-entry',
-        cvFileType: 'pdf', 
-        fileSizeBytes: 0,
-      };
-      localStorage.setItem('uploadMeta', JSON.stringify(dummyUploadMeta));
-
+      localStorage.setItem('chosenTemplate', 'modern');
       router.push('/choose-template');
     } catch (e) {
       console.error('Failed to save user data to localStorage', e);
@@ -130,43 +115,51 @@ export default function CreatePortfolioPage() {
     }
   };
 
-  const handleUploadAndNavigate = async (cvFile: File, photoFile: File | null) => {
+  const handleGeneratePortfolio = async (cvFile: File, photoFile: File | null) => {
+    if (!user) {
+      toast({ variant: 'destructive', title: 'Authentication Error', description: 'You must be logged in to create a portfolio.' });
+      return;
+    }
+
     setIsProcessing(true);
     toast({
-      title: 'Processing files...',
-      description: 'Saving your files securely before the next step.',
+      title: '🚀 Starting Portfolio Generation',
+      description: 'Your CV is being analyzed by our AI. This may take a moment...',
     });
 
+    const formData = new FormData();
+    formData.append('cv', cvFile);
+    if (photoFile) {
+      formData.append('photo', photoFile);
+    }
+    formData.append('userId', user.uid);
+
     try {
-      const tempCvFileUrl = URL.createObjectURL(cvFile);
-      const tempProfilePhotoURL = photoFile ? URL.createObjectURL(photoFile) : undefined;
+      const response = await fetch('/api/portfolio/generate', {
+        method: 'POST',
+        body: formData,
+      });
 
-      const newUploadMeta: UploadMeta = {
-        cvFileUrl: tempCvFileUrl,
-        cvFileType: cvFile.name.split('.').pop() as 'pdf' | 'doc' | 'docx',
-        fileSizeBytes: cvFile.size,
-        profilePhotoURL: tempProfilePhotoURL,
-      };
-
-      // Persist to localStorage
-      localStorage.setItem('uploadMeta', JSON.stringify(newUploadMeta));
-      if (tempProfilePhotoURL) {
-        localStorage.setItem('profilePhotoURL', tempProfilePhotoURL);
-      } else {
-        localStorage.removeItem('profilePhotoURL');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate portfolio.');
       }
 
-      // Clear any old portfolio data and extracted data
-      localStorage.removeItem('portfolioData');
-      localStorage.removeItem('extracted');
+      const { portfolioId } = await response.json();
 
-      router.push('/choose-template');
-    } catch (error) {
-      console.error('File processing failed:', error);
+      toast({
+        title: '✅ Success!',
+        description: 'Your portfolio data has been generated. Now, let\'s pick a template.',
+      });
+
+      router.push(`/choose-template?portfolioId=${portfolioId}`);
+
+    } catch (error: any) {
+      console.error('Portfolio generation failed:', error);
       toast({
         variant: 'destructive',
-        title: 'Oh no! Something went wrong.',
-        description: 'Could not process your files. Please try again.',
+        title: '🚫 Oh no! Something went wrong.',
+        description: error.message || 'Could not generate your portfolio. Please try again.',
       });
     } finally {
       setIsProcessing(false);
@@ -211,7 +204,7 @@ export default function CreatePortfolioPage() {
           </div>
 
           <div className="mt-16 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <UploadCVCard onContinue={handleUploadAndNavigate} isParsing={isProcessing} dict={dict.uploadCard} />
+            <UploadCVCard onContinue={handleGeneratePortfolio} isParsing={isProcessing} dict={dict.uploadCard} />
             <div
               className="p-8 bg-gradient-to-b from-black to-gray-900 text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300 border border-gray-800 flex flex-col justify-between"
             >

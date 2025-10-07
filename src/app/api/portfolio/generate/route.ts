@@ -1,15 +1,4 @@
 
-import { NextRequest, NextResponse } from 'next/server';
-import { google } from '@ai-sdk/google';
-import { streamText } from 'ai';
-import { PortfolioData } from '@/templates/types';
-import { v4 as uuidv4 } from 'uuid';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { storage } from '@/firebase';
-
-// Allow streaming responses
-export const maxDuration = 30;
-
 const portfolioDataSchema = `
 type PortfolioData = {
   personalInfo: {
@@ -71,11 +60,13 @@ You are an expert CV to Portfolio data extractor. Your task is to parse a resume
 - Use empty arrays for unknown lists; omit null or undefined properties.
 - NEVER include commentary, markdown, or any text outside of the JSON object. Your entire output must be a single, valid JSON.
 - If a field is not present in the CV, omit it from the JSON.
-- Generate a \`portfolioNameAbbr\` from the user's initials (e.g., "Jane Doe" -> "JD").
+- Generate a 
+`portfolioNameAbbr`
+ from the user's initials (e.g., "Jane Doe" -> "JD").
 `;
 
-async function uploadFileToFirebase(file: File): Promise<string> {
-    const storageRef = ref(storage, `uploads/${uuidv4()}-${file.name}`);
+async function uploadFileToFirebase(file: File, userId: string): Promise<string> {
+    const storageRef = ref(storage, `uploads/${userId}/${uuidv4()}-${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
@@ -85,10 +76,14 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const cvFile = formData.get('cv') as File | null;
-    const photoDataUrl = formData.get('photo') as string | null;
+    const photoFile = formData.get('photo') as File | null;
+    const userId = formData.get('userId') as string | null;
 
     if (!cvFile) {
       return NextResponse.json({ error: 'No CV file provided' }, { status: 400 });
+    }
+    if (!userId) {
+      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
     // 1. Convert CV file to a data URL to pass to Gemini
@@ -126,8 +121,6 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    // For non-streaming response, we need to assemble it.
-    // In a real streaming scenario, you'd handle chunks.
     let jsonString = '';
     const reader = text.getReader();
     while (true) {
@@ -136,16 +129,12 @@ export async function POST(req: NextRequest) {
         jsonString += value;
     }
 
-
     let parsedData = JSON.parse(jsonString) as PortfolioData;
 
     // 4. Handle photo upload
     let photoURL = '';
-     if (photoDataUrl) {
-      const photoResponse = await fetch(photoDataUrl);
-      const photoBlob = await photoResponse.blob();
-      const photoFile = new File([photoBlob], "profile_photo.jpg", { type: "image/jpeg" });
-      photoURL = await uploadFileToFirebase(photoFile);
+    if (photoFile) {
+      photoURL = await uploadFileToFirebase(photoFile, userId);
     }
     
     // 5. Normalize and enrich data
@@ -160,12 +149,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // 6. Save to Firestore
+    const portfolioId = uuidv4();
+    const portfolioRef = doc(db, 'portfolios', portfolioId);
 
-    return NextResponse.json(parsedData);
+    await setDoc(portfolioRef, {
+      ...parsedData,
+      userId: userId,
+      createdAt: serverTimestamp(),
+      originalCvUrl: await uploadFileToFirebase(cvFile, userId), // Also save the original CV
+    });
+
+    return NextResponse.json({ portfolioId: portfolioId });
 
   } catch (error: any) {
-    console.error('Error parsing CV with Gemini:', error);
-    let errorMessage = 'Failed to parse CV with AI model.';
+    console.error('Error in generate portfolio route:', error);
+    let errorMessage = 'Failed to generate portfolio with AI model.';
     if (error.message.includes('API key')) {
         errorMessage = 'AI API key is not configured correctly.'
     }
