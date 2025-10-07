@@ -1,3 +1,11 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { google } from '@ai-sdk/google';
+import { streamText } from 'ai';
+import { v4 as uuidv4 } from 'uuid';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '@/firebase';
+import type { PortfolioData } from '@/templates/types';
 
 const portfolioDataSchema = `
 type PortfolioData = {
@@ -60,9 +68,7 @@ You are an expert CV to Portfolio data extractor. Your task is to parse a resume
 - Use empty arrays for unknown lists; omit null or undefined properties.
 - NEVER include commentary, markdown, or any text outside of the JSON object. Your entire output must be a single, valid JSON.
 - If a field is not present in the CV, omit it from the JSON.
-- Generate a 
-`portfolioNameAbbr`
- from the user's initials (e.g., "Jane Doe" -> "JD").
+- Generate a portfolioNameAbbr from the user's initials (e.g., "Jane Doe" -> "JD").
 `;
 
 async function uploadFileToFirebase(file: File, userId: string): Promise<string> {
