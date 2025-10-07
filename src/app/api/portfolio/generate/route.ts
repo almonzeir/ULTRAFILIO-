@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '@/firebase';
+import { adminDb, adminStorage } from '@/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import type { PortfolioData } from '@/templates/types';
 
 const portfolioDataSchema = `
@@ -72,9 +71,23 @@ You are an expert CV to Portfolio data extractor. Your task is to parse a resume
 `;
 
 async function uploadFileToFirebase(file: File, userId: string): Promise<string> {
-    const storageRef = ref(storage, `uploads/${userId}/${uuidv4()}-${file.name}`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
+    const bucket = adminStorage.bucket();
+    const filePath = `uploads/${userId}/${uuidv4()}-${file.name}`;
+    const fileRef = bucket.file(filePath);
+    
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+
+    await fileRef.save(fileBuffer, {
+        metadata: {
+            contentType: file.type,
+        },
+    });
+
+    const [downloadURL] = await fileRef.getSignedUrl({
+        action: 'read',
+        expires: '03-09-2491', // Far-future expiration date
+    });
+    
     return downloadURL;
 }
 
@@ -157,12 +170,12 @@ export async function POST(req: NextRequest) {
 
     // 6. Save to Firestore
     const portfolioId = uuidv4();
-    const portfolioRef = doc(db, 'portfolios', portfolioId);
+    const portfolioRef = adminDb.collection('portfolios').doc(portfolioId);
 
-    await setDoc(portfolioRef, {
+    await portfolioRef.set({
       ...parsedData,
       userId: userId,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       originalCvUrl: await uploadFileToFirebase(cvFile, userId), // Also save the original CV
     });
 

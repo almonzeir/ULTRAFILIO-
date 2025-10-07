@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { adminDb } from '@/lib/firebase-admin';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -35,14 +34,18 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Fetch portfolio data from Firestore
-    const docRef = doc(db, 'portfolios', portfolioId as string);
-    const docSnap = await getDoc(docRef);
+    const docRef = adminDb.collection('portfolios').doc(portfolioId as string);
+    const docSnap = await docRef.get();
 
-    if (!docSnap.exists()) {
+    if (!docSnap.exists) {
       return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
     const portfolioData = docSnap.data();
+
+    if (!portfolioData) {
+        return NextResponse.json({ error: 'Portfolio data is empty' }, { status: 404 });
+    }
 
     // 2. Construct the prompt for the AI
     const prompt = AI_TEMPLATE_PROMPT
