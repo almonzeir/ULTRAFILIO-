@@ -6,6 +6,7 @@ import { UploadCloud, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/dictionaries';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface UploadCVCardProps {
     onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
@@ -132,10 +133,11 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
           </div>
         </div>
       </div>
-      <button 
+      <Button 
         onClick={handleContinueClick} 
         disabled={!cvFile || isProcessing}
-        className="mt-10 w-full py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-lg rounded-full shadow-lg hover:scale-105 transform transition-transform duration-300 disabled:bg-gray-400 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        size="lg"
+        className="w-full mt-10 py-4 text-lg font-bold"
       >
         {isProcessing ? (
             <>
@@ -143,7 +145,7 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
                 {dict.processingButton}
             </>
         ) : dict.continueButton}
-      </button>
+      </Button>
     </div>
   );
 }
