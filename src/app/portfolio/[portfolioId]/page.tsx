@@ -90,8 +90,11 @@ export default function PortfolioPage() {
   React.useEffect(() => {
     if (templateFromUrl) {
       if (templateFromUrl.startsWith('AIGenerated_')) {
-        const Component = dynamic(() => import(`@/templates/generated/${templateFromUrl.replace('.tsx', '')}`), { ssr: false }) as React.ComponentType<{ data: PortfolioData }>;
-        setTemplateComponent(() => Component);
+        // FIXME: Re-enable this when we have actual generated templates and the directory is not empty
+        // const Component = dynamic(() => import(`@/templates/generated/${templateFromUrl.replace('.tsx', '')}`), { ssr: false }) as React.ComponentType<{ data: PortfolioData }>;
+        // setTemplateComponent(() => Component);
+        console.warn('AI Generated templates are currently disabled in build.');
+        setTemplateComponent(null);
       } else {
         setTemplateComponent(() => templateMap[templateFromUrl]);
       }
