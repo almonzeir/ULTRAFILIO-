@@ -1,4 +1,3 @@
-
 {
   "header": {
     "features": "Features",
@@ -14,7 +13,9 @@
     "title": "Turn Your Resume into a Stunning Portfolio",
     "subtitle": "UltraFolio instantly transforms your CV into a beautiful, professional website. No coding required.",
     "ctaFree": "Get Started for Free",
-    "ctaDemo": "Live Demo"
+    "ctaDemo": "Live Demo",
+    "badge": "New: AI-Powered Templates",
+    "tryNow": "Try Now"
   },
   "howItWorks": {
     "eyebrow": "How it works",
@@ -37,16 +38,40 @@
     "title": "Choose Your Style",
     "subtitle": "Select from our professionally designed, Apple-inspired templates.",
     "modern": {
-      "name": "Modern (Apple Noir)",
-      "description": "Bold hero, asymmetry, animated cards"
+      "name": "Modern",
+      "description": "Premium & Dynamic design with smooth animations."
+    },
+    "executive": {
+      "name": "Executive",
+      "description": "Professional & Bold design for senior professionals."
+    },
+    "creative": {
+      "name": "Creative",
+      "description": "Artistic & Unique with bold gradients."
+    },
+    "minimalPlus": {
+      "name": "Minimal Plus",
+      "description": "Clean & Elegant. Perfect for developers."
+    },
+    "generated": {
+      "name": "Futuristic",
+      "description": "Tech-Forward design with cutting-edge styling."
     },
     "minimalist": {
-      "name": "Minimalist (Apple Light)",
-      "description": "Typography-first, ultra-white canvas"
+      "name": "Minimalist",
+      "description": "Ultra Simple and distraction-free."
+    },
+    "aurora": {
+      "name": "Aurora",
+      "description": "Award-winning design with aurora backgrounds and bento grids."
+    },
+    "cyber": {
+      "name": "Cyber 3D",
+      "description": "Experimental 3D Interactive Experience."
     },
     "basic": {
-      "name": "Basic (Editorial)",
-      "description": "Clean resume-like column layout"
+      "name": "Basic",
+      "description": "Classic Resume style. Clean and professional."
     },
     "preview": "Preview"
   },
@@ -147,7 +172,7 @@
       "description": "Upload your CV and we’ll automatically generate your portfolio.",
       "dropzone": {
         "label": "Click to upload or drag & drop",
-        "hint": "PDF, DOC, DOCX (max 15MB)"
+        "hint": "PDF (max 15MB)"
       },
       "photoLabel": "Profile Picture (Recommended)",
       "continueButton": "Continue",
@@ -265,15 +290,9 @@
     "loginLink": "Login"
   },
   "chooseTemplatePage": {
-    "title": "Choose a Template",
+    "title": "Choose Your Template",
     "subtitle": "Select a design for your portfolio. You can customize colors later.",
-    "modernTitle": "Modern Template",
-    "modernDesc": "Sleek and stylish layout with bold typography and smooth spacing.",
-    "minimalistTitle": "Minimalist Template",
-    "minimalistDesc": "Clean and simple, focusing purely on your content.",
-    "basicTitle": "Basic Template",
-    "basicDesc": "A straightforward, classic resume-style layout.",
-    "generateButton": "Generate My Portfolio",
-    "backButton": "Back"
+    "backButton": "Back",
+    "continueButton": "Continue"
   }
 }

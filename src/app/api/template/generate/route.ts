@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from '@ai-sdk/google';
 import { streamText } from 'ai';
-import { adminDb } from '@/lib/firebase-admin';
+// import { adminDb } from '@/lib/firebase-admin'; // Disabled: Firebase not initialized
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -33,32 +33,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Portfolio ID is required' }, { status: 400 });
     }
 
+    // TODO: Re-implement for Supabase
+    // For now, return error to prevent build failure due to missing firebase-admin
+    return NextResponse.json({ error: 'AI Generation temporarily disabled during migration to Supabase' }, { status: 503 });
+
+    /* 
     // 1. Fetch portfolio data from Firestore
     const docRef = adminDb.collection('portfolios').doc(portfolioId as string);
-    const docSnap = await docRef.get();
-
-    if (!docSnap.exists) {
-      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
-    }
-
-    const portfolioData = docSnap.data();
-
-    if (!portfolioData) {
-        return NextResponse.json({ error: 'Portfolio data is empty' }, { status: 404 });
-    }
-
-    // 2. Construct the prompt for the AI
-    const prompt = AI_TEMPLATE_PROMPT
-      .replace('{{name}}', portfolioData.personalInfo.fullName)
-      .replace('{{title}}', portfolioData.personalInfo.title)
-      .replace('{{summary}}', portfolioData.about.extendedBio)
-      .replace('{{skills}}', JSON.stringify(portfolioData.about.skills))
-      .replace('{{experience}}', JSON.stringify(portfolioData.experience))
-      .replace('{{projects}}', JSON.stringify(portfolioData.projects))
-      .replace('{{education}}', JSON.stringify(portfolioData.education));
-
-    // 3. Call the AI model
-    const model = google('models/gemini-1.5-flash-latest');
+    // ... rest of logic
+    */
+    /*
     const { text } = await streamText({
       model: model,
       prompt: prompt,
@@ -67,9 +51,9 @@ export async function POST(req: NextRequest) {
     let componentCode = '';
     const reader = text.getReader();
     while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        componentCode += value;
+      const { done, value } = await reader.read();
+      if (done) break;
+      componentCode += value;
     }
 
     // 4. Save the generated component to a file
@@ -80,6 +64,7 @@ export async function POST(req: NextRequest) {
     await fs.writeFile(filePath, componentCode);
 
     return NextResponse.json({ templateName });
+    */
 
   } catch (error: any) {
     console.error('Error generating AI template:', error);

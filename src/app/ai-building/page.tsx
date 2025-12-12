@@ -19,7 +19,7 @@ interface UploadMeta {
   fileSizeBytes: number;
 }
 
-type BuildState = 'idle' | 'uploaded' | 'template_selected' | 'parsing' | 'mapping' | 'building' | 'ready';
+type BuildState = 'idle' | 'uploaded' | 'template_selected' | 'parsing' | 'mapping' | 'building' | 'ready' | 'error';
 
 const messages = [
   'Reading your CV…',
@@ -31,6 +31,13 @@ const messages = [
   'Final checks…',
 ];
 
+const errorMessages = [
+  'Having trouble reading your CV...',
+  'Checking file format...',
+  'Trying alternative parsing method...',
+  'Please wait...',
+];
+
 export default function AIBuildingPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -38,10 +45,16 @@ export default function AIBuildingPage() {
   const [buildState, setBuildState] = useState<BuildState>('idle');
   const [extractedData, setExtractedData] = useState<PortfolioData | null>(null);
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     const messageInterval = setInterval(() => {
-      setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
+      if (buildState === 'error') {
+        setCurrentMessageIndex((prevIndex: number) => (prevIndex + 1) % errorMessages.length);
+      } else {
+        setCurrentMessageIndex((prevIndex: number) => (prevIndex + 1) % messages.length);
+      }
     }, 2000); // Rotate messages every 2 seconds
 
     const startBuild = async () => {
@@ -68,7 +81,7 @@ export default function AIBuildingPage() {
 
       // Check if extracted data already exists in localStorage (for persistence on refresh)
       const storedExtracted = localStorage.getItem('extracted');
-      if (storedExtracted) {
+      if (storedExtracted && !isRetrying) {
         currentExtractedData = JSON.parse(storedExtracted);
         setExtractedData(currentExtractedData);
         setBuildState('mapping'); // Skip parsing if already extracted
@@ -82,11 +95,9 @@ export default function AIBuildingPage() {
           localStorage.setItem('extracted', JSON.stringify(currentExtractedData)); // Persist extracted data
         } catch (e: any) {
           console.error('Gemini parsing failed:', e);
-          toast({
-            title: 'Parsing Failed',
-            description: e.message || 'We encountered an issue reading your CV. Please try again or upload a DOCX version.',
-            variant: 'destructive',
-          });
+          setError(e.message || 'We encountered an issue reading your CV. Please try again or upload a DOCX version.');
+          setBuildState('error');
+          
           // Fallback: if PDF failed because non-extractable, prompt to upload DOCX
           if (uploadMeta.cvFileType === 'pdf') {
             toast({
@@ -95,18 +106,14 @@ export default function AIBuildingPage() {
               variant: 'destructive',
             });
           }
-          router.push('/create');
+          // Don't redirect immediately, allow user to retry
           return;
         }
       }
 
       if (!currentExtractedData) {
-        toast({
-          variant: 'destructive',
-          title: 'Extraction Error',
-          description: 'Could not extract data from your CV.',
-        });
-        router.push('/create');
+        setError('Could not extract data from your CV.');
+        setBuildState('error');
         return;
       }
 
@@ -131,18 +138,56 @@ export default function AIBuildingPage() {
     return () => {
       clearInterval(messageInterval);
     };
-  }, [router, toast]);
+  }, [router, toast, isRetrying]);
+
+  const handleRetry = () => {
+    setIsRetrying(true);
+    setError(null);
+    setBuildState('parsing');
+  };
+
+  const handleCancel = () => {
+    router.push('/create');
+  };
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white font-inter">
       <div className="animate-spin mb-8 border-4 border-t-transparent border-white rounded-full w-16 h-16"></div>
-      <h1 className="text-3xl font-bold mb-6">Preparing your portfolio...</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {buildState === 'error' ? 'Having Trouble...' : 'Preparing your portfolio...'}
+      </h1>
       <div className="text-center space-y-2 opacity-80" style={{ height: '50px' }}>
         <p className="text-sm transition-opacity duration-500 opacity-100">
-          {messages[currentMessageIndex]}
+          {buildState === 'error' 
+            ? errorMessages[currentMessageIndex] 
+            : messages[currentMessageIndex]}
         </p>
       </div>
-      <p className="mt-8 text-xs text-gray-400">This usually takes 10–30 seconds depending on document size.</p>
+      {buildState === 'error' && (
+        <div className="mt-6 text-center">
+          <p className="text-red-400 mb-4">{error}</p>
+          <div className="flex gap-4">
+            <button 
+              onClick={handleRetry}
+              className="px-4 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
+              disabled={isRetrying}
+            >
+              {isRetrying ? 'Retrying...' : 'Try Again'}
+            </button>
+            <button 
+              onClick={handleCancel}
+              className="px-4 py-2 bg-transparent text-white border border-white rounded-md font-medium hover:bg-white/10 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+      <p className="mt-8 text-xs text-gray-400">
+        {buildState === 'error' 
+          ? 'Need help? Contact support.' 
+          : 'This usually takes 10–30 seconds depending on document size.'}
+      </p>
     </main>
   );
 }

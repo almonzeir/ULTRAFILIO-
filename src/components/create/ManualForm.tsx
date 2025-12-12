@@ -12,51 +12,53 @@ import { ArrowLeft, PlusCircle, Trash2 } from 'lucide-react';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-// Zod Schema for validation
+// Zod Schema for validation - RELAXED for easier user experience
+// Only name and email are truly required, everything else is optional!
 const experienceSchema = z.object({
-  jobTitle: z.string().min(1, 'Job title is required'),
-  company: z.string().min(1, 'Company is required'),
+  jobTitle: z.string().optional(),
+  company: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   description: z.string().optional(),
 });
 
 const educationSchema = z.object({
-  degree: z.string().min(1, 'Degree is required'),
-  institution: z.string().min(1, 'Institution is required'),
+  degree: z.string().optional(),
+  institution: z.string().optional(),
   startYear: z.string().optional(),
   endYear: z.string().optional(),
 });
 
 const projectSchema = z.object({
-  title: z.string().min(1, 'Project title is required'),
+  title: z.string().optional(),
   description: z.string().optional(),
   technologies: z.string().optional(),
-  link: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  link: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 const certificateSchema = z.object({
-    name: z.string().min(1, 'Certificate name is required'),
-    organization: z.string().optional(),
-    year: z.string().optional(),
+  name: z.string().optional(),
+  organization: z.string().optional(),
+  year: z.string().optional(),
 });
 
 const languageSchema = z.object({
-    language: z.string().min(1, 'Language is required'),
-    proficiency: z.string().min(1, 'Proficiency is required'),
+  language: z.string().optional(),
+  proficiency: z.string().optional(),
 });
 
-
+// MAIN FORM: Only name and email are required!
 const formSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
-  professionalTitle: z.string().min(2, 'Title is required'),
-  summary: z.string().max(250, 'Summary must be 250 characters or less').optional(),
+  professionalTitle: z.string().optional(), // Optional now!
+  summary: z.string().max(500).optional(),
   location: z.string().optional(),
-  email: z.string().email('Invalid email address'),
+  email: z.string().email('Invalid email address').or(z.literal('')), // Can be empty
   phone: z.string().optional(),
-  website: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  linkedin: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  github: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  // REMOVED: website field - users haven't created a portfolio yet!
+  linkedin: z.string().optional(),
+  github: z.string().optional(),
   skills: z.string().optional(),
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
@@ -80,12 +82,53 @@ export default function ManualForm({
   onSubmit: handleFormSubmit,
   onBack,
   dict,
+  initialData,
+  initialPhotoURL
 }: {
   onSubmit: (data: any) => void;
   onBack: () => void;
   dict: Dictionary['createPage']['manualForm'];
+  initialData?: Partial<FormData>;
+  initialPhotoURL?: string;
 }) {
   const [step, setStep] = React.useState(1);
+  const [photoPreview, setPhotoPreview] = React.useState<string | null>(initialPhotoURL || null);
+  const [photoFile, setPhotoFile] = React.useState<File | null>(null);
+  const [projectImages, setProjectImages] = React.useState<{ [key: number]: { file: File | null, preview: string | null } }>({});
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleProjectImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProjectImages(prev => ({
+          ...prev,
+          [index]: { file, preview: reader.result as string }
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeProjectImage = (index: number) => {
+    setProjectImages(prev => {
+      const newImages = { ...prev };
+      delete newImages[index];
+      return newImages;
+    });
+  };
 
   const {
     register,
@@ -96,11 +139,21 @@ export default function ManualForm({
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      experience: [{ jobTitle: '', company: '', startDate: '', endDate: '', description: '' }],
-      education: [{ degree: '', institution: '', startYear: '', endYear: '' }],
-      projects: [{ title: '', description: '', technologies: '', link: '' }],
-      certifications: [{ name: '', organization: '', year: ''}],
-      languages: [{ language: '', proficiency: 'Intermediate'}]
+      fullName: initialData?.fullName || '',
+      professionalTitle: initialData?.professionalTitle || '',
+      summary: initialData?.summary || '',
+      location: initialData?.location || '',
+      email: initialData?.email || '',
+      phone: initialData?.phone || '',
+      // REMOVED: website field - users create portfolio first, then get a link!
+      linkedin: initialData?.linkedin || '',
+      github: initialData?.github || '',
+      skills: initialData?.skills || '',
+      experience: initialData?.experience || [{ jobTitle: '', company: '', startDate: '', endDate: '', description: '' }],
+      education: initialData?.education || [{ degree: '', institution: '', startYear: '', endYear: '' }],
+      projects: initialData?.projects || [{ title: '', description: '', technologies: '', link: '' }],
+      certifications: initialData?.certifications || [{ name: '', organization: '', year: '' }],
+      languages: initialData?.languages || [{ language: '', proficiency: 'Intermediate' }]
     },
   });
 
@@ -120,35 +173,44 @@ export default function ManualForm({
     remove: removeProject,
   } = useFieldArray({ control, name: 'projects' });
   const {
-      fields: certificationFields,
-      append: appendCertification,
-      remove: removeCertification,
+    fields: certificationFields,
+    append: appendCertification,
+    remove: removeCertification,
   } = useFieldArray({ control, name: 'certifications' });
   const {
-      fields: languageFields,
-      append: appendLanguage,
-      remove: removeLanguage,
+    fields: languageFields,
+    append: appendLanguage,
+    remove: removeLanguage,
   } = useFieldArray({ control, name: 'languages' });
 
 
   const nextStep = async () => {
+    // Only validate required fields - name is the only truly required field!
     const fieldsToValidate: (keyof FormData)[] =
       step === 1
-        ? ['fullName', 'professionalTitle', 'email', 'website', 'linkedin', 'github']
-        : step === 2
-        ? ['experience', 'education', 'skills']
-        : [];
-    
+        ? ['fullName'] // Only name required, everything else optional
+        : []; // Other steps have no required fields
+
     const isValid = await trigger(fieldsToValidate as any);
     if (isValid) {
       setStep((s) => s + 1);
     }
   };
 
+  // Skip to final step (for users who want to rush)
+  const skipToEnd = () => {
+    setStep(3);
+  };
+
   const prevStep = () => setStep((s) => s - 1);
-  
+
   const onSubmit = (data: FormData) => {
-    handleFormSubmit(data);
+    // Include the photo file and project images in the submission
+    handleFormSubmit({
+      ...data,
+      photoFile: photoFile, // Add the photo file to the form data
+      projectImageFiles: projectImages, // Add project images
+    });
   };
 
   return (
@@ -156,17 +218,78 @@ export default function ManualForm({
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="max-w-5xl mx-auto p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
           <div className="flex items-center mb-4">
-             {step === 1 && (
-                <Button variant="ghost" size="icon" onClick={onBack} className="mr-4">
-                  <ArrowLeft className="h-6 w-6" />
-                </Button>
-              )}
+            {step === 1 && (
+              <Button variant="ghost" size="icon" onClick={onBack} className="mr-4">
+                <ArrowLeft className="h-6 w-6" />
+              </Button>
+            )}
             <ProgressBar step={step} />
           </div>
 
           {step === 1 && (
             <div>
               <h3 className="text-2xl font-semibold mb-8">{dict.step1.title}</h3>
+
+              {/* Photo Upload with Preview */}
+              <div className="mb-8 p-6 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950 dark:to-purple-950 rounded-xl border-2 border-dashed border-violet-300 dark:border-violet-700">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  {/* Preview Circle */}
+                  <div className="relative group">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 flex items-center justify-center">
+                      {photoPreview ? (
+                        <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="text-center text-gray-400">
+                          <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <p className="text-xs">No Photo</p>
+                        </div>
+                      )}
+                    </div>
+                    {photoPreview && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPhotoPreview(null);
+                          setPhotoFile(null);
+                        }}
+                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Upload Button */}
+                  <div className="flex-1 text-center md:text-left">
+                    <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                      📸 Profile Photo (Optional)
+                    </h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      Upload your photo to personalize your portfolio
+                    </p>
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all transform hover:scale-105">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <span>{photoPreview ? 'Change Photo' : 'Upload Photo'}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoChange}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                      JPG, PNG, or GIF • Max 5MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <Input {...register('fullName')} placeholder={`${dict.step1.fullName} *`} />
@@ -177,8 +300,8 @@ export default function ManualForm({
                   {errors.professionalTitle && <p className="text-red-500 text-sm mt-1">{errors.professionalTitle.message}</p>}
                 </div>
                 <div className="md:col-span-2">
-                    <Textarea {...register('summary')} placeholder={dict.step1.summary} maxLength={250} rows={4} />
-                    {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary.message}</p>}
+                  <Textarea {...register('summary')} placeholder={dict.step1.summary} maxLength={250} rows={4} />
+                  {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary.message}</p>}
                 </div>
                 <Input {...register('location')} placeholder={dict.step1.location} />
                 <div>
@@ -186,149 +309,211 @@ export default function ManualForm({
                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
                 </div>
                 <Input {...register('phone')} type="tel" placeholder={dict.step1.phone} />
+                {/* REMOVED: Website/Portfolio field - user creates portfolio first, gets link after! */}
                 <div>
-                    <Input {...register('website')} type="url" placeholder={dict.step1.website} />
-                    {errors.website && <p className="text-red-500 text-sm mt-1">{errors.website.message}</p>}
+                  <Input {...register('linkedin')} type="url" placeholder="LinkedIn" />
+                  {errors.linkedin && <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>}
                 </div>
                 <div>
-                    <Input {...register('linkedin')} type="url" placeholder="LinkedIn" />
-                    {errors.linkedin && <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>}
-                </div>
-                <div>
-                    <Input {...register('github')} type="url" placeholder="GitHub" />
-                    {errors.github && <p className="text-red-500 text-sm mt-1">{errors.github.message}</p>}
+                  <Input {...register('github')} type="url" placeholder="GitHub" />
+                  {errors.github && <p className="text-red-500 text-sm mt-1">{errors.github.message}</p>}
                 </div>
               </div>
-              <div className="mt-10 flex justify-end">
-                <Button onClick={nextStep} type="button">
-                  {dict.step1.nextButton}
-                </Button>
+              <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  💡 Only your name is required. Fill what you can, skip the rest!
+                </p>
+                <div className="flex gap-3">
+                  <Button onClick={skipToEnd} type="button" variant="ghost" className="text-gray-500">
+                    Skip to end →
+                  </Button>
+                  <Button onClick={nextStep} type="button">
+                    {dict.step1.nextButton}
+                  </Button>
+                </div>
               </div>
             </div>
           )}
 
           {step === 2 && (
-             <div>
-                <h3 className="text-2xl font-semibold mb-8">{dict.step2.title}</h3>
-                
-                {/* Experience */}
-                <div className="mb-8">
-                    <h4 className="text-xl font-semibold mb-4">{dict.step2.experience.title}</h4>
-                    {experienceFields.map((field, index) => (
-                        <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                            <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
-                            <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
-                            <Input {...register(`experience.${index}.startDate`)} placeholder={dict.step2.experience.startDate} />
-                            <Input {...register(`experience.${index}.endDate`)} placeholder={dict.step2.experience.endDate} />
-                            <Textarea {...register(`experience.${index}.description`)} placeholder={dict.step2.experience.description} className="md:col-span-2" rows={3}/>
-                            <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                                <Trash2 className="h-4 w-4"/>
-                            </Button>
-                        </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => appendExperience({ jobTitle: '', company: '', startDate: '', endDate: '', description: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4"/> Add Experience
+            <div>
+              <h3 className="text-2xl font-semibold mb-8">{dict.step2.title}</h3>
+
+              {/* Experience */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-4">{dict.step2.experience.title}</h4>
+                {experienceFields.map((field, index) => (
+                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                    <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
+                    <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
+                    <Input {...register(`experience.${index}.startDate`)} placeholder={dict.step2.experience.startDate} />
+                    <Input {...register(`experience.${index}.endDate`)} placeholder={dict.step2.experience.endDate} />
+                    <Textarea {...register(`experience.${index}.description`)} placeholder={dict.step2.experience.description} className="md:col-span-2" rows={3} />
+                    <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" onClick={() => appendExperience({ jobTitle: '', company: '', startDate: '', endDate: '', description: '' })}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
+                </Button>
+              </div>
 
-                {/* Education */}
-                <div className="mb-8">
-                    <h4 className="text-xl font-semibold mb-4">{dict.step2.education.title}</h4>
-                    {educationFields.map((field, index) => (
-                        <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                             <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
-                             <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
-                             <Input {...register(`education.${index}.startYear`)} placeholder={dict.step2.education.startYear} />
-                             <Input {...register(`education.${index}.endYear`)} placeholder={dict.step2.education.endYear} />
-                             <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                                <Trash2 className="h-4 w-4"/>
-                            </Button>
-                        </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => appendEducation({ degree: '', institution: '', startYear: '', endYear: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4"/> Add Education
+              {/* Education */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-4">{dict.step2.education.title}</h4>
+                {educationFields.map((field, index) => (
+                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                    <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
+                    <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
+                    <Input {...register(`education.${index}.startYear`)} placeholder={dict.step2.education.startYear} />
+                    <Input {...register(`education.${index}.endYear`)} placeholder={dict.step2.education.endYear} />
+                    <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" onClick={() => appendEducation({ degree: '', institution: '', startYear: '', endYear: '' })}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Education
+                </Button>
+              </div>
 
-                {/* Skills */}
-                <div>
-                    <h4 className="text-xl font-semibold mb-4">{dict.step2.skills.title}</h4>
-                    <Input {...register('skills')} placeholder={dict.step2.skills.placeholder} />
-                </div>
+              {/* Skills */}
+              <div>
+                <h4 className="text-xl font-semibold mb-4">{dict.step2.skills.title}</h4>
+                <Input {...register('skills')} placeholder={dict.step2.skills.placeholder} />
+              </div>
 
-                <div className="mt-10 flex justify-between">
-                    <Button onClick={prevStep} type="button" variant="outline">{dict.step2.backButton}</Button>
-                    <Button onClick={nextStep} type="button">{dict.step2.nextButton}</Button>
+              <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  💡 All fields are optional. Add what you have!
+                </p>
+                <div className="flex gap-3">
+                  <Button onClick={prevStep} type="button" variant="outline">{dict.step2.backButton}</Button>
+                  <Button onClick={skipToEnd} type="button" variant="ghost" className="text-gray-500">
+                    Skip to end →
+                  </Button>
+                  <Button onClick={nextStep} type="button">{dict.step2.nextButton}</Button>
                 </div>
+              </div>
             </div>
           )}
 
           {step === 3 && (
             <div>
-                 <h3 className="text-2xl font-semibold mb-8">{dict.step3.title}</h3>
+              <h3 className="text-2xl font-semibold mb-8">{dict.step3.title}</h3>
 
-                {/* Projects */}
-                <div className="mb-8">
-                    <h4 className="text-xl font-semibold mb-4">{dict.step3.projects.title}</h4>
-                    {projectFields.map((field, index) => (
-                        <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                            <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
-                             <div>
-                                <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
-                                {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
+              {/* Projects */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-4">{dict.step3.projects.title}</h4>
+                {projectFields.map((field, index) => (
+                  <div key={field.id} className="border p-4 rounded-lg mb-4 relative">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
+                      <div>
+                        <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
+                        {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
+                      </div>
+                      <Textarea {...register(`projects.${index}.description`)} placeholder={dict.step3.projects.description} className="md:col-span-2" rows={2} />
+                      <Input {...register(`projects.${index}.technologies`)} placeholder={dict.step3.projects.technologies} className="md:col-span-2" />
+
+                      {/* Project Image Upload */}
+                      <div className="md:col-span-2 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-dashed border-blue-300 dark:border-blue-700">
+                        <div className="flex items-center gap-4">
+                          {/* Image Preview */}
+                          <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                            {projectImages[index]?.preview ? (
+                              <img src={projectImages[index].preview!} alt="Project preview" className="w-full h-full object-cover" />
+                            ) : (
+                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                            )}
+                          </div>
+
+                          {/* Upload Button */}
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📸 Project Screenshot (Optional)</p>
+                            <div className="flex gap-2">
+                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                                {projectImages[index]?.preview ? 'Change' : 'Upload'}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleProjectImageChange(index, e)}
+                                  className="hidden"
+                                />
+                              </label>
+                              {projectImages[index]?.preview && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => removeProjectImage(index)}
+                                  className="text-red-500 hover:text-red-600"
+                                >
+                                  Remove
+                                </Button>
+                              )}
                             </div>
-                            <Textarea {...register(`projects.${index}.description`)} placeholder={dict.step3.projects.description} className="md:col-span-2" rows={2}/>
-                            <Input {...register(`projects.${index}.technologies`)} placeholder={dict.step3.projects.technologies} className="md:col-span-2"/>
-                            <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                                <Trash2 className="h-4 w-4"/>
-                            </Button>
+                            <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                          </div>
                         </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => appendProject({ title: '', description: '', technologies: '', link: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4"/> Add Project
+                      </div>
+                    </div>
+                    <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" onClick={() => appendProject({ title: '', description: '', technologies: '', link: '', imageUrl: '' })}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                </Button>
+              </div>
 
-                {/* Certifications */}
-                <div className="mb-8">
-                    <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
-                    {certificationFields.map((field, index) => (
-                        <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
-                            <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
-                            <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
-                            <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
-                            <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                                <Trash2 className="h-4 w-4"/>
-                            </Button>
-                        </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => appendCertification({ name: '', organization: '', year: '' })}>
-                        <PlusCircle className="mr-2 h-4 w-4"/> Add Certification
+              {/* Certifications */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
+                {certificationFields.map((field, index) => (
+                  <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
+                    <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
+                    <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
+                    <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
+                    <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" onClick={() => appendCertification({ name: '', organization: '', year: '' })}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Certification
+                </Button>
+              </div>
 
-                {/* Languages */}
-                <div className="mb-8">
-                    <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
-                    {languageFields.map((field, index) => (
-                        <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                            <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
-                             <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
-                            <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                                <Trash2 className="h-4 w-4"/>
-                            </Button>
-                        </div>
-                    ))}
-                    <Button type="button" variant="outline" onClick={() => appendLanguage({ language: '', proficiency: 'Intermediate' })}>
-                        <PlusCircle className="mr-2 h-4 w-4"/> Add Language
+              {/* Languages */}
+              <div className="mb-8">
+                <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
+                {languageFields.map((field, index) => (
+                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                    <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
+                    <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
+                    <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                </div>
+                  </div>
+                ))}
+                <Button type="button" variant="outline" onClick={() => appendLanguage({ language: '', proficiency: 'Intermediate' })}>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Language
+                </Button>
+              </div>
 
 
-                <div className="mt-10 flex justify-between">
-                    <Button onClick={prevStep} type="button" variant="outline">{dict.step3.backButton}</Button>
-                    <Button type="submit">{dict.step3.submitButton}</Button>
-                </div>
+              <div className="mt-10 flex justify-between">
+                <Button onClick={prevStep} type="button" variant="outline">{dict.step3.backButton}</Button>
+                <Button type="submit">{dict.step3.submitButton}</Button>
+              </div>
             </div>
           )}
         </div>

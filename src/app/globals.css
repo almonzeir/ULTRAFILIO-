@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -41,12 +59,18 @@
     --brand-2: var(--secondary);
 
     /* Modern Template Dark Theme */
-    --dark-bg: 220 27% 5%; /* #070C15 */
-    --card-bg: 220 27% 15%; /* #1F2533 - Made Lighter */
-    --electric-blue: 217 91% 60%; /* #3B82F6 */
-    --secondary-glow: 221 72% 43%; /* #1D4ED8 */
-    --text-light: 210 17% 90%; /* #E2E8F0 */
+    --dark-bg: 220 27% 5%;
+    /* #070C15 */
+    --card-bg: 220 27% 15%;
+    /* #1F2533 - Made Lighter */
+    --electric-blue: 217 91% 60%;
+    /* #3B82F6 */
+    --secondary-glow: 221 72% 43%;
+    /* #1D4ED8 */
+    --text-light: 210 17% 90%;
+    /* #E2E8F0 */
   }
+
   .dark {
     --background: var(--dark-bg);
     --foreground: var(--text-light);
@@ -64,14 +88,16 @@
     --accent-foreground: var(--text-light);
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 220 27% 12%; /* Darker border */
+    --border: 220 27% 12%;
+    /* Darker border */
     --input: var(--card-bg);
     --ring: var(--electric-blue);
 
     /* New Color Tokens for Dark Mode */
     --bg-0: var(--dark-bg);
     --bg-1: var(--card-bg);
-    --bg-2: var(--dark-bg); /* Using dark-bg for popover in dark mode */
+    --bg-2: var(--dark-bg);
+    /* Using dark-bg for popover in dark mode */
     --text-0: var(--text-light);
     --text-1: var(--muted-foreground);
     --stroke: var(--border);
@@ -84,30 +110,52 @@
   * {
     @apply border-[hsl(var(--stroke))];
   }
+
   body {
     @apply bg-[var(--bg-0)] text-[var(--text-0)] scroll-smooth;
     line-height: 1.6;
   }
+
   .dark body {
     background-color: hsl(var(--dark-bg));
     color: hsl(var(--text-light));
   }
+
   .font-arabic {
     font-family: 'Tajawal', sans-serif;
   }
 }
 
 @layer components {
+
   /* Custom scrollbar for webkit browsers */
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: hsl(var(--bg-1)); }
-  ::-webkit-scrollbar-thumb { background: hsl(var(--brand)); border-radius: 4px; }
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.8);
+  }
 
   /* Glowing Accent Class */
   .glowing-shadow {
     box-shadow: 0 0 10px hsla(var(--brand), 0.5), 0 0 20px hsla(var(--brand), 0.3);
     transition: all 0.3s ease-in-out;
   }
+
   .glowing-shadow:hover {
     box-shadow: 0 0 15px hsla(var(--brand), 0.7), 0 0 30px hsla(var(--brand), 0.5);
   }
@@ -118,6 +166,7 @@
     padding-bottom: 0.5rem;
     display: inline-block;
   }
+
   .section-title-wrap::after {
     content: '';
     position: absolute;
@@ -133,36 +182,38 @@
 
   /* Timeline for Experience Section */
   .timeline-item {
-      position: relative;
-      padding-left: 3rem;
-      margin-bottom: 3rem;
+    position: relative;
+    padding-left: 3rem;
+    margin-bottom: 3rem;
   }
 
   .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: 10px;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background-color: hsl(var(--bg-1));
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: hsl(var(--bg-1));
   }
 
   .timeline-dot {
-      position: absolute;
-      left: 4px;
-      top: 6px;
-      width: 14px;
-      height: 14px;
-      background-color: hsl(var(--brand));
-      border-radius: 50%;
-      z-index: 10;
-      box-shadow: 0 0 8px hsl(var(--brand));
-      border: 2px solid hsl(var(--bg-0));
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    background-color: hsl(var(--brand));
+    border-radius: 50%;
+    z-index: 10;
+    box-shadow: 0 0 8px hsl(var(--brand));
+    border: 2px solid hsl(var(--bg-0));
   }
 
   @media (min-width: 768px) {
-       .timeline-item::before { display: none; }
+    .timeline-item::before {
+      display: none;
+    }
   }
 
   .btn-special {
@@ -206,20 +257,74 @@
   }
 
   .hero-mask {
-    pointer-events:none; position:absolute; inset:0; -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%); mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
+    mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
   }
 }
 
 @layer utilities {
-    .swiper-wrapper {
-      align-items: stretch;
+  .swiper-wrapper {
+    align-items: stretch;
+  }
+
+  @keyframes pulseGlow {
+
+    0%,
+    100% {
+      opacity: 0.4;
     }
 
-    @keyframes pulseGlow {
-        0%, 100% { opacity: 0.4; }
-        50% { opacity: 0.7; }
+    50% {
+      opacity: 0.7;
     }
-    .animate-pulse-slow {
-        animation: pulseGlow 8s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseGlow 8s ease-in-out infinite;
+  }
+
+  /* Aurora template - twinkling stars */
+  @keyframes twinkle {
+
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
     }
+
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
+  .animate-twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+
+  /* Gradient animation for buttons */
+  .bg-size-200 {
+    background-size: 200% 100%;
+  }
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .animate-gradient {
+    animation: gradientShift 3s ease infinite;
+  }
 }

@@ -13,12 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useUser } from '@/firebase';
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from 'firebase/auth';
+import { supabase } from '@/lib/supabase/client';
 import Header from '@/components/layout/header';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
@@ -31,7 +26,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { auth, user } = useUser();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { language } = useLanguage();
@@ -46,44 +41,49 @@ export default function LoginForm() {
   }, [language]);
 
   useEffect(() => {
-    if (user) {
-      router.push('/create');
-    }
-  }, [user, router]);
-
-  useEffect(() => {
     const verificationMessage = searchParams.get('message');
-    if (verificationMessage === 'verification-sent' && dict) {
-      setMessage(dict.verificationSent);
+    if (verificationMessage) {
+      setMessage(verificationMessage);
     }
-  }, [searchParams, dict]);
+  }, [searchParams]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
-    if (!auth) return;
+    setLoading(true);
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      if (!userCredential.user.emailVerified) {
-        setError(dict?.verifyEmailError || "Please verify your email before logging in.");
-        await auth.signOut(); // Sign out user until they are verified
-        return;
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
       router.push('/create');
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    if (!auth) return;
-    const provider = new GoogleAuthProvider();
+    setError(null);
+    setLoading(true);
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/create');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) throw error;
     } catch (error: any) {
       setError(error.message);
+      setLoading(false);
     }
   };
 
@@ -96,86 +96,116 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen relative overflow-hidden bg-background selection:bg-neutral-200 dark:selection:bg-neutral-800">
+      {/* Monochrome Background - Subtle & Premium */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-50 dark:opacity-20 pointer-events-none" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent opacity-50" />
+
       <Header />
-      <main className="flex-grow flex items-center justify-center">
-        <Card className="mx-auto max-w-sm w-full">
-          <CardHeader>
-            <CardTitle className="text-2xl">{dict.title}</CardTitle>
-            <CardDescription>
-              {dict.description}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+
+      <main className="flex-grow flex items-center justify-center p-4 relative z-10">
+        <div className="w-full max-w-md">
+          {/* Stunning Glass Card - B&W */}
+          <div className="backdrop-blur-md bg-white/70 dark:bg-black/60 border border-neutral-200 dark:border-neutral-800 shadow-2xl rounded-3xl p-8 sm:p-10 transition-all duration-500 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-white/5">
+
+            <div className="text-center mb-10">
+              <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white mb-2">
+                {dict.title}
+              </h1>
+              <p className="text-neutral-500 dark:text-neutral-400 font-medium">{dict.description}</p>
+            </div>
+
             {message && (
-              <Alert className="mb-4 bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700">
-                <AlertDescription className="text-green-800 dark:text-green-200">
-                  {message}
-                </AlertDescription>
+              <Alert className="mb-6 bg-neutral-50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800">
+                <AlertDescription className="text-neutral-900 dark:text-neutral-200 font-medium text-center">{message}</AlertDescription>
               </Alert>
             )}
-            <form onSubmit={handleEmailLogin}>
-              <div className="grid gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">{dict.email}</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">{dict.password}</Label>
-                    <Link
-                      href="/forgot-password"
-                      className="ml-auto inline-block text-sm underline"
-                    >
-                      {dict.forgotPassword}
-                    </Link>
-                  </div>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                {error && <p className="text-destructive text-sm">{error}</p>}
-                <Button type="submit" className="w-full">
-                  {dict.loginButton}
-                </Button>
+
+            <form onSubmit={handleEmailLogin} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="ml-1 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">{dict.email}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  className="h-12 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800 focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all placeholder:text-neutral-400"
+                />
               </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="ml-1 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">{dict.password}</Label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs font-semibold text-neutral-900 dark:text-white hover:underline underline-offset-4 decoration-neutral-400"
+                  >
+                    {dict.forgotPassword}
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  className="h-12 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800 focus:ring-2 focus:ring-black dark:focus:ring-white focus:border-transparent transition-all"
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-sm font-medium text-center">
+                  {error}
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-12 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-base shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all duration-300 border border-transparent dark:hover:bg-neutral-200 hover:bg-neutral-800"
+              >
+                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : dict.loginButton}
+              </Button>
             </form>
-            <div className="relative my-4">
+
+            <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-neutral-200 dark:border-neutral-800" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
+              <div className="relative flex justify-center text-xs uppercase cursor-default">
+                <span className="bg-white/80 dark:bg-black/80 px-4 py-1 text-neutral-400 dark:text-neutral-500 font-semibold backdrop-blur-sm rounded-full border border-neutral-100 dark:border-neutral-800">
                   {dict.orContinueWith}
                 </span>
               </div>
             </div>
+
             <Button
               variant="outline"
-              className="w-full"
               onClick={handleGoogleLogin}
+              disabled={loading}
+              className="w-full h-12 rounded-xl border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-900 dark:text-white font-semibold hover:scale-[1.01] transition-all duration-300 flex items-center gap-3 shadow-sm"
             >
+              <svg className="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+              </svg>
               {dict.googleButton}
             </Button>
-            <div className="mt-4 text-center text-sm">
-              {dict.noAccount}{' '}
-              <Link href="/signup" className="underline">
+
+            <div className="mt-8 text-center text-sm">
+              <span className="text-neutral-500 dark:text-neutral-400">{dict.noAccount}{' '}</span>
+              <Link href="/signup" className="font-bold text-neutral-900 dark:text-white hover:underline underline-offset-4 decoration-2">
                 {dict.signupLink}
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
     </div>
   );

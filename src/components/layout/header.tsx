@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/sheet';
 import Link from 'next/link';
 import UserProfileButton from '../auth/user-profile-button';
-import { useUser } from '@/firebase';
+import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 
 export default function Header() {
@@ -41,9 +41,9 @@ export default function Header() {
   if (!dict) return null;
 
   const navLinks = [
-    { name: dict.features, href: '#' },
-    { name: dict.templates, href: '#' },
-    { name: dict.pricing, href: '#' },
+    { name: dict.features, href: '/#features' },
+    { name: dict.templates, href: '/demo-template' },
+    { name: dict.pricing, href: '/checkout' },
   ];
 
   const NavMenu = () => (
@@ -66,7 +66,7 @@ export default function Header() {
         <div className="mr-4 hidden md:flex">
           <Logo />
         </div>
-        
+
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -83,11 +83,11 @@ export default function Header() {
                   </Link>
                 </SheetClose>
                 {navLinks.map((link) => (
-                   <SheetClose asChild key={link.name}>
+                  <SheetClose asChild key={link.name}>
                     <Link href={link.href} className="text-muted-foreground hover:text-foreground">
                       {link.name}
                     </Link>
-                   </SheetClose>
+                  </SheetClose>
                 ))}
               </nav>
             </SheetContent>

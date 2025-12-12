@@ -5,7 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
-import { useEffect, useState }from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface Step {
@@ -69,7 +69,8 @@ export default function HowItWorks() {
   };
 
   return (
-    <motion.section 
+    <motion.section
+      id="features"
       key={language}
       className="py-24 sm:py-32 bg-background"
       initial="hidden"
@@ -88,7 +89,7 @@ export default function HowItWorks() {
           </p>
         </motion.div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-          <motion.dl 
+          <motion.dl
             className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3"
             variants={containerVariants}
           >

@@ -10,6 +10,7 @@ import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { useEffect, useState } from 'react';
+import PortfolioCarousel from './portfolio-carousel';
 
 export default function TemplateGallery() {
   const { language } = useLanguage();
@@ -26,70 +27,32 @@ export default function TemplateGallery() {
   if (!dict) return null;
 
   const templates = [
-    {
-      key: 'modern',
-      name: dict.modern.name,
-      description: dict.modern.description,
-      imageId: 'template-modern',
-    },
-    {
-      key: 'minimalist',
-      name: dict.minimalist.name,
-      description: dict.minimalist.description,
-      imageId: 'template-minimalist',
-    },
-    {
-      key: 'basic',
-      name: dict.basic.name,
-      description: dict.basic.description,
-      imageId: 'template-basic',
-    },
+    { key: 'aurora', name: dict.aurora?.name || 'Aurora', description: dict.aurora?.description || 'Award-winning design with aurora backgrounds.', image: '/templates/aurora.png', isPro: true },
+    { key: 'modern', name: dict.modern.name, description: dict.modern.description, image: '/templates/modern.png', isPro: false },
+    { key: 'executive', name: dict.executive.name, description: dict.executive.description, image: '/templates/executive.png', isPro: false },
+    { key: 'creative', name: dict.creative.name, description: dict.creative.description, image: '/templates/creative.png', isPro: false },
+    { key: 'minimalPlus', name: dict.minimalPlus.name, description: dict.minimalPlus.description, image: '/templates/minimal-plus.png', isPro: false },
+    { key: 'generated', name: dict.generated.name, description: dict.generated.description, image: '/templates/futuristic.png', isPro: false },
+    { key: 'minimalist', name: dict.minimalist.name, description: dict.minimalist.description, image: '/templates/minimalist.png', isPro: false },
+    { key: 'cyber', name: dict.cyber.name, description: dict.cyber.description, image: '/templates/cyber.png', isPro: true },
+    { key: 'basic', name: dict.basic.name, description: dict.basic.description, image: '/templates/basic.png', isPro: false },
   ];
 
   return (
-    <section className="py-24 sm:py-32 bg-black text-white dark:bg-white dark:text-black">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">{dict.title}</h2>
-          <p className="mt-6 text-lg leading-8 text-gray-400 dark:text-gray-600">
+    <section id="templates" className="py-24 sm:py-32 bg-[#0a0a0f] text-white relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 bg-gradient-to-b from-violet-900/10 via-transparent to-indigo-900/10 pointer-events-none" />
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl font-headline bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">{dict.title}</h2>
+          <p className="mt-6 text-xl leading-8 text-gray-400">
             {dict.subtitle}
           </p>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {templates.map((template) => {
-            const image = PlaceHolderImages.find(p => p.id === template.imageId);
-            return (
-              <Card key={template.key} className="group relative overflow-hidden bg-card text-card-foreground border-border/50 hover:border-primary/50 transition-all duration-300">
-                <CardContent className="p-4">
-                  <div className="overflow-hidden rounded-lg">
-                    <MacbookFrame>
-                      {image && (
-                         <Image
-                            src={image.imageUrl}
-                            alt={image.description}
-                            data-ai-hint={image.imageHint}
-                            width={1200}
-                            height={800}
-                            className="rounded-md transition-transform duration-500 group-hover:scale-105"
-                          />
-                      )}
-                    </MacbookFrame>
-                  </div>
-                  <div className="mt-4">
-                    <h3 className="font-semibold text-lg font-headline">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{template.description}</p>
-                  </div>
-                </CardContent>
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Button size="lg" variant="secondary" className="dark:text-black">
-                    <Eye className="mr-2 h-4 w-4" />
-                    {dict.preview}
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
+        <div className="mt-16">
+          <PortfolioCarousel items={templates} />
         </div>
       </div>
     </section>

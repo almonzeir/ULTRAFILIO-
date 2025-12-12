@@ -12,8 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/firebase';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { supabase } from '@/lib/supabase/client';
 import Header from '@/components/layout/header';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
@@ -24,7 +23,6 @@ export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const auth = useAuth();
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['forgotPasswordPage'] | null>(null);
 
@@ -42,13 +40,13 @@ export default function ForgotPasswordForm() {
     setMessage('');
     setError('');
 
-    if (!auth) {
-      setError('Authentication service not available.');
-      return;
-    }
-
     try {
-      await sendPasswordResetEmail(auth, email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
       setMessage(dict?.successMessage || 'Password reset email sent! Please check your inbox.');
     } catch (error: any) {
       setError(error.message);

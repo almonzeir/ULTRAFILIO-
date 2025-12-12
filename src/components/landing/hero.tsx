@@ -49,7 +49,14 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-background">
+    <section className="relative isolate overflow-hidden bg-background">
+      {/* Apple Style: Subtle Top Light Source (White/Gray) instead of Purple Blobs */}
+      <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 pointer-events-none">
+        <div
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#f3f4f6] to-[#e5e7eb] dark:from-[#333] dark:to-[#111] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+
       <div className="relative container mx-auto px-6 py-24 sm:py-32 lg:px-8">
         <motion.div
           className="mx-auto max-w-2xl text-center"
@@ -57,14 +64,21 @@ export default function Hero() {
           initial="hidden"
           animate="visible"
         >
+          <motion.div variants={itemVariants} className="mb-8 flex justify-center">
+            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-muted-foreground ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:ring-white/10 dark:hover:ring-white/20 transition-all">
+              {dict.badge} <Link href="/create" className="font-semibold text-foreground"><span className="absolute inset-0" aria-hidden="true" />{dict.tryNow} <span aria-hidden="true">&rarr;</span></Link>
+            </div>
+          </motion.div>
+
+          {/* Clean Monochrome Heading */}
           <motion.h1
-            className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl font-headline"
+            className="text-5xl font-bold tracking-tight text-foreground sm:text-7xl font-headline"
             variants={itemVariants}
           >
             {dict.title}
           </motion.h1>
           <motion.p
-            className="mt-6 text-lg leading-8 text-muted-foreground"
+            className="mt-6 text-lg leading-8 text-muted-foreground max-w-xl mx-auto"
             variants={itemVariants}
           >
             {dict.subtitle}
@@ -73,24 +87,28 @@ export default function Hero() {
             className="mt-10 flex items-center justify-center gap-x-6"
             variants={itemVariants}
           >
-            <Link href="/signup">
-              <Button size="lg" className="btn-special">
+            {/* Apple Blue Button (The only accent usually allowed) or Monochrome Black */}
+            <Link href="/create">
+              <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-foreground text-background hover:bg-foreground/90 transition-all hover:scale-105 shadow-xl shadow-black/5 dark:shadow-white/5">
                 <Rocket className="mr-2 h-5 w-5" />
                 {dict.ctaFree}
               </Button>
             </Link>
-            <Button size="lg" variant="outline">
-              {dict.ctaDemo}
-            </Button>
+            <Link href="/demo-template">
+              <Button size="lg" variant="ghost" className="rounded-full px-8 py-6 text-lg group hover:bg-muted font-medium">
+                {dict.ctaDemo} <span aria-hidden="true" className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
         <motion.div
           className="mt-16 flow-root sm:mt-24"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6, ease: 'easeOut' }}
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="rounded-xl bg-muted/10 p-2 ring-1 ring-inset ring-foreground/10 lg:p-4">
+          {/* Clean Glass Frame - No Gradients */}
+          <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4 dark:bg-white/5 dark:ring-white/10 backdrop-blur-3xl shadow-2xl">
             <MacbookFrame>
               <video
                 src={videoSrc}
@@ -98,11 +116,18 @@ export default function Hero() {
                 loop
                 muted
                 playsInline
-                className="rounded-md w-full h-full object-cover"
+                className="rounded-md w-full h-full object-cover grayscale-[20%]"
               />
             </MacbookFrame>
           </div>
         </motion.div>
+      </div>
+
+      {/* Bottom Ambient Glow */}
+      <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)] pointer-events-none">
+        <div
+          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#f3f4f6] to-[#e5e7eb] dark:from-[#333] dark:to-[#111] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+        />
       </div>
     </section>
   );

@@ -7,7 +7,7 @@ import HowItWorks from '@/components/landing/how-it-works';
 import TemplateGallery from '@/components/landing/template-gallery';
 import Pricing from '@/components/landing/pricing';
 import Testimonials from '@/components/landing/testimonials';
-import { useUser } from '@/firebase';
+import { useUser } from '@/hooks/useUser';
 
 export default function Home() {
   const { user } = useUser();

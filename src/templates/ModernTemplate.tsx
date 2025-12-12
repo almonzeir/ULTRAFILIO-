@@ -1,447 +1,417 @@
-/* GeneratedModernTemplateAllInOne.tsx
-   Single-file, contrast-safe, premium portfolio using CSS color tokens (light/dark),
-   Tailwind CDN, zero external icon deps, and your PortfolioData shape.
-*/
+/* ModernTemplate.tsx - Stunning 'Glass & Glow' Redesign */
 import React from "react";
 import type { PortfolioData } from "./types";
+import { MapPin, Mail, Building2, Zap, User } from 'lucide-react';
 
 export default function ModernTemplate({ data }: { data: PortfolioData }) {
+  // Helpers
+  const { personalInfo, about, experience, projects } = data;
+
   return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{data.personalInfo.fullName} – Portfolio</title>
-      </head>
-      <body className="selection:bg-brand/28 selection:text-text-0 bg-background text-foreground scroll-smooth">
-        {/* Skip link */}
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 z-50 rounded bg-[hsl(var(--text-0))] px-3 py-2 text-[hsl(var(--bg-0))]"
-        >
-          Skip to content
-        </a>
+    <div className="font-sans antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 min-h-screen selection:bg-brand selection:text-white">
+      {/* 
+        Injecting dynamic theme styles. 
+        Note: The parent page (Demo/Live) sets CSS variables like --brand. 
+        We'll use Tailwind classes that map to these, or style={{}} for specifics.
+      */}
+      <style>{`
+        :root {
+          --glass-border: rgba(255, 255, 255, 0.1);
+          --glass-bg: rgba(255, 255, 255, 0.05);
+          --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .dark {
+          --glass-border: rgba(255, 255, 255, 0.05);
+          --glass-bg: rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        
+        /* Custom Utilities */
+        .glass-panel {
+          background: var(--glass-bg);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid var(--glass-border);
+          box-shadow: var(--glass-shadow);
+        }
+        
+        .text-gradient {
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-image: linear-gradient(135deg, hsl(var(--brand)), hsl(var(--brand-2)));
+        }
+        
+        .bg-gradient-brand {
+          background-image: linear-gradient(135deg, hsl(var(--brand)), hsl(var(--brand-2)));
+        }
+        
+        .blob {
+          position: absolute;
+          filter: blur(80px);
+          z-index: 0;
+          opacity: 0.4;
+          animation: blob-bounce 10s infinite ease-in-out;
+        }
+        @keyframes blob-bounce {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .card-hover:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1); 
+          border-color: hsl(var(--brand) / 0.5);
+        }
+      `}</style>
 
-        {/* HEADER */}
-        <header className="sticky top-0 z-50 border-b border-stroke bg-background/80 backdrop-blur-md">
-          <div className="max-w-screen-xl mx-auto px-4 flex items-center justify-between py-4">
-            <a
-              href="#home"
-              className="text-xl md:text-2xl font-black tracking-widest text-brand hover:opacity-90 focus:ring-2 focus:ring-ring rounded px-1"
-              aria-label="Go to home"
-            >
-              {data.personalInfo.portfolioNameAbbr}
-            </a>
+      {/* --- BACKGROUND BLOBS --- */}
+      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="blob bg-[hsl(var(--brand))] w-96 h-96 rounded-full top-[-10%] left-[-10%] mix-blend-multiply dark:mix-blend-screen opacity-20 dark:opacity-10"></div>
+        <div className="blob bg-[hsl(var(--brand-2))] w-96 h-96 rounded-full bottom-[-10%] right-[-10%] mix-blend-multiply dark:mix-blend-screen opacity-20 dark:opacity-10 animation-delay-2000"></div>
+        <div className="blob bg-blue-400 w-80 h-80 rounded-full top-[40%] left-[30%] mix-blend-multiply dark:mix-blend-screen opacity-20 dark:opacity-5 animation-delay-4000"></div>
+      </div>
 
-            <nav className="hidden md:flex items-center gap-8">
-              {["home","about","experience","projects","contact"].map((id) => (
-                <a
-                  key={id}
-                  href={`#${id}`}
-                  className="text-sm font-medium text-text-1 hover:text-text-0 focus:ring-2 focus:ring-ring rounded px-1"
-                >
-                  {id[0].toUpperCase() + id.slice(1)}
-                </a>
-              ))}
-              <button
-                id="themeToggle"
-                className="inline-flex items-center gap-2 rounded-xl border border-stroke bg-bg-2 px-3 py-2 text-sm text-text-0 hover:bg-bg-1 focus:ring-2 focus:ring-ring"
-                onClick={() => {
-                  const el = document.documentElement;
-                  const dark = el.classList.toggle("dark");
-                  try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch(e){}
-                  // swap icon
-                  const sun = document.getElementById("icon-sun");
-                  const moon = document.getElementById("icon-moon");
-                  if (sun && moon) { sun.style.display = dark ? "inline" : "none"; moon.style.display = dark ? "none" : "inline"; }
-                }}
+      {/* --- NAVBAR --- */}
+      <nav className="fixed top-0 w-full z-50 transition-all duration-300 border-b border-slate-200/50 dark:border-slate-800/50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <a href="#" className="text-xl font-bold tracking-tighter hover:opacity-80 transition-opacity">
+            <span className="text-gradient pl-1">{personalInfo.portfolioNameAbbr}</span>
+          </a>
+
+          <div className="hidden md:flex items-center space-x-8">
+            {['About', 'Experience', 'Projects', 'Contact'].map(item => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[hsl(var(--brand))] dark:hover:text-[hsl(var(--brand))] transition-colors"
               >
-                <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" style={{display: "none"}}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
-                <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-                <span className="hidden sm:inline">Theme</span>
-              </button>
-            </nav>
-
-            {/* mobile menu (simple) */}
-            <details className="md:hidden relative">
-              <summary className="list-none rounded p-2 hover:bg-bg-2 focus:ring-2 focus:ring-ring">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-text-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 12h16M4 18h16"/></svg>
-              </summary>
-              <div className="absolute right-0 mt-2 w-48 rounded-xl bg-bg-1/80 backdrop-blur-md border border-stroke shadow-lg p-2">
-                {["home","about","experience","projects","contact"].map((id) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    className="block rounded-lg px-3 py-2 text-text-0 hover:bg-bg-2"
-                  >
-                    {id[0].toUpperCase() + id.slice(1)}
-                  </a>
-                ))}
-                <button
-                  className="mt-1 w-full rounded-lg border border-stroke bg-bg-2 px-3 py-2 text-left text-text-0 hover:bg-bg-1"
-                  onClick={() => (document.getElementById("themeToggle") as HTMLButtonElement)?.click()}
-                >
-                  Toggle Theme
-                </button>
-              </div>
-            </details>
-          </div>
-        </header>
-
-        <main id="main" className="max-w-screen-xl mx-auto px-4">
-          {/* HERO */}
-          <section id="home" className="relative min-h-[86vh] py-20 sm:py-24 overflow-hidden">
-            <div className="hero-mask">
-              <div className="absolute -top-24 -left-32 h-72 w-72 rounded-full bg-brand/18 blur-3xl" />
-              <div className="absolute -bottom-20 -right-16 h-[20rem] w-[20rem] rounded-full bg-brand-2/16 blur-3xl" />
-            </div>
-
-            <div className="relative grid grid-cols-1 md:grid-cols-2 items-center gap-12">
-              <div className="order-2 md:order-1 text-center md:text-left">
-                <span className="chip mx-auto md:mx-0">
-                  {/* sparkles icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z"/><path d="M5 16l.8 1.7L7.5 18l-1.7.8L5 20.5l-.8-1.7L2.5 18l1.7-.3L5 16z"/><path d="M19 14l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/></svg>
-                  Elevating Digital Experiences
-                </span>
-
-                <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05]">
-                  Hi, I’m{" "}
-                  <span className="relative text-brand">
-                    {data.personalInfo.fullName}
-                    <span className="absolute -inset-x-1 -bottom-1 -z-10 block h-3 bg-brand/20 blur-sm" />
-                  </span>
-                </h1>
-                <h2 className="mt-3 text-xl sm:text-2xl font-semibold text-text-1">
-                  {data.personalInfo.title}
-                </h2>
-                <p className="mt-4 text-text-1 max-w-xl mx-auto md:mx-0">{data.personalInfo.tagline}</p>
-
-                <div className="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
-                  <a
-                    href="#projects"
-                    className="inline-flex items-center rounded-xl bg-brand px-5 py-3 font-semibold text-brand-contrast hover:opacity-95 brand-glow focus:ring-2 focus:ring-ring"
-                  >
-                    {/* layers icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l9 4.5-9 4.5L3 6.5 12 2z"/><path d="M21 11l-9 4.5L3 11"/><path d="M21 16l-9 4.5L3 16"/></svg>
-                    View My Work
-                  </a>
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center rounded-xl border border-stroke bg-bg-1 px-5 py-3 font-medium text-text-0 hover:bg-bg-2 focus:ring-2 focus:ring-ring"
-                  >
-                    {/* mail icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="mr-2 h-5 w-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>
-                    Get in Touch
-                  </a>
-                </div>
-              </div>
-
-              <div className="order-1 md:order-2 flex justify-center">
-                <div className="relative">
-                  <div className="absolute -inset-1 rounded-full bg-[conic-gradient(from_210deg,hsl(var(--brand)/0.55),hsl(var(--brand-2)/0.55))] blur-xl" />
-                  <img
-                    src={data.personalInfo.profilePhotoURL}
-                    alt={`Portrait of ${data.personalInfo.fullName}`}
-                    className="relative z-10 h-72 w-72 sm:h-80 sm:w-80 lg:h-96 lg:w-96 rounded-full object-cover ring-4 ring-stroke"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ABOUT */}
-          <section id="about" className="py-20 sm:py-24">
-            <SectionTitle>About Me</SectionTitle>
-            <p className="mx-auto mb-12 max-w-3xl text-center text-lg text-text-1">
-              {data.about.extendedBio}
-            </p>
-
-            {/* Stats */}
-            {data.about.stats?.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-                {data.about.stats.map((s, i) => (
-                  <div key={i} className="glass rounded-2xl p-6 text-center">
-                    <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-bg-2">
-                      <Icon name={s.icon} />
-                    </div>
-                    <div className="text-3xl font-extrabold">{s.value}</div>
-                    <div className="mt-1 text-xs text-text-1">{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Skills */}
-            {data.about.skills?.length > 0 && (
-              <div className="mt-16 grid gap-6 md:grid-cols-3">
-                {data.about.skills.map((cat, i) => (
-                  <div key={i} className="glass rounded-2xl p-6">
-                    <div className="mb-3 flex items-center gap-2">
-                      <Icon name={cat.icon} />
-                      <h3 className="text-lg font-semibold">{cat.category}</h3>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {cat.tags.map((t, j) => (
-                        <span key={j} className="chip">{t}</span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          {/* EXPERIENCE */}
-          <section id="experience" className="py-20 sm:py-24">
-            <SectionTitle>Work Experience</SectionTitle>
-            <p className="text-center text-text-1 mb-10">Where I’ve applied my skills and grown professionally</p>
-            <div className="relative mx-auto max-w-4xl">
-              <div className="absolute left-4 top-0 bottom-0 w-px bg-stroke sm:left-1/2 sm:-translate-x-1/2" />
-              <div className="grid gap-10">
-                {data.experience.map((exp, idx) => (
-                  <ExperienceItem key={idx} exp={exp} even={idx % 2 === 0} />
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* PROJECTS */}
-          <section id="projects" className="py-20 sm:py-24">
-            <SectionTitle>Featured Projects</SectionTitle>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {data.projects.map((p, i) => (
-                <ProjectCard key={i} project={p} />
-              ))}
-            </div>
-          </section>
-
-          {/* CONTACT */}
-          <section id="contact" className="py-20 sm:py-24">
-            <SectionTitle>Ready to Collaborate?</SectionTitle>
-            <p className="mx-auto mb-12 max-w-xl text-center text-[hsl(var(--text-1))]">
-              I’m currently seeking new opportunities and projects. Let’s build something amazing together.
-            </p>
-
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* Details */}
-              <div className="glass rounded-2xl p-8">
-                <h3 className="text-xl font-bold mb-6 text-center md:text-left">Contact Details</h3>
-                <ul className="grid gap-3">
-                  <li className="flex items-center rounded-lg bg-[hsl(var(--bg-2))] p-4">
-                    <Icon name="mail" className="mr-3 h-5 w-5 text-[hsl(var(--brand))]" />
-                    <div>
-                      <div className="text-xs text-[hsl(var(--text-1))]">Email</div>
-                      <a className="font-medium hover:underline" href={`mailto:${data.personalInfo.email}`}>
-                        {data.personalInfo.email}
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-center rounded-lg bg-[hsl(var(--bg-2))] p-4">
-                    <Icon name="linkedin" className="mr-3 h-5 w-5 text-[hsl(var(--brand))]" />
-                    <div>
-                      <div className="text-xs text-[hsl(var(--text-1))]">LinkedIn</div>
-                      <a className="font-medium hover:underline break-all" href={data.personalInfo.linkedInURL} target="_blank" rel="noreferrer">
-                        {data.personalInfo.linkedInURL}
-                      </a>
-                    </div>
-                  </li>
-                  <li className="flex items-center rounded-lg bg-[hsl(var(--bg-2))] p-4">
-                    <Icon name="map" className="mr-3 h-5 w-5 text-[hsl(var(--brand))]" />
-                    <div>
-                      <div className="text-xs text-[hsl(var(--text-1))]">Location</div>
-                      <div className="font-medium">{data.personalInfo.location}</div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Form */}
-              <form
-                className="glass rounded-2xl p-8"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  alert("Thanks! Your message has been queued.");
-                }}
-              >
-                <h3 className="text-xl font-bold mb-6 text-center md:text-left">Send a Quick Message</h3>
-                <div className="grid gap-4">
-                  <Field id="name" label="Name">
-                    <input
-                      id="name" name="name" required
-                      className="w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] px-3 py-2 text-[hsl(var(--text-0))] focus:ring-2 focus:ring-[hsl(var(--ring))]"
-                      placeholder="Your Name"
-                    />
-                  </Field>
-                  <Field id="email" label="Email">
-                    <input
-                      id="email" name="email" type="email" required
-                      className="w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] px-3 py-2 text-[hsl(var(--text-0))] focus:ring-2 focus:ring-[hsl(var(--ring))]"
-                      placeholder="your.email@example.com"
-                    />
-                  </Field>
-                  <Field id="message" label="Message">
-                    <textarea
-                      id="message" name="message" rows={5} required
-                      className="w-full rounded-lg border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] px-3 py-2 text-[hsl(var(--text-0))] focus:ring-2 focus:ring-[hsl(var(--ring))]"
-                      placeholder="Your inquiry…"
-                    />
-                  </Field>
-                  <button
-                    type="submit"
-                    className="inline-flex items-center justify-center rounded-xl bg-[hsl(var(--brand))] px-5 py-3 font-semibold text-[hsl(var(--brand-contrast))] hover:opacity-95 brand-glow focus:ring-2 focus:ring-[hsl(var(--ring))]"
-                  >
-                    <Icon name="send" className="mr-2 h-5 w-5" /> Send Message
-                  </button>
-                </div>
-              </form>
-            </div>
-          </section>
-        </main>
-
-        <footer className="mt-14 border-t border-[hsl(var(--stroke))]">
-          <div className="container-max py-6 text-center text-sm text-[hsl(var(--text-1))]">
-            © {new Date().getFullYear()} {data.personalInfo.fullName}. Built with <span className="text-[hsl(var(--brand))]">passion</span>.
-          </div>
-        </footer>
-      </body>
-    </html>
-  );
-}
-
-/* ---------- tiny helpers (inline, no deps) ---------- */
-
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="text-center mb-12">
-      <h2 className="inline-block text-3xl sm:text-4xl font-extrabold tracking-tight relative pb-3">
-        {children}
-        <span
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-20 rounded bg-[hsl(var(--brand))] shadow-[0_0_10px_hsl(var(--brand)/.65)]"
-        />
-      </h2>
-    </div>
-  );
-}
-
-function Field({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-  return (
-    <label htmlFor={id} className="grid gap-1 text-sm">
-      <span className="text-[hsl(var(--text-0))]">{label}</span>
-      {children}
-    </label>
-  );
-}
-
-function Icon({ name, className }: { name?: string; className?: string }) {
-  const cls = `h-5 w-5 ${className || ""}`;
-  switch (name) {
-    case "mail":
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v16H4z"/><path d="M22 6l-10 7L2 6"/></svg>;
-    case "linkedin":
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v16H0V8zm7.5 0h4.8v2.2h.07c.67-1.2 2.3-2.46 4.73-2.46 5.06 0 5.99 3.33 5.99 7.65V24H18V16.2c0-1.86-.03-4.25-2.59-4.25-2.59 0-2.99 2.02-2.99 4.12V24H7.5V8z"/></svg>;
-    case "map":
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 20l-5 2V6l5-2 6 2 5-2v16l-5 2-6-2z"/><path d="M9 4v16M15 6v16"/></svg>;
-    case "send":
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>;
-    case "factory":
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18V10l-6 3V9l-6 3V7L3 9v12z"/></svg>;
-    default:
-      // sparkles
-      return <svg xmlns="http://www.w3.org/2000/svg" className={cls} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l1.5 3.5L17 8l-3.5 1.5L12 13l-1.5-3.5L7 8l3.5-1.5L12 3z"/></svg>;
-  }
-}
-
-function ExperienceItem({
-  exp,
-  even,
-}: {
-  exp: {
-    dates: string;
-    location: string;
-    jobTitle: string;
-    company: string;
-    responsibilities: string[];
-    tags: string[];
-  };
-  even: boolean;
-}) {
-  return (
-    <div className={`relative sm:grid sm:grid-cols-2 sm:gap-10`}>
-      <div
-        aria-hidden
-        className="absolute left-4 sm:left-1/2 sm:-translate-x-1/2 top-2 h-3 w-3 rounded-full bg-brand ring-4 ring-bg-0 shadow-lg"
-      />
-      <div className={`${even ? "sm:pr-12" : "sm:order-2 sm:pl-12"}`}>
-        <article className="glass rounded-2xl p-6 transition-transform hover:-translate-y-0.5">
-          <p className="mb-1 text-xs text-text-1">
-            {exp.dates} • {exp.location}
-          </p>
-          <h3 className="text-lg font-semibold text-brand">{exp.jobTitle}</h3>
-          <p className="mb-3 text-sm text-text-1 flex items-center gap-1">
-            <Icon name="factory" /> {exp.company}
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-sm">
-            {exp.responsibilities.map((r, i) => (
-              <li key={i}>{r}</li>
+                {item}
+              </a>
             ))}
-          </ul>
-          {!!exp.tags?.length && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {exp.tags.map((t, i) => (
-                <span key={i} className="chip">{t}</span>
+            <a
+              href="#contact"
+              className="px-5 py-2 rounded-full bg-gradient-brand text-white text-sm font-semibold shadow-lg shadow-brand/20 hover:shadow-brand/40 hover:-translate-y-0.5 transition-all"
+            >
+              Let's Talk
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* --- HERO SECTION --- */}
+      <section id="home" className="relative z-10 pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20">
+
+          {/* Text Content */}
+          <div className="flex-1 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--brand)/0.1)] border border-[hsl(var(--brand)/0.2)] text-[hsl(var(--brand))] text-xs font-semibold uppercase tracking-wider mb-6">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--brand))] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(var(--brand))]"></span>
+              </span>
+              Available for work
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6">
+              Hello, I'm <br />
+              <span className="text-gradient">{personalInfo.fullName}</span>
+            </h1>
+
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              {personalInfo.tagline}
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <a
+                href="#projects"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-lg hover:-translate-y-1 hover:shadow-xl transition-all"
+              >
+                View My Work
+              </a>
+              <a
+                href={personalInfo.githubURL || '#'}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel text-slate-900 dark:text-white font-bold text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+              >
+                <GitHubIcon className="w-5 h-5" />
+                GitHub
+              </a>
+            </div>
+
+            {/* Stats Row */}
+            <div className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-12">
+              {about.stats?.slice(0, 3).map((stat, i) => (
+                <div key={i} className="text-center lg:text-left">
+                  <div className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</div>
+                  <div className="text-sm text-slate-500 font-medium uppercase tracking-wide">{stat.label}</div>
+                </div>
               ))}
             </div>
-          )}
-        </article>
-      </div>
+          </div>
+
+          {/* Hero Image / Graphic */}
+          <div className="relative w-full max-w-md lg:max-w-lg lg:flex-1 flex justify-center perspective-1000">
+            {/* Decorative Elements */}
+            <div className="absolute inset-0 bg-gradient-brand rounded-[2rem] rotate-6 opacity-20 blur-2xl"></div>
+
+            {/* Main Image Container - Stunning Circle */}
+            <div className="relative w-72 h-72 sm:w-80 sm:h-80 group">
+              {/* Animated Glow Rings */}
+              <div className="absolute inset-0 rounded-full bg-gradient-brand opacity-20 blur-2xl group-hover:blur-3xl transition-all duration-700"></div>
+              <div className="absolute -inset-1 rounded-full bg-gradient-brand opacity-50 group-hover:opacity-80 blur-sm transition-all duration-700 animate-spin-slow"></div>
+
+              {/* Glass Container */}
+              <div className="relative w-full h-full rounded-full overflow-hidden border-[6px] border-white/20 shadow-2xl glass-panel z-10 transition-transform duration-500 group-hover:scale-[1.02]">
+                {personalInfo.profilePhotoURL ? (
+                  <img
+                    src={personalInfo.profilePhotoURL}
+                    alt={personalInfo.fullName}
+                    className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300">
+                    <User size={64} />
+                  </div>
+                )}
+              </div>
+
+              {/* Floating Badge */}
+              <div className="absolute bottom-4 right-0 glass-panel px-4 py-2 rounded-full flex items-center gap-2 shadow-lg z-20 animate-bounce-slow">
+                <div className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
+                <span className="text-xs font-bold whitespace-nowrap">{personalInfo.title}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- ABOUT & SKILLS --- */}
+      <section id="about" className="relative z-10 py-20 bg-white/50 dark:bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader title="About Me" subtitle="My creative journey and skillset" />
+
+          <div className="grid md:grid-cols-2 gap-12 items-start mt-12">
+            <div className="glass-panel p-8 rounded-3xl">
+              <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+                {about.extendedBio}
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                {personalInfo.location && (
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-sm font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-[hsl(var(--brand))]" /> {personalInfo.location}
+                  </span>
+                )}
+                {personalInfo.email && (
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-sm font-medium">
+                    <Mail className="w-3.5 h-3.5 text-[hsl(var(--brand))]" /> {personalInfo.email}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Skills Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {about.skills?.map((skillGroup, idx) => (
+                <div key={idx} className="glass-panel p-6 rounded-2xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <span className="text-[hsl(var(--brand))]">{skillGroup.icon || <Zap className="w-5 h-5" />}</span>
+                    {skillGroup.category}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {skillGroup.tags.map((tag, tIdx) => (
+                      <span key={tIdx} className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[hsl(var(--brand)/0.1)] text-[hsl(var(--brand))] border border-[hsl(var(--brand)/0.2)]">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- EXPERIENCE --- */}
+      <section id="experience" className="relative z-10 py-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader title="Experience" subtitle="My professional career path" />
+
+          <div className="mt-16 relative">
+            {/* Line */}
+            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[hsl(var(--brand))] via-slate-300 dark:via-slate-700 to-transparent"></div>
+
+            <div className="space-y-12">
+              {experience.map((job, index) => (
+                <div key={index} className={`relative flex flex-col md:flex-row gap-8 md:gap-0 ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+
+                  {/* Timeline Dot */}
+                  <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-[hsl(var(--brand))] ring-4 ring-white dark:ring-slate-950 -translate-x-1/2 mt-1.5 z-10"></div>
+
+                  {/* Content half */}
+                  <div className="md:w-1/2 md:px-12 pl-12">
+                    <div className="glass-panel p-6 rounded-2xl card-hover relative group">
+                      <div className="absolute top-6 right-6 text-slate-400 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Building2 size={24} />
+                      </div>
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 mb-3">
+                        {job.dates}
+                      </span>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">{job.jobTitle}</h3>
+                      <div className="text-[hsl(var(--brand))] font-medium mb-4">{job.company}</div>
+                      <ul className="space-y-2">
+                        {job.responsibilities.map((resp, rIdx) => (
+                          <li key={rIdx} className="text-sm text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--brand)/0.5)] shrink-0"></span>
+                            {resp}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Empty half */}
+                  <div className="hidden md:block md:w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- PROJECTS --- */}
+      <section id="projects" className="relative z-10 py-20 bg-slate-50 dark:bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader title="Featured Work" subtitle="A selection of my best projects" />
+
+          <div className="mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {projects.map((project, idx) => (
+              <a
+                key={idx}
+                href={project.detailsURL}
+                target="_blank"
+                rel="noreferrer"
+                className="group block rounded-3xl overflow-hidden glass-panel h-full flex flex-col card-hover"
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse"></div>
+                  {project.imageURL ? (
+                    <img
+                      src={project.imageURL}
+                      alt={project.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[hsl(var(--brand))/0.3] via-purple-500/20 to-[hsl(var(--brand-2))/0.3]">
+                      {/* Abstract Pattern */}
+                      <div className="absolute inset-0 opacity-30 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] bg-cover mix-blend-overlay"></div>
+                      <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-xl">
+                        <ArrowUpRight className="w-8 h-8 text-white/80" />
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                    <span className="text-white font-medium flex items-center gap-2">
+                      View Project <ArrowUpRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--brand))]">
+                      {project.category}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-[hsl(var(--brand))] transition-colors">
+                    {project.name}
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-6 flex-1">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tags?.map((tag, tIdx) => (
+                      <span key={tIdx} className="text-xs font-medium px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* --- CALL TO ACTION --- */}
+      <section id="contact" className="relative z-10 py-24 px-4 overflow-hidden">
+        <div className="max-w-4xl mx-auto text-center relative">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[hsl(var(--brand))] rounded-full blur-[120px] opacity-20 -z-10"></div>
+
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-8">
+            Let's build something <br />
+            <span className="text-gradient">extraordinary.</span>
+          </h2>
+          <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto">
+            I'm currently opening my schedule for new projects.
+            If you have an idea that needs a creative touch, get in touch.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href={`mailto:${personalInfo.email}`}
+              className="px-8 py-4 rounded-full bg-gradient-brand text-white font-bold text-lg hover:shadow-lg hover:shadow-brand/30 hover:-translate-y-1 transition-all"
+            >
+              Say Hello
+            </a>
+            <a
+              href={personalInfo.linkedInURL || '#'}
+              target="_blank"
+              rel="noreferrer"
+              className="px-8 py-4 rounded-full glass-panel font-bold text-lg hover:bg-white/10 transition-all"
+            >
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="relative z-10 py-8 text-center text-sm text-slate-500 border-t border-slate-200 dark:border-slate-800">
+        <p>© {new Date().getFullYear()} {personalInfo.fullName}. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
 
-function ProjectCard({
-  project,
-}: {
-  project: {
-    imageURL: string;
-    name: string;
-    category: string;
-    description: string;
-    tags: string[];
-    detailsURL: string;
-  };
-}) {
+// Subcomponents
+function SectionHeader({ title, subtitle }: { title: string, subtitle: string }) {
   return (
-    <a
-      href={project.detailsURL}
-      className="glass group block overflow-hidden rounded-2xl focus:ring-2 focus:ring-[hsl(var(--ring))]"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <img
-          src={project.imageURL}
-          alt={project.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-          loading="lazy"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[hsl(var(--bg-0)/0.5)] via-[hsl(var(--bg-0)/0.1)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      </div>
-      <div className="p-6">
-        <div className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--brand))]">
-          {project.category}
-        </div>
-        <h3 className="mt-1 text-lg font-bold">{project.name}</h3>
-        <p className="mt-2 line-clamp-3 text-sm text-[hsl(var(--text-1))]">{project.description}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {project.tags.map((t, i) => (
-            <span key={i} className="chip">{t}</span>
-          ))}
-        </div>
-        <div className="mt-5 inline-flex items-center text-[hsl(var(--brand))]">
-          View Details
-          <svg xmlns="http://www.w3.org/2000/svg" className="ml-1 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-        </div>
-      </div>
-    </a>
+    <div className="text-center max-w-2xl mx-auto mb-16">
+      <h2 className="text-3xl md:text-4xl font-bold mb-4">{title}</h2>
+      <div className="h-1 w-20 bg-gradient-brand mx-auto rounded-full mb-4"></div>
+      <p className="text-slate-600 dark:text-slate-400 text-lg">
+        {subtitle}
+      </p>
+    </div>
+  );
+}
+
+// Icons
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.05-.015-2.055-3.33.72-4.035-1.605-4.035-1.605-.54-1.38-1.335-1.755-1.335-1.755-1.087-.735.084-.72.084-.72 1.2.075 1.83 1.23 1.83 1.23 1.065 1.815 2.805 1.29 3.495.99.105-.78.42-1.29.765-1.59-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405 1.02 0 2.04.135 3 .405 2.295-1.545 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.92 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.285 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
+}
+
+function ArrowUpRight({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
   );
 }

@@ -10,19 +10,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser } from '@/firebase';
+import { useUser } from '@/hooks/useUser';
 import { LogOut } from 'lucide-react';
-import { signOut } from 'firebase/auth';
+import { supabase } from '@/lib/supabase/client';
 
 export default function UserProfileButton() {
-  const { user, auth } = useUser();
+  const { user } = useUser();
 
-  if (!user || !auth) {
+  if (!user) {
     return null;
   }
 
+  // Supabase stores user metadata differently than Firebase
+  const displayName = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || 'User';
+  const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+
   const handleLogout = async () => {
-    await signOut(auth);
+    await supabase.auth.signOut();
   };
 
   const getInitials = (name: string | null | undefined) => {
@@ -41,10 +45,10 @@ export default function UserProfileButton() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={user.photoURL || undefined}
-              alt={user.displayName || 'User'}
+              src={avatarUrl || undefined}
+              alt={displayName}
             />
-            <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+            <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -52,7 +56,7 @@ export default function UserProfileButton() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user.displayName}
+              {displayName}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}

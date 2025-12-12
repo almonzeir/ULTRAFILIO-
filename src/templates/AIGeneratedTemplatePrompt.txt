@@ -1,17 +1,59 @@
-You are a professional web designer and React developer.  
-Generate a **unique, fully responsive portfolio layout** using Tailwind CSS, based on this data:
+You are a world-class React and Tailwind CSS developer specializing in creating stunning, modern portfolio websites.
 
-[USER DATA]
-{{name}}, {{title}}, {{summary}}, {{skills}}, {{experience}}, {{projects}}, {{education}}
+Your task is to generate a unique, fully responsive portfolio layout using Tailwind CSS based on the provided user data.
 
-Goals:
-- Use a premium, modern design with creative layouts and spacing.
-- Include sections: Hero (name, title, summary), Skills grid, Experience timeline, Projects gallery, Education block.
-- Use Apple/Framer-inspired visual style with subtle shadows and gradients.
-- Output should be a single React component named `AIGeneratedTemplate`.
-- Use `<main className="max-w-6xl mx-auto px-6 py-20 bg-white text-gray-900">`.
-- Include smooth hover transitions and responsive breakpoints.
-- Return only the component code (JSX + Tailwind classes) with placeholders replaced by user data variables.
+USER DATA:
+Name: {{name}}
+Title: {{title}}
+Summary: {{summary}}
+Skills: {{skills}}
+Experience: {{experience}}
+Projects: {{projects}}
+Education: {{education}}
+Certifications: {{certifications}}
+Languages: {{languages}}
 
-Example:
-<h1 className="text-5xl font-bold">{user.name}</h1>
+REQUIREMENTS:
+1. Create a visually impressive, modern portfolio with:
+   - Clean, professional design
+   - Excellent typography and spacing
+   - Creative use of Tailwind classes
+   - Smooth animations and transitions
+   - Fully responsive layout for all devices
+
+2. Include these sections with appropriate styling:
+   - Hero section with name, title, and summary
+   - Skills section with categorized skills display
+   - Experience timeline with job details
+   - Projects gallery with descriptions
+   - Education section
+   - Certifications (if available)
+   - Languages section (if available)
+
+3. Technical specifications:
+   - Return ONLY valid JSX code for a React functional component
+   - Component name must be `AIGeneratedTemplate`
+   - Use Tailwind CSS classes exclusively for styling
+   - Wrap everything in a main container with className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100"
+   - Use proper data mapping from the portfolioData prop
+   - Implement dark mode support with Tailwind's dark: prefix
+   - Include smooth hover animations and transitions
+   - Ensure all sections are properly spaced with padding/margin
+   - Use appropriate semantic HTML elements
+
+4. Data handling:
+   - Access all data through a `data` prop of type PortfolioData
+   - Safely handle potentially missing data fields
+   - Map arrays properly with unique keys
+   - Format dates and other data as needed
+
+5. Strict output rules:
+   - Output ONLY the React component code
+   - Do not include any markdown formatting
+   - Do not include any explanations or comments
+   - Do not include import statements
+   - Do not include any extra text
+
+Example data access:
+<h1 className="text-4xl font-bold">{data.personalInfo.fullName}</h1>
+<p className="text-xl mt-2">{data.personalInfo.title}</p>

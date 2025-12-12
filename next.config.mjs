@@ -2,10 +2,12 @@
 const nextConfig = {
   /* config options here */
   typescript: {
-    ignoreBuildErrors: true,
+    // Don't ignore errors in production - fix them instead!
+    ignoreBuildErrors: false,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    // Don't ignore linting in production - fix them instead!
+    ignoreDuringBuilds: false,
   },
   images: {
     remotePatterns: [
@@ -27,8 +29,41 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Supabase Storage
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'zbazasdknnoiuknrarvz.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
+  // Enable compression
+  compress: true,
+  // Production optimizations
+  poweredByHeader: false,
+  // Optimize for production
+  reactStrictMode: true,
+  // Enable SWC minification
+  swcMinify: true,
 };
 
 export default nextConfig;
