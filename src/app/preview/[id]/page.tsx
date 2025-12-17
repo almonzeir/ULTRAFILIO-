@@ -5,24 +5,17 @@ import { useRouter } from 'next/navigation';
 import {
     Palette, Briefcase, Zap, Sparkles,
     Smartphone, Monitor, X, Menu, Rocket, Minimize2, FileText, Check,
-    Pencil, Share
+    Pencil, Share, Moon, Sun
 } from 'lucide-react';
 import { useColorTheme } from '@/context/color-theme-context';
 import { supabase } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { ShareDialog } from '@/components/share/ShareDialog';
+import { useDictionary } from '@/hooks/use-dictionary'; // Import hook
+import { ArrowLeft } from 'lucide-react'; // Import ArrowLeft
+
 
 // Templates
-import ModernTemplate from '@/templates/ModernTemplate';
-import ExecutiveTemplate from '@/templates/ExecutiveTemplate';
-import CreativeTemplate from '@/templates/CreativeTemplate';
-import MinimalPlusTemplate from '@/templates/MinimalPlusTemplate';
-import BasicTemplate from '@/templates/BasicTemplate';
-import MinimalistTemplate from '@/templates/MinimalistTemplate';
-import GeneratedModernTemplate from '@/templates/GeneratedModernTemplate';
-import Cyber3DTemplate from '@/templates/Cyber3DTemplate';
-import AuroraTemplate from '@/templates/AuroraTemplate';
 import type { PortfolioData } from '@/templates/types';
 
 const templates = [
@@ -47,40 +40,24 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
     const [loading, setLoading] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+    const [isDarkMode, setIsDarkMode] = useState(true);
+    // Removed local isArabic state
     const { theme, setTheme, availableThemes } = useColorTheme();
+    const { dictionary, language } = useDictionary(); // Use hook
 
-    // Publish State
-    const [isPublishOpen, setIsPublishOpen] = useState(false);
-    const [isPublishing, setIsPublishing] = useState(false);
+    // Finalize Action
+    const handleFinalize = async () => {
+        // Save state (optional but good practice)
+        await supabase
+            .from('portfolios')
+            .update({
+                template_id: selectedTemplate,
+                theme: theme
+            })
+            .eq('id', portfolioId);
 
-    const handlePublish = async () => {
-        setIsPublishing(true);
-        try {
-            // Save current state (Template + Theme)
-            // Note: We are optimistically trying to save 'theme'. If col doesn't exist, it might fail or ignore.
-            const { error } = await supabase
-                .from('portfolios')
-                .update({
-                    template_id: selectedTemplate,
-                    theme: theme // Assuming column exists or JSONB
-                })
-                .eq('id', portfolioId);
-
-            if (error) {
-                console.warn("Could not save theme/template during publish (might be harmless):", error);
-            }
-
-            // Open Modal
-            setIsPublishOpen(true);
-            toast({
-                title: "Portfolio Published!",
-                description: "Your site is live.",
-            });
-        } catch (e) {
-            console.error("Publish error", e);
-        } finally {
-            setIsPublishing(false);
-        }
+        // Redirect to Edit Page (Content Editor)
+        router.push(`/edit/${portfolioId}`);
     };
 
     // Fetch Real Data
@@ -146,9 +123,8 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
     }, [portfolioId, toast]);
 
     const handleSaveAndEdit = () => {
-        // Here we would typically update the template_id in DB first
-        // Then navigate to the editor
-        router.push(`/builder/${portfolioId}`); // Assuming builder route
+        // Navigate to the full editor
+        router.push(`/edit/${portfolioId}`);
     };
 
     if (loading) {
@@ -163,18 +139,6 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
     }
 
     if (!portfolioData) return null;
-
-    const CurrentTemplate = {
-        'aurora': AuroraTemplate,
-        'modern': ModernTemplate,
-        'executive': ExecutiveTemplate,
-        'creative': CreativeTemplate,
-        'minimal-plus': MinimalPlusTemplate,
-        'basic': BasicTemplate,
-        'minimalist': MinimalistTemplate,
-        'generated': GeneratedModernTemplate,
-        'cyber': Cyber3DTemplate,
-    }[selectedTemplate] || AuroraTemplate;
 
     return (
         <div className="flex h-screen w-screen overflow-hidden bg-neutral-900 text-white font-sans">
@@ -197,7 +161,9 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
 
                     {/* Template Selector */}
                     <div>
-                        <h3 className="text-xs font-bold uppercase text-neutral-500 mb-4 tracking-wider">Select Template</h3>
+                        <h3 className="text-xs font-bold uppercase text-neutral-500 mb-4 tracking-wider">
+                            {dictionary?.preview?.selectTemplate || 'Select Template'}
+                        </h3>
                         <div className="grid gap-2">
                             {templates.map((t) => (
                                 <button
@@ -211,16 +177,39 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                                     <div className={`w-8 h-8 rounded-lg ${t.color} flex items-center justify-center shadow-inner`}>
                                         <t.icon size={14} className="text-white" />
                                     </div>
-                                    <span className="font-medium">{t.name}</span>
+                                    <span className="font-medium">{language === 'ar' ? t.name : t.name}</span>
                                     {selectedTemplate === t.id && <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
                                 </button>
                             ))}
                         </div>
                     </div>
 
+                    {/* Appearance Selector */}
+                    <div>
+                        <h3 className="text-xs font-bold uppercase text-neutral-500 mb-4 tracking-wider">
+                            {dictionary?.preview?.appearance || 'Appearance'}
+                        </h3>
+                        <div className="flex gap-2 p-1 bg-neutral-800/50 rounded-lg border border-neutral-800 mb-4">
+                            <button
+                                onClick={() => setIsDarkMode(false)}
+                                className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-md transition-all ${!isDarkMode ? 'bg-white text-black shadow-sm' : 'text-neutral-400 hover:text-white'}`}
+                            >
+                                <Sun size={16} /> {dictionary?.preview?.light || 'Light'}
+                            </button>
+                            <button
+                                onClick={() => setIsDarkMode(true)}
+                                className={`flex-1 flex items-center justify-center gap-2 p-2 rounded-md transition-all ${isDarkMode ? 'bg-neutral-700 text-white shadow-sm' : 'text-neutral-400 hover:text-white'}`}
+                            >
+                                <Moon size={16} /> {dictionary?.preview?.dark || 'Dark'}
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Color Selector */}
                     <div>
-                        <h3 className="text-xs font-bold uppercase text-neutral-500 mb-4 tracking-wider">Color Theme</h3>
+                        <h3 className="text-xs font-bold uppercase text-neutral-500 mb-4 tracking-wider">
+                            {dictionary?.preview?.colorTheme || 'Color Theme'}
+                        </h3>
                         <div className="space-y-2">
                             {availableThemes.map((t) => (
                                 <button
@@ -252,7 +241,7 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                         size="lg"
                     >
                         <Pencil className="w-4 h-4 mr-2" />
-                        Edit Content
+                        {dictionary?.preview?.editDetails || 'Edit Content'}
                     </Button>
                 </div>
             </aside>
@@ -264,6 +253,15 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                 {/* Toolbar */}
                 <div className="h-16 border-b border-neutral-800 flex items-center justify-between px-4 bg-neutral-900/50 backdrop-blur-sm z-10">
                     <div className="flex items-center gap-3">
+                        {/* Always Enabled Back Button */}
+                        <button
+                            onClick={() => router.back()}
+                            className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors"
+                            title={dictionary?.backButton || "Back"}
+                        >
+                            <ArrowLeft size={20} />
+                        </button>
+
                         {!isSidebarOpen && (
                             <button onClick={() => setIsSidebarOpen(true)} className="p-2 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors">
                                 <Menu size={20} />
@@ -274,14 +272,14 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                             <button
                                 onClick={() => setViewMode('desktop')}
                                 className={`p-2 rounded-md transition-all ${viewMode === 'desktop' ? 'bg-neutral-700 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-300'}`}
-                                title="Desktop View"
+                                title={dictionary?.preview?.desktopView || "Desktop View"}
                             >
                                 <Monitor size={16} />
                             </button>
                             <button
                                 onClick={() => setViewMode('mobile')}
                                 className={`p-2 rounded-md transition-all ${viewMode === 'mobile' ? 'bg-neutral-700 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-300'}`}
-                                title="Mobile View"
+                                title={dictionary?.preview?.mobileView || "Mobile View"}
                             >
                                 <Smartphone size={16} />
                             </button>
@@ -289,30 +287,20 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                     </div>
 
                     <div className="flex items-center gap-4 text-sm font-medium text-neutral-400">
-                        <Button variant="ghost" className="text-neutral-400 hover:text-white" onClick={handleSaveAndEdit}>
-                            Edit Details
+                        <Button variant="ghost" className="text-neutral-400 hover:text-white text-sm" onClick={handleSaveAndEdit}>
+                            {dictionary?.preview?.editDetails || 'Edit Details'}
                         </Button>
                         <Button
                             className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20"
-                            onClick={handlePublish}
-                            disabled={isPublishing}
+                            onClick={handleFinalize}
                         >
-                            {isPublishing ? 'Publishing...' : (
-                                <>
-                                    <Share className="w-4 h-4 mr-2" />
-                                    Publish
-                                </>
-                            )}
+                            <Check className="w-4 h-4 mr-2" />
+                            {dictionary?.preview?.finalize || 'Finalize'}
                         </Button>
                     </div>
                 </div>
 
-                <ShareDialog
-                    open={isPublishOpen}
-                    onOpenChange={setIsPublishOpen}
-                    portfolioId={portfolioId}
-                    portfolioName={portfolioData?.personalInfo.fullName}
-                />
+
 
                 {/* Preview Viewport */}
                 <div className="flex-1 overflow-hidden relative bg-neutral-950 flex items-center justify-center p-4 sm:p-8">
@@ -343,8 +331,8 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
 
                         {/* The Template Renders Here via IFRAME for True Native Responsive Behavior */}
                         <iframe
-                            src={`/render/${portfolioId}?theme=${theme}&template=${selectedTemplate}`}
-                            className={`w-full h-full border-0 ${viewMode === 'mobile' ? 'rounded-[38px]' : 'rounded-none'}`}
+                            src={`/render/${portfolioId}?theme=${theme}&template=${selectedTemplate}&mode=${isDarkMode ? 'dark' : 'light'}&lang=${language === 'ar' ? 'ar' : 'en'}`}
+                            className={`w-full h-full border-0 ${viewMode === 'mobile' ? 'rounded-[38px]' : 'rounded-none'} ${isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}
                             title="Portfolio Preview"
                         />
                     </div>

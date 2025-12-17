@@ -25,6 +25,8 @@ export default function Pricing() {
     fetchDictionary();
   }, [language]);
 
+  if (!dict) return null;
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -43,29 +45,35 @@ export default function Pricing() {
   };
 
   const handleSubscribe = (planId: string) => {
-    // Redirect to checkout page which shows "FREE access during early access"
+    if (planId === 'free') {
+      router.push('/signup');
+      return;
+    }
+    // Redirect to checkout page for paid plans
     router.push('/checkout');
   };
 
   return (
     <motion.section
       id="pricing"
-      className="py-24 sm:py-32 bg-gradient-to-b from-background via-background to-muted/30 relative overflow-hidden"
+      // Changed gradient to neutral grey/silver tones
+      className="py-24 sm:py-32 bg-gradient-to-b from-background via-neutral-50/50 dark:via-neutral-900/20 to-muted/30 relative overflow-hidden"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={containerVariants}
     >
-      {/* Background decoration */}
+      {/* Background decoration - Gone is the purple */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-violet-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-indigo-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-gray-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-slate-500/5 rounded-full blur-3xl" />
       </div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         {/* Header */}
         <motion.div className="mx-auto max-w-2xl text-center mb-16" variants={itemVariants}>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-sm font-medium mb-6">
+          {/* Neutral Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-sm font-medium mb-6">
             <Sparkles className="w-4 h-4" />
             Simple, Transparent Pricing
           </div>
@@ -122,44 +130,45 @@ export default function Pricing() {
 
           {/* PRO MONTHLY - Most Popular */}
           <motion.div variants={itemVariants} className="relative">
-            {/* Popular Badge */}
+            {/* Popular Badge - High Contrast, No Purple */}
             <div className="absolute -top-4 left-0 right-0 mx-auto w-max z-20">
-              <div className="px-4 py-1.5 text-xs font-bold tracking-wider bg-gradient-to-r from-violet-600 to-indigo-600 text-white uppercase rounded-full shadow-lg shadow-violet-500/30">
+              <div className="px-4 py-1.5 text-xs font-bold tracking-wider bg-black dark:bg-white text-white dark:text-black uppercase rounded-full shadow-lg shadow-black/20 dark:shadow-white/20">
                 Most Popular
               </div>
             </div>
 
-            <Card className="h-full flex flex-col bg-gradient-to-b from-violet-600 to-indigo-700 text-white border-0 shadow-2xl shadow-violet-500/20 relative overflow-hidden">
-              {/* Shine effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            {/* Changed from Violet Gradient to "Dark Matter" (Black/Neutral-900) */}
+            <Card className="h-full flex flex-col bg-[#0f0f0f] dark:bg-neutral-900 text-white border-0 shadow-2xl shadow-black/40 relative overflow-hidden">
+              {/* Subtle Metallic Shine */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
 
               <CardHeader className="pb-4 relative">
-                <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-4 border border-white/10">
                   <Rocket className="w-6 h-6 text-white" />
                 </div>
                 <CardTitle className="font-headline text-2xl text-white">Pro Monthly</CardTitle>
-                <CardDescription className="text-white/80 text-base">
+                <CardDescription className="text-white/60 text-base">
                   Full power, cancel anytime
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow space-y-6 relative">
                 <div className="flex items-baseline">
                   <span className="text-5xl font-bold tracking-tight text-white">$5</span>
-                  <span className="ml-2 text-sm text-white/70">/month</span>
+                  <span className="ml-2 text-sm text-white/50">/month</span>
                 </div>
 
-                {/* First month promo */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/20">
+                {/* First month promo - Gold accent remains fine as it's not purple, evokes premium */}
+                <div className="bg-white/5 backdrop-blur-sm rounded-lg px-4 py-3 border border-white/10">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-yellow-300" />
-                    <span className="font-bold text-yellow-100">First month only $3!</span>
+                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <span className="font-bold text-amber-100">First month only $2!</span>
                   </div>
                 </div>
 
                 <ul className="space-y-3 text-sm">
                   {PLANS.pro_monthly.features.slice(0, 6).map((feature, i) => (
-                    <li key={i} className="flex gap-3 items-start text-white/90">
-                      <div className="p-0.5 rounded-full bg-white/20 mt-0.5">
+                    <li key={i} className="flex gap-3 items-start text-white/80">
+                      <div className="p-0.5 rounded-full bg-white/10 mt-0.5">
                         <Check className="h-4 w-4 flex-none text-white" />
                       </div>
                       <span>{feature}</span>
@@ -169,10 +178,10 @@ export default function Pricing() {
               </CardContent>
               <CardFooter className="relative">
                 <Button
-                  className="w-full h-12 rounded-xl text-base font-bold bg-white text-violet-700 hover:bg-white/90 shadow-lg"
+                  className="w-full h-12 rounded-xl text-base font-bold bg-white text-black hover:bg-neutral-200 shadow-lg"
                   onClick={() => handleSubscribe('pro_monthly')}
                 >
-                  Start Pro - $3 First Month
+                  Start Pro - $2 First Month
                 </Button>
               </CardFooter>
             </Card>
@@ -180,40 +189,40 @@ export default function Pricing() {
 
           {/* PRO LIFETIME - Best Value */}
           <motion.div variants={itemVariants} className="relative">
-            {/* Best Value Badge */}
+            {/* Best Value Badge - Keeping Amber/Gold as it signifies value/premium, matches "Amazing" */}
             <div className="absolute -top-4 left-0 right-0 mx-auto w-max z-20">
-              <div className="px-4 py-1.5 text-xs font-bold tracking-wider bg-gradient-to-r from-amber-500 to-orange-500 text-white uppercase rounded-full shadow-lg shadow-amber-500/30">
+              <div className="px-4 py-1.5 text-xs font-bold tracking-wider bg-gradient-to-r from-amber-500 to-amber-600 text-white uppercase rounded-full shadow-lg shadow-amber-500/30">
                 Best Value
               </div>
             </div>
 
-            <Card className="h-full flex flex-col bg-foreground text-background border-0 shadow-2xl relative overflow-hidden">
+            <Card className="h-full flex flex-col bg-white dark:bg-neutral-800 text-foreground border-0 shadow-xl relative overflow-hidden">
               <CardHeader className="pb-4">
-                <div className="w-12 h-12 rounded-xl bg-background/10 flex items-center justify-center mb-4">
-                  <Crown className="w-6 h-6 text-amber-400" />
+                <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
+                  <Crown className="w-6 h-6 text-amber-500" />
                 </div>
-                <CardTitle className="font-headline text-2xl text-background">Pro Lifetime</CardTitle>
-                <CardDescription className="text-background/70 text-base">
+                <CardTitle className="font-headline text-2xl">Pro Lifetime</CardTitle>
+                <CardDescription className="text-muted-foreground text-base">
                   Pay once, own forever
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow space-y-6">
                 <div className="flex items-baseline">
-                  <span className="text-5xl font-bold tracking-tight text-background">$15</span>
-                  <span className="ml-2 text-sm text-background/60">one-time</span>
+                  <span className="text-5xl font-bold tracking-tight">$15</span>
+                  <span className="ml-2 text-sm text-muted-foreground">one-time</span>
                 </div>
 
                 {/* Savings badge */}
-                <div className="inline-flex items-center gap-2 bg-green-500/20 text-green-400 px-3 py-1.5 rounded-lg text-sm font-medium">
+                <div className="inline-flex items-center gap-2 bg-green-500/10 text-green-600 dark:text-green-400 px-3 py-1.5 rounded-lg text-sm font-medium">
                   <Check className="w-4 h-4" />
                   Save $45/year vs monthly
                 </div>
 
                 <ul className="space-y-3 text-sm">
                   {PLANS.pro_lifetime.features.map((feature, i) => (
-                    <li key={i} className="flex gap-3 items-start text-background/80">
-                      <div className="p-0.5 rounded-full bg-background/10 mt-0.5">
-                        <Check className="h-4 w-4 flex-none text-background" />
+                    <li key={i} className="flex gap-3 items-start text-muted-foreground">
+                      <div className="p-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 mt-0.5">
+                        <Check className="h-4 w-4 flex-none text-neutral-600 dark:text-neutral-300" />
                       </div>
                       <span>{feature}</span>
                     </li>
@@ -222,7 +231,7 @@ export default function Pricing() {
               </CardContent>
               <CardFooter>
                 <Button
-                  className="w-full h-12 rounded-xl text-base font-bold bg-background text-foreground hover:bg-background/90"
+                  className="w-full h-12 rounded-xl text-base font-bold bg-foreground text-background hover:opacity-90"
                   onClick={() => handleSubscribe('pro_lifetime')}
                 >
                   Get Lifetime Access - $15

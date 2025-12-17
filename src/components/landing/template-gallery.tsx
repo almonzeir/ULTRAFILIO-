@@ -39,14 +39,16 @@ export default function TemplateGallery() {
   ];
 
   return (
-    <section id="templates" className="py-24 sm:py-32 bg-[#0a0a0f] text-white relative overflow-hidden">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-b from-violet-900/10 via-transparent to-indigo-900/10 pointer-events-none" />
+    // Updated background to Neutral-950/Black for distinct premium feel (removing the blue/violet)
+    <section id="templates" className="py-24 sm:py-32 bg-[#0a0a0a] text-white relative overflow-hidden">
+      {/* Background effects - Monochrome/Silver */}
+      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/10 via-transparent to-neutral-900/10 pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
         <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl font-headline bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">{dict.title}</h2>
-          <p className="mt-6 text-xl leading-8 text-gray-400">
+          {/* Headline - Silver/White Gradient */}
+          <h2 className="text-4xl font-bold tracking-tight sm:text-5xl font-headline bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">{dict.title}</h2>
+          <p className="mt-6 text-xl leading-8 text-neutral-400">
             {dict.subtitle}
           </p>
         </div>

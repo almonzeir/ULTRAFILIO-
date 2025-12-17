@@ -7,7 +7,8 @@
     "toggleTheme": "Toggle theme",
     "toggleNavigation": "Toggle navigation menu",
     "login": "Login",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "dashboard": "My Portfolios"
   },
   "hero": {
     "title": "Turn Your Resume into a Stunning Portfolio",
@@ -294,5 +295,53 @@
     "subtitle": "Select a design for your portfolio. You can customize colors later.",
     "backButton": "Back",
     "continueButton": "Continue"
+  },
+  "preview": {
+    "finalize": "Finalize",
+    "editDetails": "Edit Details",
+    "selectTemplate": "Select Template",
+    "appearance": "Appearance",
+    "colorTheme": "Color Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "arabicMode": "Arabic Mode",
+    "mobileView": "Mobile View",
+    "desktopView": "Desktop View",
+    "publishing": "Publishing...",
+    "successTitle": "Published Successfully!",
+    "successDesc": "Your portfolio is live."
+  },
+  "editor": {
+    "editPortfolio": "Edit Portfolio",
+    "save": "Save",
+    "saving": "Saving...",
+    "publish": "Publish",
+    "publishing": "Publishing...",
+    "edit": "Edit",
+    "layout": "Layout",
+    "preview": "Preview",
+    "personalInfo": "Personal Information",
+    "aboutSkills": "About & Skills",
+    "projects": "Projects",
+    "experience": "Experience",
+    "education": "Education",
+    "certifications": "Certifications",
+    "languages": "Languages",
+    "add": "Add",
+    "remove": "Remove",
+    "uploadPhoto": "Upload Photo",
+    "removePhoto": "Remove Photo",
+    "projectImage": "Project Image",
+    "saved": "Saved",
+    "saveSuccess": "Changes saved successfully.",
+    "error": "Error",
+    "saveError": "Failed to save changes.",
+    "uploadSuccess": "Image Uploaded",
+    "uploadError": "Upload Failed",
+    "newProject": "New Project",
+    "jobTitle": "Job Title",
+    "company": "Company",
+    "degree": "Degree",
+    "institution": "Institution"
   }
 }

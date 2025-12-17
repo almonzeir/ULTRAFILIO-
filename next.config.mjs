@@ -64,6 +64,9 @@ const nextConfig = {
   reactStrictMode: true,
   // Enable SWC minification
   swcMinify: true,
+  experimental: {
+    serverComponentsExternalPackages: ['pdf-parse'],
+  },
 };
 
 export default nextConfig;

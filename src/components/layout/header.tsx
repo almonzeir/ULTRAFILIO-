@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 
 export default function Header() {
   const { language, toggleLanguage } = useLanguage();
-  const [dict, setDict] = React.useState<Dictionary['header'] | null>(null);
+  const [dict, setDict] = React.useState<Dictionary['header'] & { dashboard?: string } | null>(null);
   const { setTheme, theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const { user } = useUser();
@@ -45,6 +45,10 @@ export default function Header() {
     { name: dict.templates, href: '/demo-template' },
     { name: dict.pricing, href: '/checkout' },
   ];
+
+  if (user && dict.dashboard) {
+    navLinks.push({ name: dict.dashboard, href: '/dashboard' });
+  }
 
   const NavMenu = () => (
     <nav className="flex items-center gap-6">

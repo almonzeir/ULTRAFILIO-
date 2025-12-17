@@ -32,28 +32,51 @@ const PORTFOLIO_FACTS = [
 ];
 
 const LoadingScreen = () => {
-  const [factIndex, setFactIndex] = React.useState(0);
+  const [logs, setLogs] = React.useState<string[]>([]);
   const [currentStep, setCurrentStep] = React.useState(0);
 
+  // Advanced Tech Steps
   const STEPS = [
-    { label: "Initializing AI Engine...", duration: 2000 },
-    { label: "Scanning CV Document...", duration: 3000 },
-    { label: "Extracting Professional Skills...", duration: 4000 },
-    { label: "Analyzing Work Experience...", duration: 4000 },
-    { label: "Structuring Portfolio Data...", duration: 3000 },
-    { label: "Finalizing Design System...", duration: 2000 },
+    { label: "INITIALIZING NEURAL CORE...", duration: 2500 },
+    { label: "ESTABLISHING SECURE UPLINK...", duration: 3000 },
+    { label: "VECTORIZING PROFESSIONAL DATA...", duration: 4000 },
+    { label: "OPTIMIZING SEMANTIC LAYERS...", duration: 3500 },
+    { label: "SYNTHESIZING DESIGN SYSTEM...", duration: 3000 },
+    { label: "FINALIZING OUTPUT MATRIX...", duration: 2000 },
   ];
 
+  // Simulated Terminal Logs
   React.useEffect(() => {
+    let logIndex = 0;
+    const possibleLogs = [
+      "Allocating memory block 0x8F4...",
+      "Parsing distinct entities...",
+      "Resolving dependency graph...",
+      "Injecting styles...",
+      "Verifying integrity hash...",
+      "Compiling assets...",
+      "Optimizing render tree...",
+      "Connecting to distribution network...",
+      "Applying heuristic analysis...",
+      "Generating layout permutations...",
+      "Analyzing content density...",
+      "Refining color variables...",
+      "Calibrating animation timing...",
+      "System green.",
+    ];
+
     const interval = setInterval(() => {
-      setFactIndex((prev) => (prev + 1) % PORTFOLIO_FACTS.length);
-    }, 4000);
+      if (logIndex < possibleLogs.length) {
+        setLogs((prev) => [...prev.slice(-4), `> ${possibleLogs[logIndex]}`]);
+        logIndex++;
+      }
+    }, 800);
+
     return () => clearInterval(interval);
   }, []);
 
   React.useEffect(() => {
     let timeout: NodeJS.Timeout;
-
     const runSteps = (index: number) => {
       if (index >= STEPS.length) return;
       setCurrentStep(index);
@@ -61,85 +84,106 @@ const LoadingScreen = () => {
         runSteps(index + 1);
       }, STEPS[index].duration);
     };
-
     runSteps(0);
     return () => clearTimeout(timeout);
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex items-center justify-center overflow-hidden">
-      {/* Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--muted)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--muted)/0.3)_1px,transparent_1px)] bg-[size:60px_60px]" />
+    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center overflow-hidden font-mono text-cyan-500 selection:bg-cyan-500/20">
+      {/* --- Sci-Fi Background Layer --- */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 via-[#050510] to-black" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#0ea5e91a_1px,transparent_1px),linear-gradient(to_bottom,#0ea5e91a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
 
-      {/* Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[120px]" />
+      {/* --- Holographic Central Core --- */}
+      <div className="relative z-10 flex flex-col items-center">
 
-      <div className="relative z-10 max-w-2xl w-full mx-auto px-6 flex flex-col items-center">
-
-        {/* Spinner */}
-        <div className="relative mb-16">
+        <div className="relative w-64 h-64 mb-16 flex items-center justify-center">
+          {/* Ring 1 - Fast Reverse Spin */}
           <motion.div
-            className="w-20 h-20 rounded-full border-2 border-muted"
-            style={{ borderTopColor: 'hsl(var(--primary))' }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 rounded-full border-t-2 border-b-2 border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.2)]"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles className="w-7 h-7 text-primary" />
+          {/* Ring 2 - Slow Forward Spin */}
+          <motion.div
+            className="absolute inset-4 rounded-full border-r-2 border-l-2 border-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,0.3)]"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          />
+          {/* Ring 3 - Pulse */}
+          <motion.div
+            className="absolute inset-12 rounded-full border border-cyan-300/20 bg-cyan-900/10 backdrop-blur-sm"
+            animate={{ scale: [1, 1.05, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+
+          {/* Center Logo / Core */}
+          <div className="relative z-20 flex flex-col items-center justify-center bg-black/80 rounded-full w-24 h-24 border border-cyan-500/50 shadow-[0_0_50px_rgba(6,182,212,0.5)]">
+            <Sparkles className="w-10 h-10 text-cyan-400 animate-pulse" />
+          </div>
+
+          {/* Orbiting Particle */}
+          <motion.div
+            className="absolute inset-0"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          >
+            <div className="h-3 w-3 bg-white rounded-full absolute top-0 left-1/2 -translate-x-1/2 blur-[2px] shadow-[0_0_10px_white]" />
+          </motion.div>
+        </div>
+
+        {/* --- Main Status Text --- */}
+        <div className="text-center space-y-4 mb-12 relative">
+          {/* Glitch Effect Line */}
+          <div className="h-[1px] w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent absolute -top-6 animate-pulse opacity-50" />
+
+          <h2 className="text-2xl md:text-3xl font-bold tracking-[0.2em] text-cyan-50 drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]">
+            {STEPS[currentStep]?.label || "SYSTEM READY"}
+          </h2>
+          <p className="text-cyan-400/60 text-sm uppercase tracking-widest">
+            AI Processing Unit Active
+          </p>
+        </div>
+
+        {/* --- Steps Progress Bar --- */}
+        <div className="w-full max-w-sm mb-12">
+          <div className="flex justify-between items-end mb-2 text-xs text-cyan-600 font-mono">
+            <span>PROGRESS</span>
+            <span>{Math.round((currentStep / (STEPS.length - 1)) * 100)}%</span>
+          </div>
+          <div className="h-2 w-full bg-cyan-900/30 rounded-full overflow-hidden border border-cyan-900/50">
+            <motion.div
+              className="h-full bg-cyan-400 shadow-[0_0_20px_rgba(34,211,238,0.5)]"
+              initial={{ width: "0%" }}
+              animate={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
           </div>
         </div>
 
-        {/* Status */}
-        <div className="text-center mb-10 space-y-2">
-          <motion.h2
-            key={currentStep}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-2xl md:text-3xl font-bold text-foreground tracking-tight"
-          >
-            {STEPS[currentStep]?.label || "Finalizing..."}
-          </motion.h2>
-          <p className="text-muted-foreground">AI is crafting your professional story</p>
+        {/* --- Terminal Window --- */}
+        <div className="w-full max-w-lg bg-black/80 border border-cyan-800/50 rounded-lg p-4 font-mono text-xs shadow-2xl backdrop-blur-md relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-6 bg-cyan-900/20 border-b border-cyan-800/50 flex items-center px-3 gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-500/50" />
+            <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
+            <div className="w-2 h-2 rounded-full bg-green-500/50" />
+            <span className="ml-auto text-cyan-700 font-bold text-[10px]">TERMINAL.EXE</span>
+          </div>
+          <div className="mt-4 space-y-1 h-24 flex flex-col justify-end">
+            {logs.map((log, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-cyan-300/80 truncate"
+              >
+                {log}
+              </motion.div>
+            ))}
+          </div>
+          {/* Scanline Overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[size:100%_4px] pointer-events-none opacity-20" />
         </div>
-
-        {/* Steps */}
-        <div className="w-full max-w-md space-y-3 mb-12">
-          {STEPS.map((step, index) => {
-            const isActive = index === currentStep;
-            const isCompleted = index < currentStep;
-
-            return (
-              <div key={index} className="flex items-center gap-4">
-                <div className={`w-2 h-2 rounded-full transition-all duration-300 ${isActive ? 'bg-primary scale-125' :
-                  isCompleted ? 'bg-muted-foreground' : 'bg-muted'
-                  }`} />
-                <span className={`text-sm transition-colors duration-300 ${isActive ? 'text-foreground font-medium' :
-                  isCompleted ? 'text-muted-foreground' : 'text-muted'
-                  }`}>
-                  {step.label}
-                </span>
-                {isCompleted && <span className="ml-auto text-muted-foreground text-xs">✓</span>}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Fact */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={factIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="border border-border p-6 rounded-2xl max-w-lg w-full text-center bg-card"
-          >
-            <p className="text-xs font-medium text-muted-foreground tracking-widest uppercase mb-3">Did You Know?</p>
-            <p className="text-base text-foreground font-medium leading-relaxed">
-              "{PORTFOLIO_FACTS[factIndex]}"
-            </p>
-          </motion.div>
-        </AnimatePresence>
 
       </div>
     </div>

@@ -7,7 +7,8 @@
     "toggleTheme": "تبديل المظهر",
     "toggleNavigation": "تبديل قائمة التنقل",
     "login": "تسجيل الدخول",
-    "getStarted": "ابدأ الآن"
+    "getStarted": "ابدأ الآن",
+    "dashboard": "محافظي"
   },
   "hero": {
     "title": "حوّل سيرتك الذاتية إلى معرض أعمال مذهل",
@@ -294,5 +295,53 @@
     "subtitle": "اختر تصميمًا لمعرض أعمالك. يمكنك تخصيص الألوان لاحقًا.",
     "backButton": "رجوع",
     "continueButton": "متابعة"
+  },
+  "preview": {
+    "finalize": "إتمام",
+    "editDetails": "تعديل التفاصيل",
+    "selectTemplate": "اختر القالب",
+    "appearance": "المظهر",
+    "colorTheme": "نسق الألوان",
+    "light": "فاتح",
+    "dark": "داكن",
+    "arabicMode": "الوضع العربي",
+    "mobileView": "عرض الجوال",
+    "desktopView": "عرض سطح المكتب",
+    "publishing": "جاري النشر...",
+    "successTitle": "!تم النشر بنجاح",
+    "successDesc": ".تم إطلاق موقعك"
+  },
+  "editor": {
+    "editPortfolio": "تعديل السيرة الذاتية",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "publish": "نشر",
+    "publishing": "جاري النشر...",
+    "edit": "تعديل",
+    "layout": "التخطيط",
+    "preview": "معاينة",
+    "personalInfo": "المعلومات الشخصية",
+    "aboutSkills": "نبذة والمهارات",
+    "projects": "المشاريع",
+    "experience": "الخبرة",
+    "education": "التعليم",
+    "certifications": "الشهادات",
+    "languages": "اللغات",
+    "add": "إضافة",
+    "remove": "حذف",
+    "uploadPhoto": "رفع صورة",
+    "removePhoto": "إزالة الصورة",
+    "projectImage": "صورة المشروع",
+    "saved": "تم الحفظ",
+    "saveSuccess": "تم حفظ التغييرات بنجاح.",
+    "error": "خطأ",
+    "saveError": "فشل حفظ التغييرات.",
+    "uploadSuccess": "تم رفع الصورة",
+    "uploadError": "فشل الرفع",
+    "newProject": "مشروع جديد",
+    "jobTitle": "المسمى الوظيفي",
+    "company": "الشركة",
+    "degree": "الدرجة العلمية",
+    "institution": "المؤسسة"
   }
 }

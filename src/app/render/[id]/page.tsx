@@ -1,34 +1,57 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { useColorTheme } from '@/context/color-theme-context';
+import { useTheme } from 'next-themes';
+import { Loader2 } from 'lucide-react';
 
-// Templates
-import ModernTemplate from '@/templates/ModernTemplate';
-import ExecutiveTemplate from '@/templates/ExecutiveTemplate';
-import CreativeTemplate from '@/templates/CreativeTemplate';
-import MinimalPlusTemplate from '@/templates/MinimalPlusTemplate';
-import BasicTemplate from '@/templates/BasicTemplate';
-import MinimalistTemplate from '@/templates/MinimalistTemplate';
-import GeneratedModernTemplate from '@/templates/GeneratedModernTemplate';
-import Cyber3DTemplate from '@/templates/Cyber3DTemplate';
-import AuroraTemplate from '@/templates/AuroraTemplate';
+// Dynamic Template Imports
+const ModernTemplate = dynamic(() => import('@/templates/ModernTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const ExecutiveTemplate = dynamic(() => import('@/templates/ExecutiveTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const CreativeTemplate = dynamic(() => import('@/templates/CreativeTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const MinimalPlusTemplate = dynamic(() => import('@/templates/MinimalPlusTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const BasicTemplate = dynamic(() => import('@/templates/BasicTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const MinimalistTemplate = dynamic(() => import('@/templates/MinimalistTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+const Cyber3DTemplate = dynamic(() => import('@/templates/Cyber3DTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-cyan-500" /></div>
+});
+const AuroraTemplate = dynamic(() => import('@/templates/AuroraTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
+});
+const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModernTemplate'), {
+    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+});
+
 import type { PortfolioData } from '@/templates/types';
 
 export default function RenderPage({ params }: { params: { id: string } }) {
     const portfolioId = params.id;
     const searchParams = useSearchParams();
-    const forcedTheme = searchParams.get('theme');
-    const { setTheme } = useColorTheme();
+    const mode = searchParams.get('mode');
+    const { setTheme } = useTheme();
 
     // Apply theme from URL if present (for iframe control)
     useEffect(() => {
-        if (forcedTheme) {
-            setTheme(forcedTheme as any);
+        if (mode) {
+            setTheme(mode);
+        } else {
+            setTheme('dark'); // Default to dark if not validating
         }
-    }, [forcedTheme, setTheme]);
+    }, [mode, setTheme]);
 
     const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState('modern');
@@ -109,7 +132,7 @@ export default function RenderPage({ params }: { params: { id: string } }) {
 
     return (
         <div className="absolute inset-0">
-            <CurrentTemplate data={portfolioData} />
+            <CurrentTemplate data={portfolioData} isDarkMode={mode === 'dark' || !mode} />
         </div>
     );
 }

@@ -1,10 +1,14 @@
-import type { Locale } from './i18n-config'
+import type { Locale } from './i18n-config';
+import en from '../locales/en.json';
+import ar from '../locales/ar.json';
 
 const dictionaries = {
-  en: () => import('@/locales/en.json').then((module) => module.default),
-  ar: () => import('@/locales/ar.json').then((module) => module.default),
-}
+  en,
+  ar,
+};
 
-export const getDictionary = async (locale: Locale) => dictionaries[locale]()
+export const getDictionary = async (locale: Locale) => {
+  return dictionaries[locale];
+};
 
-export type Dictionary = Awaited<ReturnType<typeof getDictionary>>
+export type Dictionary = typeof en;

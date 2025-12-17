@@ -84,8 +84,12 @@ async function handleOrderCreated(data: ReturnType<typeof parseWebhookPayload>) 
                 user_id: data.userId,
                 plan_type: 'pro_lifetime',
                 status: 'active',
-                lemonsqueezy_order_id: data.orderId,
-                lemonsqueezy_customer_id: data.customerId,
+                external_transaction_id: data.orderId, // Map to payment history really, but keeping simplified logic for now or custom column
+                // Note: The schema has external_subscription_id/external_customer_id on subscriptions table
+                // For lifetime, we might not have a sub ID, so we use order ID or similar.
+                external_subscription_id: data.orderId, // Using order ID as the "subscription" identifier for lifetime
+                external_customer_id: data.customerId,
+                payment_provider: 'lemonsqueezy',
                 start_date: new Date().toISOString(),
                 end_date: null, // Lifetime = no end date
                 is_lifetime: true,
@@ -113,8 +117,9 @@ async function handleSubscriptionCreated(data: ReturnType<typeof parseWebhookPay
             user_id: data.userId,
             plan_type: data.planType || 'pro_monthly',
             status: 'active',
-            lemonsqueezy_subscription_id: data.subscriptionId,
-            lemonsqueezy_customer_id: data.customerId,
+            external_subscription_id: data.subscriptionId,
+            external_customer_id: data.customerId,
+            payment_provider: 'lemonsqueezy',
             start_date: new Date().toISOString(),
             is_first_month: true,
             is_lifetime: false,
@@ -155,7 +160,7 @@ async function handleSubscriptionUpdated(data: ReturnType<typeof parseWebhookPay
         await supabaseAdmin
             .from('subscriptions')
             .update(updateData)
-            .eq('lemonsqueezy_subscription_id', data.subscriptionId);
+            .eq('external_subscription_id', data.subscriptionId);
     }
 
     console.log('Subscription updated:', data.subscriptionId || data.userId);
@@ -181,7 +186,7 @@ async function handleSubscriptionEnded(data: ReturnType<typeof parseWebhookPaylo
         await supabaseAdmin
             .from('subscriptions')
             .update(updateData)
-            .eq('lemonsqueezy_subscription_id', data.subscriptionId);
+            .eq('external_subscription_id', data.subscriptionId);
     }
 
     console.log('Subscription ended:', data.subscriptionId || data.userId);

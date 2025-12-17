@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import type { PortfolioData } from '@/templates/types';
+import Groq from 'groq-sdk';
+import { HfInference } from '@huggingface/inference';
 
 const portfolioDataSchema = `
 type PortfolioData = {
@@ -65,6 +67,20 @@ You are a helpful assistant that extracts data from a resume to build a portfoli
 - Your goal is to generate VALID JSON, no matter what.
 `;
 
+const FULL_PROMPT_TEMPLATE = `
+${SYSTEM_PROMPT}
+
+SCHEMA (TypeScript): ${portfolioDataSchema}
+
+TASK:
+1) Parse the resume content provided below.
+2) Fill the PortfolioData JSON schema with the extracted and normalized fields.
+3) Create concise, action-led bullets with metrics if present.
+4) Extract links (LinkedIn, GitHub, website) if they exist.
+
+RETURN: Valid JSON of PortfolioData only. Do not include markdown formatting.
+`;
+
 async function uploadFileToSupabase(file: File, userId: string, bucket: 'cvs' | 'profile-photos'): Promise<string> {
   const fileExt = file.name.split('.').pop();
   const fileName = `${userId}/${uuidv4()}.${fileExt}`;
@@ -92,8 +108,134 @@ async function uploadFileToSupabase(file: File, userId: string, bucket: 'cvs' | 
     return publicUrl;
   }
 
-  // For CVs, we return the path (or signed URL if needed immediately, but path is better for DB)
+  // For CVs, we return the path
   return data.path;
+}
+
+// @ts-ignore
+import PDFParser from 'pdf2json';
+
+// --- Text Extraction Helper ---
+async function extractTextFromPDF(buffer: Buffer): Promise<string> {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(`Parsing PDF buffer of size: ${buffer.length} bytes with pdf2json`);
+      const pdfParser = new PDFParser(null, true); // true = text only
+
+      pdfParser.on("pdfParser_dataError", (errData: any) => {
+        console.error("pdf2json Error:", errData.parserError);
+        reject(new Error(`PDF Parsing Failed: ${errData.parserError}`));
+      });
+
+      pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+        try {
+          // pdf2json returns URL-encoded text, need to decode
+          // The structure is pdfData.formImage.Pages[].Texts[].R[].T
+          const rawText = pdfParser.getRawTextContent();
+          console.log(`Successfully extracted ${rawText.length} characters.`);
+          resolve(rawText);
+        } catch (e: any) {
+          console.error("Error processing text from pdf2json:", e);
+          reject(new Error("Failed to process PDF text content"));
+        }
+      });
+
+      pdfParser.parseBuffer(buffer);
+    } catch (e: any) {
+      console.error("pdf2json Exception:", e);
+      reject(new Error(`PDF Parsing Exception: ${e.message}`));
+    }
+  });
+}
+
+// --- Provider Implementations ---
+
+async function callGemini(cvFile: File, fullPrompt: string): Promise<string> {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+
+  if (!apiKey) throw new Error('GOOGLE_GENERATIVE_AI_API_KEY is not set');
+
+  // Convert CV file to base64 for Gemini (Multimodal)
+  const cvArrayBuffer = await cvFile.arrayBuffer();
+  const cvBase64 = Buffer.from(cvArrayBuffer).toString('base64');
+
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const requestBody = {
+    contents: [{
+      parts: [
+        { text: fullPrompt },
+        {
+          inline_data: {
+            mime_type: cvFile.type || 'application/pdf',
+            data: cvBase64
+          }
+        }
+      ]
+    }],
+    generationConfig: {
+      response_mime_type: "application/json"
+    }
+  };
+
+  console.log(`🚀 [GEMINI] Sending request to ${model}...`);
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody)
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Gemini API Failed: ${response.status} - ${errText}`);
+  }
+
+  const data = await response.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+async function callGroq(cvText: string, fullPrompt: string): Promise<string> {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) throw new Error('GROQ_API_KEY is not set');
+
+  const groq = new Groq({ apiKey });
+
+  console.log('🚀 [GROQ] Sending request to Llama 3...');
+  const completion = await groq.chat.completions.create({
+    messages: [
+      { role: "system", content: fullPrompt },
+      { role: "user", content: `RESUME CONTENT:\n${cvText}` }
+    ],
+    model: "llama-3.3-70b-versatile", // High speed, good reasoning
+    temperature: 0.2, // Low temp for extraction
+    response_format: { type: "json_object" }
+  });
+
+  return completion.choices[0]?.message?.content || '';
+}
+
+async function callHuggingFace(cvText: string, fullPrompt: string): Promise<string> {
+  const apiKey = process.env.HUGGINGFACE_API_KEY;
+  if (!apiKey) throw new Error('HUGGINGFACE_API_KEY is not set');
+
+  const hf = new HfInference(apiKey);
+
+  console.log('🚀 [HUGGINGFACE] Sending request...');
+  // Qwen2.5 is a very strong open model available on HF Inference
+  const modelName = "Qwen/Qwen2.5-72B-Instruct";
+
+  const output = await hf.chatCompletion({
+    model: modelName,
+    messages: [
+      { role: "system", content: fullPrompt },
+      { role: "user", content: `RESUME CONTENT:\n${cvText}` }
+    ],
+    max_tokens: 4000,
+    temperature: 0.2
+  });
+
+  return output.choices[0].message.content || '';
 }
 
 export async function POST(req: NextRequest) {
@@ -113,6 +255,35 @@ export async function POST(req: NextRequest) {
     }
     const userId = user.id;
 
+    // --- CHECK DAILY LIMIT ---
+    // 1. Get current usage
+    const { data: usageData, error: usageError } = await supabaseAdmin.rpc('get_daily_generations', {
+      check_user_id: userId
+    });
+
+    if (usageError) {
+      console.error('Error checking daily limits:', usageError);
+      // Proceed cautiously or fail? Let's verify if they are pro first or strict fail.
+      // For now, fail safe (allow) or strict? Strict better for cost control.
+    }
+
+    const dailyCount = typeof usageData === 'number' ? usageData : 0;
+
+    // 2. Check if Pro
+    const { data: isPro } = await supabaseAdmin.rpc('is_user_pro', {
+      check_user_id: userId
+    });
+
+    // 3. Enforce Limit (3/day for free users)
+    if (!isPro && dailyCount >= 3) {
+      return NextResponse.json({
+        error: 'Daily limit reached',
+        code: 'LIMIT_REACHED',
+        message: 'You have reached your daily limit of 3 free portfolios. Upgrade to Pro for unlimited generations.'
+      }, { status: 403 });
+    }
+
+
     const formData = await req.formData();
     const cvFile = formData.get('cv') as File | null;
     const photoFile = formData.get('photo') as File | null;
@@ -121,83 +292,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No CV file provided' }, { status: 400 });
     }
 
-    // 1. Convert CV file to base64 for Gemini
-    const cvArrayBuffer = await cvFile.arrayBuffer();
-    const cvBase64 = Buffer.from(cvArrayBuffer).toString('base64');
+    // Determine Provider
+    const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+    let jsonResponseText = '';
 
-    // 2. Prepare prompt for Gemini
-    const fullPrompt = `
-${SYSTEM_PROMPT}
+    console.log(`Doing portfolio generation with provider: ${provider}`);
 
-SCHEMA (TypeScript): ${portfolioDataSchema}
+    if (provider === 'gemini') {
+      jsonResponseText = await callGemini(cvFile, FULL_PROMPT_TEMPLATE);
+    } else {
+      // For Groq / HuggingFace, we must extract text first
+      const arrayBuffer = await cvFile.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const cvText = await extractTextFromPDF(buffer);
 
-TASK:
-1) Parse the resume file provided.
-2) Fill the PortfolioData JSON schema with the extracted and normalized fields.
-3) Create concise, action-led bullets with metrics if present.
-4) Extract links (LinkedIn, GitHub, website) if they exist.
-
-RETURN: Valid JSON of PortfolioData only.
-    `;
-
-    // 3. Prepare payload for Direct API Call (Bypassing SDK)
-    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-    if (!apiKey) {
-      throw new Error('GOOGLE_GENERATIVE_AI_API_KEY is not set');
-    }
-
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
-
-    const requestBody = {
-      contents: [
-        {
-          parts: [
-            { text: fullPrompt },
-            {
-              inline_data: {
-                mime_type: cvFile.type || 'application/pdf',
-                data: cvBase64
-              }
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        response_mime_type: "application/json"
+      if (provider === 'groq') {
+        jsonResponseText = await callGroq(cvText, FULL_PROMPT_TEMPLATE);
+      } else if (provider === 'huggingface') {
+        jsonResponseText = await callHuggingFace(cvText, FULL_PROMPT_TEMPLATE);
+      } else {
+        throw new Error(`Invalid AI_PROVIDER: ${provider}`);
       }
-    };
-
-    console.log('🚀 [PORTFOLIO-GENERATE] Sending DIRECT request to Gemini API (v1beta)...');
-
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("❌ API Error:", errText);
-      throw new Error(`Gemini API Failed: ${response.status} ${response.statusText} - ${errText}`);
     }
 
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!text) {
-      throw new Error("No content returned from Gemini");
+    if (!jsonResponseText) {
+      throw new Error("No content returned from AI Provider");
     }
 
-    console.log('✅ [PORTFOLIO-GENERATE] API Success!');
-    console.log('📝 Response length:', text.length);
+    console.log('✅ [GENERATION] Success!');
 
-    // Clean up the text response to ensure it's valid JSON
-    const jsonString = text.replace(/```json\n|\n```/g, '').trim();
-    let parsedData = JSON.parse(jsonString) as PortfolioData;
+    // Clean up the text response (remove markdown fences if any)
+    const jsonString = jsonResponseText.replace(/```json\n|\n```/g, '').replace(/```/g, '').trim();
 
-    // 4. Handle file uploads to Supabase
+    let parsedData: PortfolioData;
+    try {
+      parsedData = JSON.parse(jsonString) as PortfolioData;
+    } catch (e) {
+      console.error("JSON Parse Error. Raw text:", jsonString);
+      throw new Error("Failed to parse AI response as JSON");
+    }
+
+    // Handle file uploads to Supabase
     let photoURL = '';
     if (photoFile) {
       photoURL = await uploadFileToSupabase(photoFile, userId, 'profile-photos');
@@ -205,7 +340,7 @@ RETURN: Valid JSON of PortfolioData only.
 
     const cvPath = await uploadFileToSupabase(cvFile, userId, 'cvs');
 
-    // 5. Normalize and enrich data
+    // Normalize and enrich data
     if (parsedData.personalInfo) {
       parsedData.personalInfo.profilePhotoURL = photoURL;
       if (parsedData.personalInfo.fullName && !parsedData.personalInfo.portfolioNameAbbr) {
@@ -217,21 +352,14 @@ RETURN: Valid JSON of PortfolioData only.
       }
     }
 
-    // 6. Ensure user exists in public.users table (for foreign key)
-    const { error: userError } = await supabaseAdmin
-      .from('users')
-      .upsert({
-        id: userId,
-        display_name: parsedData.personalInfo.fullName,
-        photo_url: photoURL || null,
-      }, { onConflict: 'id' });
+    // Ensure user exists
+    await supabaseAdmin.from('users').upsert({
+      id: userId,
+      display_name: parsedData.personalInfo.fullName,
+      photo_url: photoURL || null,
+    }, { onConflict: 'id' });
 
-    if (userError) {
-      console.error('User upsert error:', userError);
-      // Continue anyway - the user might already exist
-    }
-
-    // 7. Save to Supabase Database
+    // Save to Database
     const { data: portfolio, error: dbError } = await supabaseAdmin
       .from('portfolios')
       .insert({
@@ -251,7 +379,7 @@ RETURN: Valid JSON of PortfolioData only.
         projects: parsedData.projects,
         certifications: parsedData.certifications,
         languages: parsedData.languages,
-        template_id: 'modern', // Default template
+        template_id: 'modern',
         status: 'draft'
       })
       .select()
@@ -262,7 +390,7 @@ RETURN: Valid JSON of PortfolioData only.
       throw new Error('Failed to save portfolio to database');
     }
 
-    // Track the CV upload in the database
+    // Track CV upload
     await supabaseAdmin.from('cv_uploads').insert({
       user_id: userId,
       portfolio_id: portfolio.id,
@@ -272,6 +400,16 @@ RETURN: Valid JSON of PortfolioData only.
       storage_path: cvPath,
       status: 'completed'
     });
+
+    // --- UPDATE DAILY USAGE ---
+    await supabaseAdmin
+      .from('daily_usage')
+      .upsert({
+        user_id: userId,
+        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+        generation_count: dailyCount + 1,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id,date' });
 
     return NextResponse.json({ portfolioId: portfolio.id });
 

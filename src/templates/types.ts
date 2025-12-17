@@ -13,6 +13,7 @@ export type PortfolioData = {
     portfolioNameAbbr?: string; // e.g. "OS"
     profilePhotoURL?: string;   // from upload
   };
+  sectionOrder?: string[]; // e.g. ['hero', 'about', 'experience', 'projects', 'contact']
   about: {
     extendedBio?: string;
     stats?: Array<{ label: string; value: string; icon?: string }>;

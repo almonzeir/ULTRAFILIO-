@@ -4,6 +4,8 @@ import * as React from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import GeneratedModernTemplate from '@/templates/GeneratedModernTemplate';
+import ModernTemplate from '@/templates/ModernTemplate';
+import Cyber3DTemplate from '@/templates/Cyber3DTemplate';
 import MinimalistTemplate from '@/templates/MinimalistTemplate';
 import BasicTemplate from '@/templates/BasicTemplate';
 import type { PortfolioData } from '@/templates/types';
@@ -11,7 +13,9 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase/client';
 
 const templateMap: { [key: string]: React.ComponentType<{ data: PortfolioData }> } = {
-  modern: GeneratedModernTemplate,
+  modern: ModernTemplate,
+  generated: GeneratedModernTemplate,
+  cyber: Cyber3DTemplate,
   minimalist: MinimalistTemplate,
   basic: BasicTemplate,
 };

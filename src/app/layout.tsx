@@ -57,6 +57,11 @@ export const metadata: Metadata = {
     // google: 'your-google-verification-code',
     // yandex: 'your-yandex-verification-code',
   },
+  icons: {
+    icon: '/image.png',
+    shortcut: '/image.png',
+    apple: '/image.png',
+  },
 };
 
 export default function RootLayout({

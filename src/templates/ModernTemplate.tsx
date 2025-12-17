@@ -7,6 +7,32 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
   // Helpers
   const { personalInfo, about, experience, projects } = data;
 
+  // Consolidate skills (fix for fragmented/redundant categories)
+  const consolidatedSkills = React.useMemo(() => {
+    if (!about.skills) return [];
+
+    // Group by category name
+    const groups: Record<string, { category: string, icon?: string, tags: Set<string> }> = {};
+
+    about.skills.forEach(skill => {
+      const key = skill.category || 'General';
+      if (!groups[key]) {
+        groups[key] = {
+          category: key,
+          // Use the first non-empty icon found, or default
+          icon: skill.icon,
+          tags: new Set()
+        };
+      }
+      skill.tags.forEach(t => groups[key].tags.add(t));
+    });
+
+    return Object.values(groups).map(g => ({
+      ...g,
+      tags: Array.from(g.tags)
+    }));
+  }, [about.skills]);
+
   return (
     <div className="font-sans antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 min-h-screen selection:bg-brand selection:text-white">
       {/* 
@@ -194,7 +220,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader title="About Me" subtitle="My creative journey and skillset" />
 
-          <div className="grid md:grid-cols-2 gap-12 items-start mt-12">
+          <div className={`grid gap-12 items-start mt-12 ${about.skills && about.skills.length > 0 ? 'md:grid-cols-2' : 'grid-cols-1'}`}>
             <div className="glass-panel p-8 rounded-3xl">
               <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
                 {about.extendedBio}
@@ -215,23 +241,31 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
             </div>
 
             {/* Skills Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {about.skills?.map((skillGroup, idx) => (
-                <div key={idx} className="glass-panel p-6 rounded-2xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
-                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                    <span className="text-[hsl(var(--brand))]">{skillGroup.icon || <Zap className="w-5 h-5" />}</span>
-                    {skillGroup.category}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {skillGroup.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[hsl(var(--brand)/0.1)] text-[hsl(var(--brand))] border border-[hsl(var(--brand)/0.2)]">
-                        {tag}
+            {consolidatedSkills.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {consolidatedSkills.map((skillGroup, idx) => (
+                  <div key={idx} className="glass-panel p-6 rounded-2xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors">
+                    <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                      {/* Fix icon rendering if it's just text 'code' or similar */}
+                      <span className="text-[hsl(var(--brand))]">
+                        {(!skillGroup.icon || skillGroup.icon.length < 5 || skillGroup.icon === 'code')
+                          ? <Zap className="w-5 h-5" />
+                          : <span className="text-xl">{skillGroup.icon}</span>
+                        }
                       </span>
-                    ))}
+                      {skillGroup.category}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {skillGroup.tags.map((tag, tIdx) => (
+                        <span key={tIdx} className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[hsl(var(--brand)/0.1)] text-[hsl(var(--brand))] border border-[hsl(var(--brand)/0.2)]">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
