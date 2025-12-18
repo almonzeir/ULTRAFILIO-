@@ -409,16 +409,6 @@ export async function POST(req: NextRequest) {
       status: 'completed'
     });
 
-    // --- UPDATE DAILY USAGE ---
-    await supabaseAdmin
-      .from('daily_usage')
-      .upsert({
-        user_id: userId,
-        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-        generation_count: dailyCount + 1,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'user_id,date' });
-
     return NextResponse.json({ portfolioId: portfolio.id });
 
   } catch (error: any) {
