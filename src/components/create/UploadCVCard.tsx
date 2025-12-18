@@ -5,7 +5,7 @@ import { UploadCloud, Camera, X, Sparkles, ArrowRight, Loader2 } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import type { Dictionary } from '@/lib/dictionaries';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface UploadCVCardProps {
   onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
@@ -205,39 +205,61 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            "relative h-full min-h-[200px] rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 overflow-hidden group border-2 border-dashed",
+            "relative h-full min-h-[250px] rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-all duration-500 overflow-hidden group border-2 border-dashed",
             isDragging
-              ? "bg-primary/10 border-primary scale-[1.02]"
+              ? "bg-primary/10 border-primary scale-[1.02] shadow-[0_0_40px_rgba(var(--primary),0.2)]"
               : cvFile
-                ? "bg-primary/5 border-primary"
-                : "bg-muted/30 border-muted-foreground/30 hover:border-primary hover:bg-muted/50"
+                ? "bg-primary/5 border-primary shadow-inner"
+                : "bg-background/40 backdrop-blur-xl border-muted-foreground/20 hover:border-primary/50 hover:bg-muted/30"
           )}
         >
+          {/* Scanning Animation Effect (When file is uploaded) */}
+          <AnimatePresence>
+            {cvFile && !isProcessing && (
+              <motion.div
+                initial={{ top: "-10%" }}
+                animate={{ top: "110%" }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent z-20 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Background Decorative Circles */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
           {/* Content */}
           <div className="relative z-10 text-center px-6">
             <motion.div
               animate={isDragging ? { scale: 1.2, rotate: 180 } : { scale: 1, rotate: 0 }}
               transition={{ type: "spring", stiffness: 200 }}
+              className="mb-6"
             >
-              <UploadCloud className={cn(
-                "w-12 h-12 mx-auto mb-4 transition-colors duration-300",
-                isDragging || cvFile ? "text-primary" : "text-muted-foreground group-hover:text-primary"
-              )} />
+              <div className={cn(
+                "w-20 h-20 rounded-2xl flex items-center justify-center mx-auto transition-all duration-500",
+                cvFile ? "bg-primary text-primary-foreground shadow-lg rotate-12" : "bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/10"
+              )}>
+                <UploadCloud className="w-10 h-10" />
+              </div>
             </motion.div>
 
             {cvFile ? (
-              <div>
-                <p className="text-lg font-bold text-foreground mb-1">{cvFile.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {(cvFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+              >
+                <p className="text-xl font-black text-foreground mb-1 tracking-tight">{cvFile.name}</p>
+                <div className="flex items-center justify-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+                  <Sparkles className="w-3 h-3" />
+                  Ready to Extract
+                </div>
+              </motion.div>
             ) : (
               <>
-                <p className="text-lg font-semibold text-foreground mb-1">
+                <p className="text-xl font-bold text-foreground mb-2 tracking-tight">
                   {dict.dropzone.label}
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground max-w-[200px] mx-auto leading-relaxed">
                   {dict.dropzone.hint}
                 </p>
               </>

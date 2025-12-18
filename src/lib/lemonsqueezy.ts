@@ -130,8 +130,8 @@ export const lemonSqueezy = new LemonSqueezy();
  * Variant IDs for different plans
  */
 export const LEMONSQUEEZY_VARIANTS = {
-    pro_monthly: process.env.LEMONSQUEEZY_MONTHLY_VARIANT_ID || '',
-    pro_lifetime: process.env.LEMONSQUEEZY_LIFETIME_VARIANT_ID || '',
+    pro_monthly: 'cb97e4f6-b3cd-4f75-ae11-75eab6155eeb',
+    pro_lifetime: 'd7d38afa-79e6-4ad9-8fdf-9ce2f04f76ee',
 } as const;
 
 /**

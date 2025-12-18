@@ -691,26 +691,39 @@ export default function CreatePortfolioPage() {
       <Header />
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
 
-        {/* Subtle Grid Background */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--muted)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--muted)/0.3)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none" />
+        {/* --- PREMIUM DYNAMIC AURA --- */}
+        <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 blur-[120px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[20%] right-[-5%] w-[40%] h-[40%] bg-blue-500/10 blur-[100px] rounded-full" />
+          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-violet-500/5 blur-[80px] rounded-full animate-bounce [animation-duration:15s]" />
 
-        {/* Ambient Glow */}
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+          {/* Subtle Grid Overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--muted)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--muted)/0.3)_1px,transparent_1px)] bg-[size:60px_60px] opacity-20" />
+        </div>
 
         <section className="w-full max-w-5xl mx-auto relative z-10">
 
           {/* Header */}
           <motion.div
-            className="text-center mb-10 md:mb-12"
+            className="text-center mb-10 md:mb-16"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-3">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary uppercase tracking-widest mb-6"
+            >
+              <Sparkles className="w-3 h-3" />
+              Next-Gen Portfolio Builder
+            </motion.div>
+
+            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-foreground mb-4 font-headline">
               {dict.title}
             </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
               {dict.subtitle}
             </p>
           </motion.div>

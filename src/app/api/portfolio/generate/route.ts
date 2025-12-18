@@ -256,32 +256,40 @@ export async function POST(req: NextRequest) {
     const userId = user.id;
 
     // --- CHECK DAILY LIMIT ---
-    // 1. Get current usage
-    const { data: usageData, error: usageError } = await supabaseAdmin.rpc('get_daily_generations', {
-      check_user_id: userId
-    });
-
-    if (usageError) {
-      console.error('Error checking daily limits:', usageError);
-      // Proceed cautiously or fail? Let's verify if they are pro first or strict fail.
-      // For now, fail safe (allow) or strict? Strict better for cost control.
-    }
-
-    const dailyCount = typeof usageData === 'number' ? usageData : 0;
-
-    // 2. Check if Pro
     const { data: isPro } = await supabaseAdmin.rpc('is_user_pro', {
       check_user_id: userId
     });
 
-    // 3. Enforce Limit (3/day for free users)
-    if (!isPro && dailyCount >= 3) {
-      return NextResponse.json({
-        error: 'Daily limit reached',
-        code: 'LIMIT_REACHED',
-        message: 'You have reached your daily limit of 3 free portfolios. Upgrade to Pro for unlimited generations.'
-      }, { status: 403 });
+    // If NOT pro, we check the limit
+    if (!isPro) {
+      const { data: allowed, error: limitError } = await supabaseAdmin.rpc('check_and_increment_usage', {
+        check_user_id: userId,
+        limit_count: 3 // Limit: 3 per day
+      });
+
+      if (limitError) {
+        console.error('Limit check error:', limitError);
+        // Fail open or closed? Let's fail safe (allow) for now to avoid blocking users on DB errors
+      } else if (allowed === false) {
+        // Calculate Malaysia Time (UTC+8) for friendly message
+        const now = new Date();
+        const malaysiaTime = new Date(now.getTime() + (3600000 * 8));
+        const hoursLeft = 24 - malaysiaTime.getUTCHours();
+
+        return NextResponse.json({
+          error: `Daily limit reached. You can only generate 3 portfolios per day to ensure quality service. Please try again in approx ${hoursLeft} hours (tomorrow).`,
+          code: 'LIMIT_REACHED'
+        }, { status: 429 });
+      }
+    } else {
+      // For Pro users, we still might want to track usage, but without strict limit
+      // Or just let them pass. Let's just track it for stats.
+      await supabaseAdmin.rpc('check_and_increment_usage', {
+        check_user_id: userId,
+        limit_count: 1000 // Virtually unlimited
+      });
     }
+    // ------------------------
 
 
     const formData = await req.formData();
