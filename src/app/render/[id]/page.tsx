@@ -32,6 +32,7 @@ const Cyber3DTemplate = dynamic(() => import('@/templates/Cyber3DTemplate'), {
 const AuroraTemplate = dynamic(() => import('@/templates/AuroraTemplate'), {
     loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
 });
+
 const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModernTemplate'), {
     loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
 });

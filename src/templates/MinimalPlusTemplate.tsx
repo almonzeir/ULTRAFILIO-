@@ -1,148 +1,196 @@
-/* MinimalPlusTemplate.tsx - Swiss Design / Apple Style / Ultra Clean */
+/* MinimalPlusTemplate.tsx - Apple-Inspired / Ultra Clean / Smooth Motion */
 import React from 'react';
 import type { PortfolioData } from './types';
-import { User } from 'lucide-react';
+import { User, ArrowUpRight, Github, Linkedin, Mail, Globe, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-const DEFAULT_ORDER = ['hero', 'about', 'projects', 'experience', 'contact'];
+const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+};
+
+const staggerContainer = {
+    initial: {},
+    whileInView: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
 
 export default function MinimalPlusTemplate({ data }: { data: PortfolioData }) {
-    const { personalInfo, about, experience, projects, sectionOrder = DEFAULT_ORDER } = data;
+    const { personalInfo, about, experience, projects, sectionOrder = ['hero', 'about', 'projects', 'experience', 'contact'] } = data;
 
     return (
-        <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 font-sans selection:bg-neutral-900 selection:text-white dark:selection:bg-white dark:selection:text-black">
+        <div className="min-h-screen bg-[#fbfbfd] dark:bg-[#000000] text-[#1d1d1f] dark:text-[#f5f5f7] font-sans selection:bg-[#0071e3] selection:text-white">
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
-        :root {
-          --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
-        }
-        
-        body { font-family: 'DM Sans', sans-serif; }
-
-        .reveal-up {
-          animation: revealUp 0.8s var(--ease-out) forwards;
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        
-        @keyframes revealUp {
-          to { opacity: 1; transform: translateY(0); }
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .hover-lift {
-          transition: transform 0.3s var(--ease-out);
+        .glass-nav {
+            background: rgba(251, 251, 253, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
         }
-        .hover-lift:hover {
-          transform: translateY(-4px);
+        .dark .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .apple-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .apple-button:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
         }
       `}</style>
 
             {/* --- NAVIGATION --- */}
-            <nav className="fixed top-0 w-full z-50 bg-neutral-50/80 dark:bg-neutral-950/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
-                <div className="max-w-screen-xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <div className="text-xl font-bold tracking-tight">{personalInfo.portfolioNameAbbr}.</div>
-                    <div className="flex gap-8 text-sm font-medium text-neutral-500">
-                        <a href="#about" className="hover:text-neutral-900 dark:hover:text-white transition-colors">About</a>
-                        <a href="#work" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Work</a>
-                        <a href="#contact" className="hover:text-neutral-900 dark:hover:text-white transition-colors">Contact</a>
+            <nav className="fixed top-0 w-full z-50 glass-nav border-b border-[#d2d2d7]/30 dark:border-[#424245]/30">
+                <div className="max-w-screen-xl mx-auto px-6 h-12 md:h-14 flex items-center justify-between">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-lg font-semibold tracking-tight"
+                    >
+                        {personalInfo.fullName}
+                    </motion.div>
+                    <div className="flex gap-6 md:gap-10 text-[12px] font-medium text-[#1d1d1f]/60 dark:text-[#f5f5f7]/60">
+                        <a href="#about" className="hover:text-[#0071e3] transition-colors">About</a>
+                        <a href="#work" className="hover:text-[#0071e3] transition-colors">Work</a>
+                        <a href="#contact" className="hover:text-[#0071e3] transition-colors">Contact</a>
                     </div>
                 </div>
             </nav>
 
-            <main className="pt-32 pb-20 px-6 max-w-screen-xl mx-auto">
+            <main className="pt-24 pb-20 px-6 max-w-screen-xl mx-auto">
 
                 {/* Dynamic Section Rendering */}
                 {sectionOrder.map((sectionId) => {
                     switch (sectionId) {
                         case 'hero':
                             return (
-                                <section key="hero" className="min-h-[70vh] flex flex-col justify-center max-w-4xl mx-auto">
-                                    <div className="reveal-up">
-                                        <span className="inline-flex items-center px-3 py-1 bg-neutral-100 dark:bg-neutral-800 rounded-full text-xs font-medium mb-8">
-                                            <span className="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Available for new projects
-                                        </span>
-                                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1] mb-8">
-                                            {personalInfo.fullName.split(' ')[0]} is a <span className="text-neutral-400">{personalInfo.title}</span> based in {personalInfo.location || 'Cyber Space'}.
-                                        </h1>
-                                        <p className="text-xl md:text-2xl text-neutral-500 max-w-2xl leading-relaxed mb-10">
+                                <section key="hero" className="min-h-[80vh] flex flex-col justify-center max-w-5xl mx-auto">
+                                    <motion.div
+                                        initial="initial"
+                                        animate="animate"
+                                        variants={staggerContainer}
+                                    >
+                                        <motion.div variants={fadeInUp} className="mb-6">
+                                            <span className="inline-flex items-center px-4 py-1 bg-[#1d1d1f]/5 dark:bg-[#f5f5f7]/10 rounded-full text-[13px] font-medium">
+                                                <Sparkles className="w-3.5 h-3.5 mr-2 text-[#0071e3]" />
+                                                Available for collaboration
+                                            </span>
+                                        </motion.div>
+
+                                        <motion.h1
+                                            variants={fadeInUp}
+                                            className="text-5xl md:text-8xl font-bold tracking-tight leading-[1.05] mb-10"
+                                        >
+                                            {personalInfo.fullName.split(' ')[0]} is a <span className="text-[#86868b]">{personalInfo.title}</span> <br className="hidden md:block" />
+                                            designing things for humans.
+                                        </motion.h1>
+
+                                        <motion.p
+                                            variants={fadeInUp}
+                                            className="text-2xl md:text-3xl text-[#86868b] max-w-3xl leading-snug mb-12 font-medium"
+                                        >
                                             {personalInfo.tagline}
-                                        </p>
-                                    </div>
+                                        </motion.p>
 
-                                    <div className="reveal-up delay-200 mt-12 flex flex-col md:flex-row gap-8 pb-20 border-b border-neutral-200 dark:border-neutral-800 items-start">
-                                        <div className="bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden w-32 h-32 md:w-40 md:h-40 relative group shrink-0">
-                                            {personalInfo.profilePhotoURL ? (
-                                                <img src={personalInfo.profilePhotoURL} alt="Me" className="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-700" />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center"><User size={40} className="text-neutral-300" /></div>
-                                            )}
-                                        </div>
-
-                                        <div className="flex flex-col gap-6">
-                                            <div className="flex gap-4">
-                                                <a href="#contact" className="px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-lg font-bold text-sm hover:opacity-90 transition-opacity">
-                                                    Get in Touch
-                                                </a>
-                                                <a href="#work" className="px-6 py-3 border border-neutral-200 dark:border-neutral-700 rounded-lg font-bold text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
-                                                    View Work
-                                                </a>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {about.skills?.slice(0, 5).flatMap(cat => cat.tags).map((tag, i) => (
-                                                    <span key={i} className="text-sm text-neutral-500 bg-neutral-100 dark:bg-neutral-900 px-2 py-1 rounded">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <motion.div variants={fadeInUp} className="flex flex-wrap gap-5">
+                                            <a href="#work" className="px-8 py-3.5 bg-[#0071e3] text-white rounded-full font-semibold text-base apple-button shadow-lg shadow-[#0071e3]/20">
+                                                View Projects
+                                            </a>
+                                            <a href="#contact" className="px-8 py-3.5 bg-[#1d1d1f] dark:bg-[#f5f5f7] text-white dark:text-[#1d1d1f] rounded-full font-semibold text-base apple-button">
+                                                Get in Touch
+                                            </a>
+                                        </motion.div>
+                                    </motion.div>
                                 </section>
                             );
 
                         case 'about':
                             return (
-                                <section key="about" id="about" className="py-20 max-w-3xl mx-auto">
-                                    <h2 className="text-xs font-bold tracking-widest uppercase text-neutral-400 mb-8">About</h2>
-                                    <div className="text-xl md:text-2xl leading-relaxed text-neutral-800 dark:text-neutral-200">
-                                        {about.extendedBio}
+                                <section key="about" id="about" className="py-40 max-w-5xl mx-auto">
+                                    <div className="grid md:grid-cols-[1fr_2fr] gap-20">
+                                        <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }}>
+                                            <h2 className="text-[13px] font-bold tracking-widest uppercase text-[#86868b] mb-10">Biography</h2>
+                                            <div className="bg-[#1d1d1f]/5 dark:bg-[#f5f5f7]/5 rounded-3xl aspect-square overflow-hidden mb-8">
+                                                {personalInfo.profilePhotoURL ? (
+                                                    <img src={personalInfo.profilePhotoURL} alt="Me" className="w-full h-full object-cover scale-105 hover:scale-100 transition-transform duration-700" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center"><User size={60} className="text-[#d2d2d7]" /></div>
+                                                )}
+                                            </div>
+                                        </motion.div>
+
+                                        <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }} className="flex flex-col justify-center">
+                                            <div className="text-2xl md:text-4xl leading-tight text-[#1d1d1f] dark:text-[#f5f5f7] font-medium mb-12">
+                                                {about.extendedBio}
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-10">
+                                                <div>
+                                                    <h3 className="text-[13px] font-bold uppercase text-[#86868b] mb-6">Expertise</h3>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {about.skills?.flatMap(cat => cat.tags).map((tag, i) => (
+                                                            <span key={i} className="text-[14px] font-medium text-[#1d1d1f] dark:text-[#f5f5f7] bg-[#1d1d1f]/5 dark:bg-[#f5f5f7]/10 px-3 py-1.5 rounded-lg">
+                                                                {tag}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-[13px] font-bold uppercase text-[#86868b] mb-6">Location</h3>
+                                                    <div className="text-[14px] font-medium">Available for remote world-wide</div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
                                     </div>
                                 </section>
                             );
 
                         case 'projects':
                             return (
-                                <section key="projects" id="work" className="py-20 max-w-5xl mx-auto">
-                                    <h2 className="text-xs font-bold tracking-widest uppercase text-neutral-400 mb-12">Selected Work</h2>
-                                    <div className="space-y-24">
+                                <section key="projects" id="work" className="py-40">
+                                    <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }} className="max-w-5xl mx-auto mb-20 text-center">
+                                        <h2 className="text-[13px] font-bold tracking-widest uppercase text-[#86868b] mb-6">Portfolio</h2>
+                                        <h3 className="text-4xl md:text-6xl font-bold">Selected Case Studies</h3>
+                                    </motion.div>
+
+                                    <div className="grid md:grid-cols-2 gap-10 md:gap-20">
                                         {projects.map((project, i) => (
-                                            <article key={i} className="group cursor-pointer">
-                                                <div className="grid md:grid-cols-[1.5fr_1fr] gap-8 md:gap-16 items-start">
-                                                    <div className="overflow-hidden bg-neutral-100 dark:bg-neutral-800 rounded-xl aspect-[16/10]">
-                                                        {project.imageURL ? (
-                                                            <img src={project.imageURL} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-neutral-300">Image Placeholder</div>
-                                                        )}
-                                                    </div>
-                                                    <div className="flex flex-col h-full justify-center">
-                                                        <div className="text-sm font-medium text-[hsl(var(--brand))] mb-2">{project.category}</div>
-                                                        <h3 className="text-3xl font-bold mb-4 group-hover:text-[hsl(var(--brand))] transition-colors">{project.name}</h3>
-                                                        <p className="text-neutral-500 mb-6 leading-relaxed">{project.description}</p>
-                                                        <div className="flex flex-wrap gap-2 mb-8">
-                                                            {project.tags?.map((t, idx) => (
-                                                                <span key={idx} className="text-xs font-medium text-neutral-400">#{t}</span>
-                                                            ))}
-                                                        </div>
-                                                        <a href={project.detailsURL} className="text-sm font-bold underline decoration-2 decoration-neutral-200 dark:decoration-neutral-800 underline-offset-4 hover:decoration-[hsl(var(--brand))] transition-all">
-                                                            View Project
-                                                        </a>
-                                                    </div>
+                                            <motion.article
+                                                key={i}
+                                                initial={{ opacity: 0, scale: 0.98, y: 30 }}
+                                                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8, delay: i * 0.1 }}
+                                                className="group cursor-pointer"
+                                            >
+                                                <div className="relative overflow-hidden bg-[#1d1d1f]/5 dark:bg-[#f5f5f7]/5 rounded-[32px] aspect-square mb-10 transition-transform duration-700 group-hover:scale-[1.02]">
+                                                    {project.imageURL ? (
+                                                        <img src={project.imageURL} alt={project.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" />
+                                                    ) : (
+                                                        <div className="w-full h-full flex items-center justify-center text-[#d2d2d7] text-8xl font-bold opacity-20">{i + 1}</div>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    <a href={project.detailsURL} className="absolute bottom-10 right-10 bg-white/90 dark:bg-[#1d1d1f]/90 backdrop-blur-lg p-4 rounded-full scale-0 group-hover:scale-100 transition-all duration-500 hover:bg-white">
+                                                        <ArrowUpRight className="w-6 h-6 text-[#1d1d1f] dark:text-[#f5f5f7]" />
+                                                    </a>
                                                 </div>
-                                            </article>
+                                                <div className="px-4">
+                                                    <div className="text-[13px] font-bold text-[#0071e3] mb-3 uppercase tracking-wider">{project.category}</div>
+                                                    <h3 className="text-3xl font-bold mb-4">{project.name}</h3>
+                                                    <p className="text-[#86868b] text-lg leading-relaxed">{project.description}</p>
+                                                </div>
+                                            </motion.article>
                                         ))}
                                     </div>
                                 </section>
@@ -150,18 +198,27 @@ export default function MinimalPlusTemplate({ data }: { data: PortfolioData }) {
 
                         case 'experience':
                             return (
-                                <section key="experience" className="py-20 max-w-3xl mx-auto border-t border-neutral-200 dark:border-neutral-800">
-                                    <h2 className="text-xs font-bold tracking-widest uppercase text-neutral-400 mb-12">Experience</h2>
-                                    <div className="space-y-12">
+                                <section key="experience" className="py-40 max-w-4xl mx-auto border-t border-[#d2d2d7]/30 dark:border-[#424245]/30">
+                                    <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }} className="mb-20">
+                                        <h2 className="text-[13px] font-bold tracking-widest uppercase text-[#86868b] mb-12">Professional Experience</h2>
+                                    </motion.div>
+
+                                    <div className="space-y-20">
                                         {experience.map((exp, i) => (
-                                            <div key={i} className="group grid grid-cols-[1fr_3fr] gap-8">
-                                                <span className="text-sm text-neutral-400 font-medium pt-1">{exp.dates}</span>
+                                            <motion.div
+                                                key={i}
+                                                initial={{ opacity: 0, x: -20 }}
+                                                whileInView={{ opacity: 1, x: 0 }}
+                                                viewport={{ once: true }}
+                                                className="grid md:grid-cols-[1fr_2.5fr] gap-8"
+                                            >
+                                                <span className="text-lg text-[#86868b] font-medium">{exp.dates}</span>
                                                 <div>
-                                                    <h3 className="text-xl font-bold mb-1">{exp.jobTitle}</h3>
-                                                    <div className="text-base text-neutral-500 mb-4">{exp.company}</div>
-                                                    <p className="text-neutral-500 leading-relaxed text-sm">{exp.responsibilities[0]}</p>
+                                                    <h3 className="text-2xl font-bold mb-2">{exp.jobTitle}</h3>
+                                                    <div className="text-xl text-[#1d1d1f] dark:text-[#f5f5f7] mb-6 font-medium tracking-tight">/ {exp.company}</div>
+                                                    <p className="text-[#86868b] leading-relaxed text-lg max-w-2xl">{exp.responsibilities[0]}</p>
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         ))}
                                     </div>
                                 </section>
@@ -169,18 +226,21 @@ export default function MinimalPlusTemplate({ data }: { data: PortfolioData }) {
 
                         case 'contact':
                             return (
-                                <footer key="contact" id="contact" className="py-32 text-center max-w-2xl mx-auto">
-                                    <h2 className="text-5xl font-bold tracking-tight mb-8">Let's work together.</h2>
-                                    <a href={`mailto:${personalInfo.email}`} className="text-xl text-[hsl(var(--brand))] hover:underline decoration-2 underline-offset-4">
-                                        {personalInfo.email}
-                                    </a>
-                                    <div className="flex justify-center gap-6 mt-12">
-                                        <a href={personalInfo.linkedInURL} className="text-sm font-bold hover:text-[hsl(var(--brand))] transition-colors">LinkedIn</a>
-                                        <a href={personalInfo.githubURL} className="text-sm font-bold hover:text-[hsl(var(--brand))] transition-colors">GitHub</a>
-                                    </div>
-                                    <div className="mt-20 text-sm text-neutral-400 font-medium">
-                                        © {new Date().getFullYear()} {personalInfo.fullName}. All rights reserved.
-                                    </div>
+                                <footer key="contact" id="contact" className="py-60 text-center max-w-4xl mx-auto">
+                                    <motion.div variants={fadeInUp} initial="initial" whileInView="whileInView" viewport={{ once: true }}>
+                                        <h2 className="text-6xl md:text-9xl font-bold tracking-tight mb-16 leading-[0.9]">Let&apos;s build <br /> the future.</h2>
+                                        <a href={`mailto:${personalInfo.email}`} className="text-2xl md:text-4xl text-[#0071e3] hover:underline decoration-2 underline-offset-8 transition-all font-medium">
+                                            {personalInfo.email}
+                                        </a>
+                                        <div className="flex justify-center flex-wrap gap-10 mt-24">
+                                            <a href={personalInfo.linkedInURL} className="text-[14px] font-bold tracking-wider hover:text-[#0071e3] transition-colors uppercase">LinkedIn</a>
+                                            <a href={personalInfo.githubURL} className="text-[14px] font-bold tracking-wider hover:text-[#0071e3] transition-colors uppercase">GitHub</a>
+                                            <a href={personalInfo.website} className="text-[14px] font-bold tracking-wider hover:text-[#0071e3] transition-colors uppercase">Website</a>
+                                        </div>
+                                        <div className="mt-40 text-[12px] text-[#86868b] font-medium tracking-widest uppercase">
+                                            © {new Date().getFullYear()} {personalInfo.fullName} — Designed with passion.
+                                        </div>
+                                    </motion.div>
                                 </footer>
                             );
 

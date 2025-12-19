@@ -1,18 +1,33 @@
-/* ExecutiveTemplate.tsx - High-End / Corporate / Authoritative */
+/* ExecutiveTemplate.tsx - Stunning 'Authoritative & Elegant' Redesign */
 import React from 'react';
 import type { PortfolioData } from './types';
-import { Mail, Phone, MapPin, Scale } from 'lucide-react';
+import { Mail, Phone, MapPin, Scale, ArrowRight, Linkedin, Github, Globe, ExternalLink, Award, Briefcase, GraduationCap } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+};
+
+const staggerContainer = {
+    animate: {
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+};
 
 export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
-    const { personalInfo, about, experience, projects } = data;
+    const { personalInfo, about, experience, projects, education } = data;
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 font-sans selection:bg-slate-800 selection:text-white dark:selection:bg-slate-200 dark:selection:text-slate-900">
+        <div className="min-h-screen bg-white dark:bg-[#050507] text-slate-800 dark:text-slate-200 font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black">
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
         
         :root {
-          --font-heading: 'Playfair Display', serif;
+          --font-heading: 'Cormorant Garamond', serif;
           --font-body: 'Inter', sans-serif;
         }
 
@@ -20,29 +35,41 @@ export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
         .font-body { font-family: var(--font-body); }
 
         .executive-border {
-          border-bottom: 1px solid rgba(0,0,0,0.1);
+          border-bottom: 1px solid rgba(0,0,0,0.08);
         }
         .dark .executive-border {
-          border-bottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .gold-accent {
-          background: linear-gradient(135deg, hsl(var(--brand)), hsl(var(--brand-2)));
+        .executive-card {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+        }
+        .dark .executive-card {
+            background: #0a0a0c;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5);
         }
       `}</style>
 
-            {/* --- SIDEBAR NAV (Desktop) --- */}
-            <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-20 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 z-50 items-center py-10">
-                <div className="text-2xl font-black font-heading tracking-widest text-[hsl(var(--brand))] rotate-180" style={{ writingMode: 'vertical-rl' }}>
+            {/* --- SIDEBAR NAV --- */}
+            <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-screen w-24 border-r border-slate-100 dark:border-white/5 bg-white dark:bg-[#050507] z-50 items-center py-12">
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="text-3xl font-bold font-heading tracking-widest text-[hsl(var(--brand))] rotate-180"
+                    style={{ writingMode: 'vertical-rl' }}
+                >
                     {personalInfo.portfolioNameAbbr}
-                </div>
+                </motion.div>
 
-                <div className="flex-1 flex flex-col justify-center gap-12">
+                <div className="flex-1 flex flex-col justify-center gap-14">
                     {['Home', 'Bio', 'Work', 'Contact'].map((item, i) => (
                         <a
                             key={i}
                             href={`#${item.toLowerCase()}`}
-                            className="text-xs uppercase tracking-widest font-semibold text-slate-400 hover:text-[hsl(var(--brand))] transition-colors rotate-180"
+                            className="text-[10px] uppercase tracking-[0.3em] font-black text-slate-400 hover:text-[hsl(var(--brand))] transition-colors rotate-180"
                             style={{ writingMode: 'vertical-rl' }}
                         >
                             {item}
@@ -50,191 +77,249 @@ export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
                     ))}
                 </div>
 
-                <div className="w-1 h-20 gold-accent rounded-full"></div>
+                <div className="w-px h-24 bg-gradient-to-t from-[hsl(var(--brand))] to-transparent"></div>
             </aside>
 
-            {/* --- MAIN CONTENT WRAPPER --- */}
-            <main className="lg:pl-20 w-full">
-
-                {/* --- HEADER (Mobile/Tablet) --- */}
-                <header className="lg:hidden flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
-                    <div className="font-heading font-bold text-xl">{personalInfo.portfolioNameAbbr}</div>
-                    <nav className="flex gap-4 text-sm font-medium">
-                        <a href="#work">Work</a>
-                        <a href="#contact" className="text-[hsl(var(--brand))]">Contact</a>
-                    </nav>
-                </header>
+            {/* --- MAIN --- */}
+            <main className="lg:pl-24 w-full">
 
                 {/* --- HERO SECTION --- */}
-                <section id="home" className="min-h-[90vh] flex flex-col justify-center px-6 sm:px-12 lg:px-24 py-20 bg-slate-50 dark:bg-slate-900 overflow-hidden relative">
-                    {/* Background Texture (Subtle Grid) */}
-                    <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05]"
-                        style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
-                    </div>
+                <section id="home" className="min-h-screen flex flex-col justify-center px-8 sm:px-12 lg:px-24 py-20 bg-white dark:bg-[#070709] relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-1/3 h-full bg-[hsl(var(--brand))] opacity-[0.03] -z-10 pointer-events-none skew-x-[-15deg] translate-x-20" />
 
-                    <div className="relative z-10 max-w-6xl w-full mx-auto grid lg:grid-cols-[1.5fr_1fr] gap-16 items-center">
-                        <div className="order-2 lg:order-1">
-                            <div className="inline-block px-3 py-1 border border-slate-300 dark:border-slate-700 text-xs font-bold uppercase tracking-[0.2em] mb-6 text-slate-500">
-                                {personalInfo.title}
-                            </div>
-                            <h1 className="font-heading text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] mb-8 text-slate-900 dark:text-white">
-                                {personalInfo.fullName}
-                            </h1>
-                            <p className="font-body text-xl text-slate-600 dark:text-slate-400 max-w-xl leading-relaxed mb-10 border-l-4 border-[hsl(var(--brand))] pl-6">
-                                {personalInfo.tagline}
-                            </p>
+                    <motion.div
+                        initial="initial"
+                        animate="animate"
+                        variants={staggerContainer}
+                        className="max-w-7xl mx-auto w-full grid lg:grid-cols-[1.4fr_1fr] gap-20 items-center relative z-10"
+                    >
+                        <div>
+                            <motion.div
+                                variants={fadeInUp}
+                                className="flex items-center gap-4 mb-8"
+                            >
+                                <div className="h-px w-12 bg-[hsl(var(--brand))]" />
+                                <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">
+                                    Established {new Date().getFullYear() - 10}+
+                                </span>
+                            </motion.div>
 
-                            <div className="flex flex-wrap gap-6 text-sm font-medium tracking-wide">
-                                <a href="#contact" className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 transition-transform hover:-translate-y-1 shadow-2xl">
-                                    INITIATE CONTACT
-                                </a>
-                                <a href="#work" className="px-8 py-4 border border-slate-300 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">
-                                    VIEW PORTFOLIO
-                                </a>
+                            <motion.h1
+                                variants={fadeInUp}
+                                className="font-heading text-6xl sm:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight mb-12 text-slate-900 dark:text-white"
+                            >
+                                {personalInfo.fullName.split(' ').map((name, i) => (
+                                    <span key={i} className={i === 1 ? "text-slate-400 dark:text-slate-600 block italic font-normal" : "block"}>
+                                        {name}
+                                    </span>
+                                ))}
+                            </motion.h1>
+
+                            <div className="flex flex-col gap-10">
+                                <motion.p
+                                    variants={fadeInUp}
+                                    className="font-body text-xl md:text-2xl text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed italic"
+                                >
+                                    {personalInfo.tagline}
+                                </motion.p>
+
+                                <motion.div
+                                    variants={fadeInUp}
+                                    className="flex flex-wrap gap-8"
+                                >
+                                    <a href="#contact" className="px-12 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                                        INITIATE_CONTACT
+                                    </a>
+                                    <a href="#work" className="px-12 py-5 border border-slate-300 dark:border-white/10 font-bold tracking-widest text-sm hover:bg-white/10 transition-all">
+                                        CASE_STUDIES
+                                    </a>
+                                </motion.div>
+
+
                             </div>
                         </div>
 
-                        <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-                            <div className="relative w-64 h-64 sm:w-80 sm:h-80 mx-auto lg:mx-0">
-                                {/* Executive Elements */}
-                                <div className="absolute inset-0 rounded-full border border-[hsl(var(--brand))] rotate-12 scale-105 opacity-20"></div>
-                                <div className="absolute inset-0 rounded-full border-2 border-[hsl(var(--brand))] translate-x-3 translate-y-3 opacity-30"></div>
-
-                                {/* Main Image */}
-                                <div className="absolute inset-0 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden shadow-2xl border-4 border-white dark:border-slate-900 ring-1 ring-slate-200 dark:ring-slate-700 transition-all duration-500 hover:-translate-y-2 hover:shadow-3xl">
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 1, delay: 0.5 }}
+                            className="hidden lg:flex justify-end"
+                        >
+                            <div className="relative w-full aspect-[4/5] max-w-md group">
+                                <div className="absolute inset-0 border border-[hsl(var(--brand))] translate-x-10 translate-y-10 -z-10 group-hover:translate-x-12 group-hover:translate-y-12 transition-transform duration-700" />
+                                <div className="w-full h-full bg-slate-200 dark:bg-slate-800 overflow-hidden executive-card relative">
                                     {personalInfo.profilePhotoURL ? (
-                                        <img src={personalInfo.profilePhotoURL} alt="Profile" className="w-full h-full object-cover" />
+                                        <img src={personalInfo.profilePhotoURL} className="w-full h-full object-cover filter contrast-110 grayscale group-hover:grayscale-0 transition-all duration-1000" alt={personalInfo.fullName} />
                                     ) : (
-                                        <div className="flex items-center justify-center h-full text-slate-300"><Scale size={64} /></div>
+                                        <div className="w-full h-full flex items-center justify-center bg-slate-100 dark:bg-slate-900"><Scale size={100} className="text-slate-200 dark:text-slate-800" /></div>
                                     )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                                </div>
+                                <div className="absolute -bottom-8 -left-8 bg-[hsl(var(--brand))] text-white p-8 shadow-2xl">
+                                    <div className="text-3xl font-heading font-bold leading-none mb-1">Elite</div>
+                                    <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Tier Status</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 </section>
 
-                {/* --- SUMMARY / ABOUT --- */}
-                <section id="bio" className="py-24 px-6 sm:px-12 lg:px-24 bg-white dark:bg-slate-950">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <h2 className="font-heading text-4xl font-bold mb-12 relative inline-block">
-                            Executive Summary
-                            <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-[hsl(var(--brand))]"></span>
-                        </h2>
-                        <p className="font-body text-lg md:text-xl leading-8 text-slate-600 dark:text-slate-300">
+                {/* --- EXECUTIVE BIO --- */}
+                <section id="bio" className="py-40 px-8 sm:px-12 lg:px-24 bg-white dark:bg-[#050507]">
+                    <div className="max-w-5xl mx-auto">
+                        <motion.span
+                            initial={{ opacity: 0 }}
+                            whileInView={{ opacity: 1 }}
+                            className="text-xs font-black uppercase tracking-[0.4em] text-[hsl(var(--brand))] mb-8 block"
+                        >
+                            Mission_Statement
+                        </motion.span>
+                        <motion.h2
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            className="font-heading text-4xl md:text-6xl font-bold mb-16 leading-tight max-w-4xl"
+                        >
                             {about.extendedBio}
-                        </p>
+                        </motion.h2>
 
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 border-t border-b border-slate-100 dark:border-slate-900 py-12">
+                        {/* Stats */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mt-24 border-t border-slate-100 dark:border-white/5 pt-16">
                             {about.stats?.map((stat, i) => (
-                                <div key={i} className="text-center">
-                                    <div className="font-heading text-4xl font-bold text-[hsl(var(--brand))] mb-2">{stat.value}</div>
-                                    <div className="text-xs uppercase tracking-widest text-slate-400">{stat.label}</div>
-                                </div>
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
+                                    <div className="font-heading text-6xl font-bold text-slate-900 dark:text-white mb-2">{stat.value}</div>
+                                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{stat.label}</div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* --- EXPERIENCE (The Resumé) --- */}
-                <section id="work" className="py-24 px-6 sm:px-12 lg:px-24 bg-slate-50 dark:bg-slate-900">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-16 executive-border pb-6">
+                {/* --- EXPERIENCE --- */}
+                <section id="work" className="py-40 px-8 sm:px-12 lg:px-24 bg-slate-50 dark:bg-[#070709]">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-slate-200 dark:border-white/5 pb-12">
                             <div>
-                                <div className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--brand))] mb-2">Career History</div>
-                                <h2 className="font-heading text-4xl font-bold">Professional Experience</h2>
+                                <span className="text-xs font-black uppercase tracking-[0.4em] text-[hsl(var(--brand))] mb-4 block">Strategic_Timeline</span>
+                                <h2 className="font-heading text-5xl md:text-7xl font-bold">Experience</h2>
                             </div>
-                            <a href={personalInfo.linkedInURL || "#"} className="hidden md:block text-sm border-b border-slate-800 dark:border-slate-200 pb-1 hover:text-[hsl(var(--brand))] hover:border-[hsl(var(--brand))] transition-colors">
-                                View Full History on LinkedIn
-                            </a>
                         </div>
 
-                        <div className="space-y-12">
+                        <div className="space-y-24">
                             {experience.map((job, idx) => (
-                                <div key={idx} className="grid md:grid-cols-[1fr_3fr] gap-8 group">
-                                    <div className="md:text-right">
-                                        <div className="text-sm font-bold text-slate-900 dark:text-white">{job.dates}</div>
-                                        <div className="text-xs text-slate-500 mt-1">{job.location}</div>
+                                <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 40 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    className="grid lg:grid-cols-[1fr_2fr] gap-12 group"
+                                >
+                                    <div className="lg:text-right pt-2">
+                                        <div className="text-sm font-black text-slate-900 dark:text-white mb-1 uppercase tracking-widest">{job.dates}</div>
+                                        <div className="text-xs text-slate-400 font-bold uppercase tracking-wider">{job.location || 'Remote'}</div>
                                     </div>
-                                    <div className="relative pl-8 md:border-l border-slate-200 dark:border-slate-800">
-                                        <div className="absolute left-0 top-1.5 w-2 h-2 -translate-x-[5px] bg-[hsl(var(--brand))] rounded-full hidden md:block group-hover:scale-125 transition-transform"></div>
-                                        <h3 className="text-2xl font-heading font-bold mb-1">{job.jobTitle}</h3>
-                                        <div className="text-[hsl(var(--brand))] font-medium mb-4">{job.company}</div>
-                                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                                            {job.responsibilities[0]}
-                                        </p>
+                                    <div className="relative pl-0 lg:pl-16 lg:border-l border-slate-200 dark:border-white/5">
+                                        <h3 className="text-3xl font-heading font-bold mb-2 transition-colors group-hover:text-[hsl(var(--brand))]">{job.jobTitle}</h3>
+                                        <div className="text-lg font-bold text-slate-500 uppercase tracking-widest mb-8">{job.company}</div>
+                                        <ul className="space-y-4 max-w-2xl">
+                                            {job.responsibilities.map((resp, rIdx) => (
+                                                <li key={rIdx} className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm flex gap-4 italic font-medium">
+                                                    <div className="h-px w-4 bg-[hsl(var(--brand))] mt-3 shrink-0" />
+                                                    {resp}
+                                                </li>
+                                            ))}
+                                        </ul>
                                     </div>
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
                 </section>
 
                 {/* --- PROJECTS --- */}
-                <section className="py-24 px-6 sm:px-12 lg:px-24 bg-white dark:bg-slate-950">
-                    <div className="max-w-6xl mx-auto">
-                        <div className="text-center mb-20">
-                            <h2 className="font-heading text-4xl font-bold mb-4">Selected Engagements</h2>
-                            <p className="text-slate-500 font-body">Highlighting key strategic initiatives and deliverables</p>
+                <section className="py-40 px-8 sm:px-12 lg:px-24 bg-white dark:bg-[#050507]">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="text-center mb-32">
+                            <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-6 block">Curated_Engagements</span>
+                            <h2 className="font-heading text-5xl md:text-7xl font-bold">Key Initiatives</h2>
                         </div>
 
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
                             {projects.map((project, i) => (
-                                <article key={i} className="group cursor-pointer">
-                                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100 dark:bg-slate-900 mb-6">
+                                <motion.article
+                                    key={i}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    className="group"
+                                >
+                                    <div className="relative aspect-[4/5] overflow-hidden bg-slate-100 dark:bg-slate-900 mb-8 executive-card transition-all duration-700 group-hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.3)]">
                                         {project.imageURL ? (
-                                            <img src={project.imageURL} alt={project.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 transform group-hover:scale-105" />
+                                            <img src={project.imageURL} className="w-full h-full object-cover grayscale brightness-90 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000" alt={project.name} />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-slate-300 font-heading text-6xl opacity-20">
-                                                {i + 1}
-                                            </div>
+                                            <div className="w-full h-full flex items-center justify-center text-slate-200 dark:text-slate-800 font-heading text-9xl">0{i + 1}</div>
                                         )}
-                                        <div className="absolute inset-0 bg-[hsl(var(--brand))] mix-blend-multiply opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                                    </div>
-                                    <div className="flex justify-between items-start border-t border-slate-200 dark:border-slate-800 pt-4">
-                                        <div>
-                                            <div className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--brand))] mb-2">{project.category}</div>
-                                            <h3 className="font-heading text-xl font-bold group-hover:text-[hsl(var(--brand))] transition-colors">{project.name}</h3>
+                                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <a href={project.detailsURL} target="_blank" className="p-4 bg-white text-slate-900 rounded-full scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500">
+                                                <ArrowRight className="w-8 h-8" />
+                                            </a>
                                         </div>
-                                        <a href={project.detailsURL} className="opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-                                            ↗
-                                        </a>
                                     </div>
-                                </article>
+                                    <div className="space-y-2">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[hsl(var(--brand))]">{project.category}</span>
+                                        <h3 className="text-2xl font-heading font-bold">{project.name}</h3>
+                                        <p className="text-sm text-slate-500 line-clamp-2 italic">{project.description}</p>
+                                    </div>
+                                </motion.article>
                             ))}
                         </div>
                     </div>
                 </section>
 
-                {/* --- CONTACT FOOTER --- */}
-                <footer id="contact" className="bg-slate-900 text-white py-24 px-6 text-center lg:text-left">
-                    <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+                {/* --- FOOTER / CONTACT --- */}
+                <footer id="contact" className="bg-slate-900 dark:bg-black text-white pt-40 pb-20 px-8 sm:px-12 lg:px-24">
+                    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32">
                         <div>
-                            <h2 className="font-heading text-5xl lg:text-6xl font-bold mb-8">Let's Discuss Future Opportunities.</h2>
-                            <div className="space-y-4 font-body text-lg text-slate-400">
-                                <div className="flex flex-col lg:flex-row gap-2 lg:gap-8">
-                                    <span className="flex items-center gap-2"><Mail size={18} /> {personalInfo.email}</span>
-                                    <span className="flex items-center gap-2"><Phone size={18} /> {personalInfo.phone}</span>
+                            <h2 className="font-heading text-6xl md:text-8xl font-bold mb-12 italic">Let&apos;s talk strategy.</h2>
+                            <div className="grid gap-12 font-medium tracking-wide">
+                                <div className="space-y-2">
+                                    <div className="text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">Direct_Line</div>
+                                    <a href={`mailto:${personalInfo.email}`} className="text-2xl md:text-4xl hover:text-[hsl(var(--brand))] transition-colors border-b border-white/10 pb-2 block w-max">{personalInfo.email}</a>
                                 </div>
-                                <div className="flex items-center gap-2"><MapPin size={18} /> {personalInfo.location || "Remote / Worldwide"}</div>
+                                <div className="flex gap-12 pt-12 border-t border-white/5">
+                                    <a href={personalInfo.linkedInURL} className="text-xs font-black uppercase tracking-[0.3em] hover:text-[hsl(var(--brand))] transition-colors">LINKEDIN</a>
+                                    <a href={personalInfo.githubURL} className="text-xs font-black uppercase tracking-[0.3em] hover:text-[hsl(var(--brand))] transition-colors">GITHUB</a>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex justify-center lg:justify-end">
-                            <form className="bg-white/5 p-8 w-full max-w-md border border-white/10 backdrop-blur-sm">
-                                <h3 className="font-heading text-2xl mb-6">Direct Inquiries</h3>
-                                <div className="space-y-4">
-                                    <input type="email" placeholder="Email Address" className="w-full bg-transparent border-b border-slate-600 py-3 focus:border-white outline-none transition-colors" />
-                                    <textarea rows={3} placeholder="Message context" className="w-full bg-transparent border-b border-slate-600 py-3 focus:border-white outline-none transition-colors" />
-                                    <button className="w-full py-4 bg-white text-slate-900 font-bold tracking-widest uppercase hover:bg-[hsl(var(--brand))] hover:text-white transition-colors">
-                                        Send Brief
-                                    </button>
+
+                        <div className="flex flex-col justify-end">
+                            <div className="relative group">
+                                <div className="absolute inset-0 border border-white/10 translate-x-4 translate-y-4 pointer-events-none group-hover:translate-x-6 group-hover:translate-y-6 transition-transform" />
+                                <div className="bg-white/5 p-16 backdrop-blur-xl border border-white/10">
+                                    <h4 className="font-heading text-3xl mb-12">Private Inquiries</h4>
+                                    <div className="flex flex-col gap-10">
+                                        <div className="text-slate-400 text-sm leading-relaxed max-w-xs">
+                                            Currently reviewing opportunities for Q1-Q2 of {new Date().getFullYear() + 1}. High-impact collaborations preferred.
+                                        </div>
+                                        <a href={`mailto:${personalInfo.email}`} className="px-10 py-5 bg-white text-slate-900 font-bold uppercase tracking-widest text-xs hover:bg-[hsl(var(--brand))] hover:text-white transition-all text-center">
+                                            SECURE_MESSAGE
+                                        </a>
+                                    </div>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                    <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-slate-800 text-slate-600 text-sm flex justify-between">
-                        <div>© {new Date().getFullYear()} {personalInfo.fullName}</div>
-                        <div>EXECUTIVE PORTFOLIO</div>
+
+                    <div className="max-w-7xl mx-auto mt-40 pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div className="font-heading text-2xl font-bold">{personalInfo.fullName}</div>
+                        <div className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">
+                            © {new Date().getFullYear()} — PRIVACY_RESERVED
+                        </div>
                     </div>
                 </footer>
             </main>

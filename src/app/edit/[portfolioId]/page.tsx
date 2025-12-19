@@ -27,6 +27,7 @@ import {
 import { LayoutEditor } from '@/components/LayoutEditor';
 import type { PortfolioData } from '@/templates/types';
 import { useDictionary } from '@/hooks/use-dictionary';
+import { cn } from '@/lib/utils';
 
 // Dynamic Template Imports
 const ModernTemplate = dynamic(() => import('@/templates/ModernTemplate'), {
@@ -53,6 +54,7 @@ const Cyber3DTemplate = dynamic(() => import('@/templates/Cyber3DTemplate'), {
 const AuroraTemplate = dynamic(() => import('@/templates/AuroraTemplate'), {
     loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
 });
+
 const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModernTemplate'), {
     loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
 });
@@ -78,6 +80,7 @@ const TemplateComponent = ({ data, templateId, isDarkMode }: { data: PortfolioDa
         case 'minimalist': return <MinimalistTemplate data={data} />;
         case 'cyber': return <Cyber3DTemplate data={data} />;
         case 'aurora': return <AuroraTemplate data={data} />;
+
         case 'generated': return <GeneratedModernTemplate data={data} />;
         default: return <ModernTemplate data={data} />;
     }
@@ -430,7 +433,7 @@ export default function EditPortfolioPage() {
 
                     <div className="flex flex-col gap-4 py-4">
                         <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg text-sm text-amber-800 dark:text-amber-200">
-                            <strong>Note:</strong> {language === 'ar' ? 'هذا هو الرابط العام الفريد الخاص بك. يرجى نسخه وحفظه في مكان آمن. لن تتمكن من استعادته بسهولة لاحقًا!' : 'This is your unique public link. Please copy it and save it in a safe place. You won\'t be able to retrieve it easily later!'}
+                            <strong>Note:</strong> {language === 'ar' ? 'هذا هو الرابط العام الفريد الخاص بك. يرجى نسخه وحفظه في مكان آمن.' : 'This is your unique public link. Please copy it and save it in a safe place.'}
                         </div>
 
                         <div className="flex items-center space-x-2">
@@ -447,247 +450,401 @@ export default function EditPortfolioPage() {
                 </DialogContent>
             </Dialog>
 
-            <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
+            <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-xl">
                 <div className="container flex h-16 items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')}>
+                        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')} className="rounded-full hover:bg-muted">
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
-                        <h1 className="text-lg font-semibold">{dict.editPortfolio}</h1>
+                        <div className="flex flex-col">
+                            <h1 className="text-sm font-black tracking-widest uppercase text-muted-foreground leading-none mb-1">Portfolio Studio</h1>
+                            <h2 className="text-lg font-bold truncate max-w-[200px]">{portfolioData.personalInfo.fullName || 'Untitled'}</h2>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        {/* Appearance Toggle */}
-                        <div className="flex bg-muted rounded-md p-1 mr-4">
-                            <button onClick={() => setIsDarkMode(false)} className={`p-1.5 rounded-sm transition-all ${!isDarkMode ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}><Sun size={14} /></button>
-                            <button onClick={() => setIsDarkMode(true)} className={`p-1.5 rounded-sm transition-all ${isDarkMode ? 'bg-background shadow-sm' : 'text-muted-foreground'}`}><Moon size={14} /></button>
-                        </div>
-
-                        <Tabs value={activeTab} onValueChange={setActiveTab}>
-                            <TabsList>
-                                <TabsTrigger value="edit">{dict.edit}</TabsTrigger>
-                                <TabsTrigger value="layout">{dict.layout}</TabsTrigger>
-                                <TabsTrigger value="preview">{dict.preview}</TabsTrigger>
+                        <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-muted/50 p-1 rounded-xl">
+                            <TabsList className="bg-transparent border-0 gap-1">
+                                <TabsTrigger value="edit" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.edit}</TabsTrigger>
+                                <TabsTrigger value="layout" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.layout}</TabsTrigger>
+                                <TabsTrigger value="preview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.preview}</TabsTrigger>
                             </TabsList>
                         </Tabs>
 
-                        <Button variant="outline" onClick={handleSave} disabled={saving}>
-                            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 mr-2" />} {saving ? dict.saving : dict.save}
-                        </Button>
-                        <Button onClick={handlePublish} disabled={publishing}>
-                            {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Rocket className="h-4 w-4 mr-2" />} {publishing ? dict.publishing : dict.publish}
-                        </Button>
+                        <div className="h-6 w-[1px] bg-border mx-2" />
+
+                        {/* Appearance Toggle */}
+                        <div className="flex bg-muted/50 rounded-xl p-1">
+                            <button
+                                onClick={() => setIsDarkMode(false)}
+                                className={`p-2 rounded-lg transition-all ${!isDarkMode ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                                title="Light Mode"
+                            >
+                                <Sun size={16} />
+                            </button>
+                            <button
+                                onClick={() => setIsDarkMode(true)}
+                                className={`p-2 rounded-lg transition-all ${isDarkMode ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                                title="Dark Mode"
+                            >
+                                <Moon size={16} />
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
+
+            {/* Ambient Background */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 opacity-40">
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 blur-[150px] rounded-full" />
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-violet-500/10 blur-[150px] rounded-full" />
+            </div>
 
             {/* Main Content */}
             {activeTab === 'edit' ? (
                 <main className="container py-8 max-w-4xl mx-auto space-y-8 pb-32">
 
                     {/* Personal Info */}
-                    <Card>
-                        <CardHeader><CardTitle>{dict.personalInfo}</CardTitle></CardHeader>
-                        <CardContent className="space-y-6">
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden group">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-primary rounded-full" />
+                                {dict.personalInfo}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6 pt-6">
                             {/* Profile Photo Upload */}
-                            <div className="flex items-center gap-6">
-                                <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-muted bg-muted flex items-center justify-center shrink-0">
+                            <div className="flex flex-col md:flex-row items-center gap-8 p-6 rounded-2xl bg-muted/30 border border-white/5">
+                                <div className="relative w-32 h-32 rounded-3xl overflow-hidden border-2 border-primary/20 bg-muted/50 flex items-center justify-center shrink-0 shadow-inner group/photo">
                                     {portfolioData.personalInfo.profilePhotoURL ? (
-                                        <img src={portfolioData.personalInfo.profilePhotoURL} alt="Profile" className="w-full h-full object-cover" />
+                                        <img src={portfolioData.personalInfo.profilePhotoURL} alt="Profile" className="w-full h-full object-cover transition-transform duration-500 group-hover/photo:scale-110" />
                                     ) : (
-                                        <ImageIcon className="h-8 w-8 text-muted-foreground opacity-50" />
+                                        <ImageIcon className="h-10 w-10 text-primary opacity-20" />
+                                    )}
+                                    {portfolioData.personalInfo.profilePhotoURL && (
+                                        <button
+                                            onClick={() => updatePersonalInfo('profilePhotoURL', '')}
+                                            className="absolute inset-0 bg-black/60 opacity-0 group-hover/photo:opacity-100 flex items-center justify-center transition-opacity"
+                                        >
+                                            <Trash2 className="h-6 w-6 text-white" />
+                                        </button>
                                     )}
                                 </div>
-                                <div className="space-y-2 flex-1">
-                                    <Label>Profile Photo</Label>
-                                    <div className="flex items-center gap-2">
-                                        <Input type="file" accept="image/*" onChange={handleProfilePhotoUpload} className="max-w-xs cursor-pointer" />
-                                        {portfolioData.personalInfo.profilePhotoURL && (
-                                            <Button variant="ghost" size="icon" onClick={() => updatePersonalInfo('profilePhotoURL', '')} title="Remove Photo">
-                                                <Trash2 className="h-4 w-4 text-destructive" />
-                                            </Button>
-                                        )}
+                                <div className="space-y-3 flex-1 text-center md:text-left">
+                                    <div className="flex flex-col gap-1">
+                                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Portfolio Identity</Label>
+                                        <h4 className="font-bold">Set your professional avatar</h4>
                                     </div>
-                                    <p className="text-xs text-muted-foreground">Recommended: Square JPG/PNG, max 2MB.</p>
+                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                                        <label className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl font-bold text-sm cursor-pointer hover:bg-primary/90 transition-all active:scale-95">
+                                            <Upload className="w-4 h-4" />
+                                            {dict.uploadPhoto}
+                                            <input type="file" accept="image/*" onChange={handleProfilePhotoUpload} className="hidden" />
+                                        </label>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground italic">Optimal: 1000x1000px · PNG or JPG</p>
                                 </div>
                             </div>
 
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>Full Name</Label><Input value={portfolioData.personalInfo.fullName} onChange={(e) => updatePersonalInfo('fullName', e.target.value)} /></div>
-                                <div className="space-y-2"><Label>Professional Title</Label><Input value={portfolioData.personalInfo.title} onChange={(e) => updatePersonalInfo('title', e.target.value)} /></div>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Full Name</Label>
+                                    <Input className="rounded-xl border-muted-foreground/10 focus:ring-primary h-12" value={portfolioData.personalInfo.fullName} onChange={(e) => updatePersonalInfo('fullName', e.target.value)} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Professional Title</Label>
+                                    <Input className="rounded-xl border-muted-foreground/10 focus:ring-primary h-12" value={portfolioData.personalInfo.title} onChange={(e) => updatePersonalInfo('title', e.target.value)} />
+                                </div>
                             </div>
-                            <div className="space-y-2"><Label>Tagline / Bio</Label><Textarea value={portfolioData.personalInfo.tagline} onChange={(e) => updatePersonalInfo('tagline', e.target.value)} /></div>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>Email</Label><Input value={portfolioData.personalInfo.email} onChange={(e) => updatePersonalInfo('email', e.target.value)} /></div>
-                                <div className="space-y-2"><Label>Location</Label><Input value={portfolioData.personalInfo.location} onChange={(e) => updatePersonalInfo('location', e.target.value)} /></div>
+                            <div className="space-y-2">
+                                <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Tagline / Bio</Label>
+                                <Textarea className="rounded-xl border-muted-foreground/10 focus:ring-primary min-h-[100px]" value={portfolioData.personalInfo.tagline} onChange={(e) => updatePersonalInfo('tagline', e.target.value)} />
                             </div>
-                            <div className="grid md:grid-cols-2 gap-4">
-                                <div className="space-y-2"><Label>LinkedIn</Label><Input value={portfolioData.personalInfo.linkedInURL} onChange={(e) => updatePersonalInfo('linkedInURL', e.target.value)} /></div>
-                                <div className="space-y-2"><Label>GitHub</Label><Input value={portfolioData.personalInfo.githubURL} onChange={(e) => updatePersonalInfo('githubURL', e.target.value)} /></div>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-2"><Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Email</Label><Input className="rounded-xl h-12" value={portfolioData.personalInfo.email} onChange={(e) => updatePersonalInfo('email', e.target.value)} /></div>
+                                <div className="space-y-2"><Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Location</Label><Input className="rounded-xl h-12" value={portfolioData.personalInfo.location} onChange={(e) => updatePersonalInfo('location', e.target.value)} /></div>
                             </div>
-                            <div className="space-y-2"><Label>Website</Label><Input value={portfolioData.personalInfo.website} onChange={(e) => updatePersonalInfo('website', e.target.value)} /></div>
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="space-y-2"><Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">LinkedIn</Label><Input className="rounded-xl h-12" value={portfolioData.personalInfo.linkedInURL} onChange={(e) => updatePersonalInfo('linkedInURL', e.target.value)} /></div>
+                                <div className="space-y-2"><Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">GitHub</Label><Input className="rounded-xl h-12" value={portfolioData.personalInfo.githubURL} onChange={(e) => updatePersonalInfo('githubURL', e.target.value)} /></div>
+                            </div>
+                            <div className="space-y-2"><Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Personal Website</Label><Input className="rounded-xl h-12" value={portfolioData.personalInfo.website} onChange={(e) => updatePersonalInfo('website', e.target.value)} /></div>
                         </CardContent>
                     </Card>
 
                     {/* About & Skills */}
-                    <Card>
-                        <CardHeader><CardTitle>{dict.aboutSkills}</CardTitle></CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2"><Label>Extended Bio</Label><Textarea value={portfolioData.about.extendedBio} onChange={(e) => updateAbout('extendedBio', e.target.value)} rows={5} /></div>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-indigo-500 rounded-full" />
+                                {dict.aboutSkills}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-6 pt-6">
                             <div className="space-y-2">
-                                <Label>Skills (comma separated tags) - will be categorized as "General"</Label>
+                                <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">Bio / About</Label>
+                                <Textarea className="rounded-xl border-muted-foreground/10 focus:ring-primary min-h-[200px]" value={portfolioData.about.extendedBio} onChange={(e) => updateAbout('extendedBio', e.target.value)} rows={5} />
+                            </div>
+                            <div className="space-y-2 p-6 rounded-2xl bg-muted/20 border border-white/5">
+                                <Label className="font-bold text-xs uppercase tracking-widest text-primary mb-2 block">Skills & Expertise</Label>
                                 <Input
+                                    className="rounded-xl h-12 bg-background/50"
+                                    placeholder="React, Design Systems, UX Strategy..."
                                     value={portfolioData.about.skills?.flatMap(s => s.tags).join(', ') || ''}
                                     onChange={(e) => updateAbout('skills', [{ category: 'General', tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }])}
                                 />
+                                <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-tight">Separate tags with commas</p>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Projects */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>{dict.projects}</CardTitle>
-                            <Button variant="outline" size="sm" onClick={addProject}><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-violet-500 rounded-full" />
+                                {dict.projects}
+                            </CardTitle>
+                            <Button variant="outline" size="sm" onClick={addProject} className="rounded-xl border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all"><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-8 pt-6">
                             {portfolioData.projects.map((proj, idx) => (
-                                <div key={idx} className="p-4 border rounded-lg space-y-4 relative bg-muted/20">
-                                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:bg-destructive/10" onClick={() => removeProject(idx)}><Trash2 className="h-4 w-4" /></Button>
+                                <div key={idx} className="group/item p-6 rounded-3xl border border-border/50 bg-muted/10 transition-all hover:bg-muted/20 relative">
+                                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-all" onClick={() => removeProject(idx)}><Trash2 className="h-4 w-4" /></Button>
 
-                                    <div className="grid md:grid-cols-2 gap-4 mr-8">
-                                        <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={(e) => updateProject(idx, 'name', e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Link (URL)</Label><Input value={proj.detailsURL || ''} onChange={(e) => updateProject(idx, 'detailsURL', e.target.value)} placeholder="https://..." /></div>
+                                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Project Name</Label><Input className="rounded-xl h-12" value={proj.name} onChange={(e) => updateProject(idx, 'name', e.target.value)} /></div>
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Project URL</Label><Input className="rounded-xl h-12" value={proj.detailsURL || ''} onChange={(e) => updateProject(idx, 'detailsURL', e.target.value)} placeholder="https://..." /></div>
                                     </div>
-                                    <div className="space-y-2"><Label>Description</Label><Textarea value={proj.description} onChange={(e) => updateProject(idx, 'description', e.target.value)} rows={2} /></div>
-                                    <div className="space-y-2"><Label>Technologies (comma separated)</Label><Input value={proj.tags?.join(', ') || ''} onChange={(e) => updateProject(idx, 'tags', e.target.value.split(',').map(s => s.trim()).filter(Boolean))} /></div>
+                                    <div className="space-y-2 mb-6"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Success Description</Label><Textarea className="rounded-xl" value={proj.description} onChange={(e) => updateProject(idx, 'description', e.target.value)} rows={3} /></div>
+                                    <div className="space-y-2 mb-6"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Stack / Tags</Label><Input className="rounded-xl h-12" value={proj.tags?.join(', ') || ''} onChange={(e) => updateProject(idx, 'tags', e.target.value.split(',').map(s => s.trim()).filter(Boolean))} /></div>
 
-                                    <div className="space-y-2">
-                                        <Label>Project Image</Label>
-                                        <div className="flex items-center gap-4">
+                                    <div className="p-4 rounded-2xl bg-background/40 border border-white/5">
+                                        <Label className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2 block">Project Visual</Label>
+                                        <div className="flex items-center gap-6">
                                             {proj.imageURL ? (
-                                                <div className="relative w-24 h-16 rounded overflow-hidden border">
+                                                <div className="relative w-40 h-24 rounded-2xl overflow-hidden border shadow-xl">
                                                     <img src={proj.imageURL} alt="Preview" className="w-full h-full object-cover" />
-                                                    <button onClick={() => updateProject(idx, 'imageURL', '')} className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center text-white"><X size={16} /></button>
+                                                    <button onClick={() => updateProject(idx, 'imageURL', '')} className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center text-white"><X size={20} /></button>
                                                 </div>
                                             ) : (
-                                                <div className="w-24 h-16 bg-muted rounded flex items-center justify-center border border-dashed"><ImageIcon className="text-muted-foreground h-6 w-6" /></div>
+                                                <div className="w-40 h-24 bg-muted/50 rounded-2xl flex flex-col items-center justify-center border border-dashed border-muted-foreground/30 text-muted-foreground">
+                                                    <ImageIcon className="h-8 w-8 opacity-20 mb-1" />
+                                                    <span className="text-[10px] uppercase font-black opacity-30 tracking-tighter">No Preview</span>
+                                                </div>
                                             )}
                                             <div className="flex-1">
-                                                <Input type="file" accept="image/*" onChange={(e) => handleProjectImageUpload(idx, e)} className="cursor-pointer" />
-                                                <p className="text-xs text-muted-foreground mt-1">Upload a screenshot (PNG/JPG)</p>
+                                                <label className="inline-flex items-center gap-2 px-4 py-2 border border-primary/30 text-primary rounded-xl font-bold text-xs cursor-pointer hover:bg-primary/5 transition-all">
+                                                    <Upload className="w-3 h-3" />
+                                                    Upload Screenshot
+                                                    <input type="file" accept="image/*" onChange={(e) => handleProjectImageUpload(idx, e)} className="hidden" />
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
-                            {portfolioData.projects.length === 0 && <p className="text-center text-muted-foreground">Showcase your work! Add a project.</p>}
+                            {portfolioData.projects.length === 0 && (
+                                <div className="text-center py-12 border border-dashed rounded-3xl opacity-50">
+                                    <div className="bg-muted w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"><Plus className="w-6 h-6" /></div>
+                                    <p className="font-bold">Showcase your masterpiece</p>
+                                    <p className="text-xs">Add your first project to impress recruiters.</p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
                     {/* Experience */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>{dict.experience}</CardTitle>
-                            <Button variant="outline" size="sm" onClick={addExperience}><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-emerald-500 rounded-full" />
+                                {dict.experience}
+                            </CardTitle>
+                            <Button variant="outline" size="sm" onClick={addExperience} className="rounded-xl border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all"><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-6 pt-6">
                             {portfolioData.experience.map((exp, idx) => (
-                                <div key={idx} className="p-4 border rounded-lg space-y-4 relative bg-muted/20">
-                                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:bg-destructive/10" onClick={() => removeExperience(idx)}><Trash2 className="h-4 w-4" /></Button>
-                                    <div className="grid md:grid-cols-2 gap-4 mr-8">
-                                        <div className="space-y-2"><Label>Job Title</Label><Input value={exp.jobTitle} onChange={(e) => updateExperience(idx, 'jobTitle', e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={(e) => updateExperience(idx, 'company', e.target.value)} /></div>
+                                <div key={idx} className="p-6 rounded-3xl border border-border/50 bg-muted/10 transition-all hover:bg-muted/20 relative">
+                                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-all" onClick={() => removeExperience(idx)}><Trash2 className="h-4 w-4" /></Button>
+                                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Job Title</Label><Input className="rounded-xl h-12" value={exp.jobTitle} onChange={(e) => updateExperience(idx, 'jobTitle', e.target.value)} /></div>
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Company</Label><Input className="rounded-xl h-12" value={exp.company} onChange={(e) => updateExperience(idx, 'company', e.target.value)} /></div>
                                     </div>
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label>Dates</Label><Input value={exp.dates} onChange={(e) => updateExperience(idx, 'dates', e.target.value)} placeholder="2020 - Present" /></div>
-                                        <div className="space-y-2"><Label>Location</Label><Input value={exp.location || ''} onChange={(e) => updateExperience(idx, 'location', e.target.value)} /></div>
+                                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Dates</Label><Input className="rounded-xl h-12" value={exp.dates} onChange={(e) => updateExperience(idx, 'dates', e.target.value)} placeholder="2020 - Present" /></div>
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Location</Label><Input className="rounded-xl h-12" value={exp.location || ''} onChange={(e) => updateExperience(idx, 'location', e.target.value)} /></div>
                                     </div>
-                                    <div className="space-y-2"><Label>Responsibilities</Label><Textarea value={exp.responsibilities.join('\n')} onChange={(e) => updateExperience(idx, 'responsibilities', e.target.value.split('\n').filter(Boolean))} rows={3} placeholder="One per line" /></div>
+                                    <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Key Impact Bullets (One per line)</Label><Textarea className="rounded-xl" value={exp.responsibilities.join('\n')} onChange={(e) => updateExperience(idx, 'responsibilities', e.target.value.split('\n').filter(Boolean))} rows={4} placeholder="Summarize your achievements..." /></div>
                                 </div>
                             ))}
                         </CardContent>
                     </Card>
 
                     {/* Education */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>{dict.education}</CardTitle>
-                            <Button variant="outline" size="sm" onClick={addEducation}><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-blue-500 rounded-full" />
+                                {dict.education}
+                            </CardTitle>
+                            <Button variant="outline" size="sm" onClick={addEducation} className="rounded-xl border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all"><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
                         </CardHeader>
-                        <CardContent className="space-y-6">
+                        <CardContent className="space-y-6 pt-6">
                             {(portfolioData.education || []).map((ed, idx) => (
-                                <div key={idx} className="p-4 border rounded-lg space-y-4 relative bg-muted/20">
-                                    <Button variant="ghost" size="icon" className="absolute top-2 right-2 text-destructive hover:bg-destructive/10" onClick={() => removeEducation(idx)}><Trash2 className="h-4 w-4" /></Button>
-                                    <div className="grid md:grid-cols-2 gap-4 mr-8">
-                                        <div className="space-y-2"><Label>Degree</Label><Input value={ed.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Institution</Label><Input value={ed.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} /></div>
+                                <div key={idx} className="p-6 rounded-3xl border border-border/50 bg-muted/10 transition-all hover:bg-muted/20 relative">
+                                    <Button variant="ghost" size="icon" className="absolute top-4 right-4 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full transition-all" onClick={() => removeEducation(idx)}><Trash2 className="h-4 w-4" /></Button>
+                                    <div className="grid md:grid-cols-2 gap-6 mb-6">
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Degree</Label><Input className="rounded-xl h-12" value={ed.degree} onChange={(e) => updateEducation(idx, 'degree', e.target.value)} /></div>
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Institution</Label><Input className="rounded-xl h-12" value={ed.institution} onChange={(e) => updateEducation(idx, 'institution', e.target.value)} /></div>
                                     </div>
-                                    <div className="grid md:grid-cols-2 gap-4">
-                                        <div className="space-y-2"><Label>Years</Label><Input value={ed.endDate || ''} onChange={(e) => updateEducation(idx, 'endDate', e.target.value)} placeholder="e.g. 2018 - 2022" /></div>
-                                        <div className="space-y-2"><Label>Field of Study (Optional)</Label><Input value={ed.field || ''} onChange={(e) => updateEducation(idx, 'field', e.target.value)} /></div>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Completion Year</Label><Input className="rounded-xl h-12" value={ed.endDate || ''} onChange={(e) => updateEducation(idx, 'endDate', e.target.value)} placeholder="e.g. 2018 - 2022" /></div>
+                                        <div className="space-y-2"><Label className="text-xs font-bold uppercase tracking-widest opacity-60">Field of Study</Label><Input className="rounded-xl h-12" value={ed.field || ''} onChange={(e) => updateEducation(idx, 'field', e.target.value)} /></div>
                                     </div>
                                 </div>
                             ))}
-                            {(!portfolioData.education || portfolioData.education.length === 0) && <p className="text-center text-muted-foreground">Add your educational background.</p>}
+                            {(!portfolioData.education || portfolioData.education.length === 0) && (
+                                <div className="text-center py-6 border border-dashed rounded-3xl opacity-50">
+                                    <p className="text-sm font-medium">Add your academic background</p>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
 
                     {/* Certifications */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>{dict.certifications}</CardTitle>
-                            <Button variant="outline" size="sm" onClick={() => setPortfolioData(prev => ({ ...prev, certifications: [...(prev.certifications || []), ""] }))}><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-amber-500 rounded-full" />
+                                {dict.certifications}
+                            </CardTitle>
+                            <Button variant="outline" size="sm" onClick={() => setPortfolioData(prev => ({ ...prev, certifications: [...(prev.certifications || []), ""] }))} className="rounded-xl border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all"><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-4 pt-6">
                             {(portfolioData.certifications || []).map((cert, idx) => (
-                                <div key={idx} className="flex gap-2">
-                                    <Input value={cert} onChange={(e) => setPortfolioData(prev => ({ ...prev, certifications: (prev.certifications || []).map((c, i) => i === idx ? e.target.value : c) }))} placeholder="e.g. AWS Certified Solution Architect" />
-                                    <Button variant="ghost" size="icon" onClick={() => setPortfolioData(prev => ({ ...prev, certifications: (prev.certifications || []).filter((_, i) => i !== idx) }))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                <div key={idx} className="flex gap-3 group/cert">
+                                    <Input className="rounded-xl h-12 flex-1" value={cert} onChange={(e) => setPortfolioData(prev => ({ ...prev, certifications: (prev.certifications || []).map((c, i) => i === idx ? e.target.value : c) }))} placeholder="e.g. AWS Certified Solution Architect" />
+                                    <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/5" onClick={() => setPortfolioData(prev => ({ ...prev, certifications: (prev.certifications || []).filter((_, i) => i !== idx) }))}><Trash2 className="h-4 w-4" /></Button>
                                 </div>
                             ))}
-                            {(!portfolioData.certifications || portfolioData.certifications.length === 0) && <p className="text-center text-muted-foreground text-sm">No certifications added.</p>}
+                            {(!portfolioData.certifications || portfolioData.certifications.length === 0) && <p className="text-center text-muted-foreground text-sm font-medium py-4">No certifications added yet.</p>}
                         </CardContent>
                     </Card>
 
                     {/* Languages */}
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle>{dict.languages}</CardTitle>
-                            <Button variant="outline" size="sm" onClick={() => setPortfolioData(prev => ({ ...prev, languages: [...(prev.languages || []), { name: "", level: "Native" }] }))}><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-cyan-500 rounded-full" />
+                                {dict.languages}
+                            </CardTitle>
+                            <Button variant="outline" size="sm" onClick={() => setPortfolioData(prev => ({ ...prev, languages: [...(prev.languages || []), { name: "", level: "Native" }] }))} className="rounded-xl border-primary/20 text-primary font-bold hover:bg-primary/5 transition-all"><Plus className="h-4 w-4 mr-2" />{dict.add}</Button>
                         </CardHeader>
-                        <CardContent className="space-y-4">
+                        <CardContent className="space-y-4 pt-6">
                             {(portfolioData.languages || []).map((lang, idx) => (
-                                <div key={idx} className="flex gap-2 items-center">
-                                    <Input value={lang.name} onChange={(e) => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).map((l, i) => i === idx ? { ...l, name: e.target.value } : l) }))} placeholder="Language (e.g. Spanish)" />
-                                    <Input value={lang.level} onChange={(e) => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).map((l, i) => i === idx ? { ...l, level: e.target.value } : l) }))} placeholder="Level (e.g. Fluent)" className="w-32" />
-                                    <Button variant="ghost" size="icon" onClick={() => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).filter((_, i) => i !== idx) }))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                                <div key={idx} className="flex flex-col sm:flex-row gap-4 p-4 rounded-2xl bg-muted/10 border border-border/50 items-center">
+                                    <Input className="rounded-xl h-12 flex-1" value={lang.name} onChange={(e) => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).map((l, i) => i === idx ? { ...l, name: e.target.value } : l) }))} placeholder="Language (e.g. Spanish)" />
+                                    <Input className="rounded-xl h-12 sm:w-48" value={lang.level} onChange={(e) => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).map((l, i) => i === idx ? { ...l, level: e.target.value } : l) }))} placeholder="Level (e.g. Fluent)" />
+                                    <Button variant="ghost" size="icon" className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/5 shrink-0" onClick={() => setPortfolioData(prev => ({ ...prev, languages: (prev.languages || []).filter((_, i) => i !== idx) }))}><Trash2 className="h-4 w-4" /></Button>
                                 </div>
                             ))}
-                            {(!portfolioData.languages || portfolioData.languages.length === 0) && <p className="text-center text-muted-foreground text-sm">No languages added.</p>}
+                            {(!portfolioData.languages || portfolioData.languages.length === 0) && <p className="text-center text-muted-foreground text-sm font-medium py-4">Add the languages you speak.</p>}
                         </CardContent>
                     </Card>
 
                 </main>
             ) : activeTab === 'layout' ? (
-                <main className="container py-8 max-w-2xl mx-auto">
-                    <Card>
-                        <CardHeader><CardTitle className="flex items-center gap-2"><LayoutGrid className="h-5 w-5" /> {dict.layout}</CardTitle><CardDescription>Drag and drop to reorder sections.</CardDescription></CardHeader>
-                        <CardContent>
+                <main className="container py-12 max-w-2xl mx-auto pb-32">
+                    <Card className="rounded-3xl bg-card/40 backdrop-blur-xl border-border shadow-2xl overflow-hidden">
+                        <CardHeader className="pb-6">
+                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
+                                <div className="w-2 h-8 bg-primary rounded-full" />
+                                {dict.layout}
+                            </CardTitle>
+                            <CardDescription className="text-sm font-medium opacity-60">Drag and drop sections to customize your portfolio's narrative flow.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="pt-0">
                             <LayoutEditor sectionOrder={portfolioData.sectionOrder || DEFAULT_SECTION_ORDER} onOrderChange={(newOrder) => setPortfolioData(prev => ({ ...prev, sectionOrder: newOrder }))} />
                         </CardContent>
                     </Card>
                 </main>
             ) : (
-                /* Preview Mode */
-                <div className={`w-full ${isDarkMode ? 'dark' : ''}`}>
-                    <div className="bg-background min-h-screen">
-                        <div className={isDarkMode ? 'dark' : ''}>
-                            <TemplateComponent data={portfolioData} templateId={templateId} isDarkMode={isDarkMode} />
+                /* Preview Mode - Studio Simulator */
+                <main className="flex-grow flex flex-col items-center py-12 px-6 bg-muted/30 pb-40">
+                    <div className="w-full max-w-6xl mx-auto">
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex flex-col">
+                                <h3 className="text-xl font-black tracking-tight">Live Simulator</h3>
+                                <p className="text-sm text-muted-foreground">Previewing as external visitor</p>
+                            </div>
+                            <div className="flex items-center gap-2 px-1 py-1 bg-muted rounded-xl border border-border">
+                                <span className="px-4 py-1.5 rounded-lg bg-background shadow-sm text-xs font-bold">Desktop</span>
+                                <span className="px-4 py-1.5 rounded-lg text-xs font-bold opacity-40">Mobile</span>
+                            </div>
+                        </div>
+
+                        <div className={cn(
+                            "w-full aspect-video rounded-[2rem] border-[12px] border-zinc-900 shadow-2xl overflow-hidden bg-background relative",
+                            isDarkMode ? 'dark' : ''
+                        )}>
+                            {/* Browser Bar Mockup */}
+                            <div className="absolute top-0 left-0 right-0 h-10 bg-zinc-900 flex items-center px-6 gap-2 z-20">
+                                <div className="flex gap-1.5">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
+                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
+                                </div>
+                                <div className="mx-auto w-1/3 h-5 bg-white/5 rounded-md flex items-center justify-center">
+                                    <span className="text-[10px] text-white/20 font-mono">ultrafolio.ai/p/{portfolioId}</span>
+                                </div>
+                            </div>
+
+                            <div className="absolute inset-x-0 bottom-0 top-10 overflow-y-auto overflow-x-hidden studio-scrollbar">
+                                <TemplateComponent data={portfolioData} templateId={templateId} isDarkMode={isDarkMode} />
+                            </div>
                         </div>
                     </div>
-                </div>
+                </main>
             )}
+            {/* Floating Studio Bar */}
+            <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-6">
+                <div className="bg-background/80 backdrop-blur-2xl border border-border p-3 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 px-3">
+                        {saving || publishing ? (
+                            <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground animate-pulse">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                {saving ? 'Syncing...' : 'Publishing...'}
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 text-xs font-bold text-emerald-500">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                All changes synced
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="ghost"
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="rounded-2xl h-11 px-6 font-bold hover:bg-muted"
+                        >
+                            {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                            {dict.save}
+                        </Button>
+                        <Button
+                            onClick={handlePublish}
+                            disabled={publishing}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl h-11 px-8 font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+                        >
+                            {publishing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Rocket className="h-4 w-4 mr-2" />}
+                            {dict.publish}
+                        </Button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

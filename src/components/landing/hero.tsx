@@ -100,17 +100,7 @@ export default function Hero() {
             </Link>
           </motion.div>
 
-          {/* Social Proof / Trust Bar */}
-          <motion.div
-            variants={itemVariants}
-            className="mt-12 flex flex-wrap justify-center items-center gap-x-8 gap-y-4 grayscale opacity-40 hover:opacity-70 transition-opacity"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground w-full mb-2">Used by builders from</span>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-4" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft" className="h-4" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" className="h-4" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Meta" className="h-4" />
-          </motion.div>
+
         </motion.div>
 
         <motion.div
