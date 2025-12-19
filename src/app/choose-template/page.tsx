@@ -311,7 +311,7 @@ function ChooseTemplateContent() {
               <div className="h-6 w-[1px] bg-border mx-2" />
 
               <Button
-                size="xl"
+                size="lg"
                 onClick={handleContinue}
                 disabled={!selected || isLoading}
                 className={cn(
