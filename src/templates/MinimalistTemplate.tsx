@@ -281,8 +281,8 @@ export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
                 Secure connection established.
               </p>
 
-              <a href={`mailto:${personalInfo.email}`} className="text-2xl md:text-3xl font-black text-[hsl(var(--brand))] border-b-4 border-[hsl(var(--brand))] hover:bg-[hsl(var(--brand))] hover:text-white px-4 py-2 transition-all leading-none">
-                {personalInfo.email.toUpperCase()}
+              <a href={`mailto:${personalInfo.email || ''}`} className="text-2xl md:text-3xl font-black text-[hsl(var(--brand))] border-b-4 border-[hsl(var(--brand))] hover:bg-[hsl(var(--brand))] hover:text-white px-4 py-2 transition-all leading-none">
+                {(personalInfo.email || 'CONTACT').toUpperCase()}
               </a>
             </div>
 
