@@ -59,19 +59,6 @@ export default function Hero() {
       <div className="relative z-10 container mx-auto px-4 md:px-8 pt-32 pb-32">
         <div className="flex flex-col items-center text-center">
 
-          {/* Floating Badge - Frosted Glass Pill */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-10"
-          >
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase liquid-glass-pill text-white/80">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Now Available
-            </span>
-          </motion.div>
-
           {/* Main Headline - Pro Typography */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}

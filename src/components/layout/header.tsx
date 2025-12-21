@@ -7,8 +7,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import en from '@/locales/en.json';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Button } from '@/components/ui/button';
-import { Menu, Moon, Sun, Languages, X } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { Menu, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import Link from 'next/link';
 import UserProfileButton from '../auth/user-profile-button';
@@ -17,12 +16,12 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
 export default function Header() {
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
   const [dict, setDict] = React.useState<Dictionary['header']>(en.header);
-  const { setTheme, theme } = useTheme();
   const [scrolled, setScrolled] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
   const { user } = useUser();
+
 
   React.useEffect(() => {
     setMounted(true);
@@ -108,13 +107,6 @@ export default function Header() {
               </Button>
             </div>
           )}
-
-          {/* Language Control */}
-          <div className="flex items-center liquid-glass p-1 rounded-full">
-            <Button variant="ghost" size="icon" onClick={toggleLanguage} className="w-9 h-9 rounded-full hover:bg-white/10">
-              <Languages className="h-4 w-4" />
-            </Button>
-          </div>
 
           {/* Mobile Menu */}
           <div className="lg:hidden">

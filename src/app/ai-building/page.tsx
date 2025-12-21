@@ -10,8 +10,10 @@ import {
   normalizePortfolioData,
   mapToTemplate,
 } from '@/lib/portfolio-builder';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Zap, Brain, Code2, Palette, CheckCircle2, AlertCircle, RotateCcw, ArrowLeft } from 'lucide-react';
+import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
-// Define UploadMeta type based on the prompt
 interface UploadMeta {
   cvFileUrl: string;
   cvFileType: 'pdf' | 'doc' | 'docx';
@@ -21,44 +23,69 @@ interface UploadMeta {
 
 type BuildState = 'idle' | 'uploaded' | 'template_selected' | 'parsing' | 'mapping' | 'building' | 'ready' | 'error';
 
-const messages = [
-  'Reading your CV…',
-  'Extracting your achievements…',
-  'Detecting your top skills…',
-  'Mapping experience to impact…',
-  'Designing your value story…',
-  'Placing your photo & branding…',
-  'Final checks…',
+const processingStages = [
+  { icon: Brain, text: 'Scanning Professional DNA', subtext: 'Neural processing in progress' },
+  { icon: Zap, text: 'Extracting Achievements', subtext: 'Identifying your career highlights' },
+  { icon: Code2, text: 'Mapping Your Skills', subtext: 'Building your competency matrix' },
+  { icon: Palette, text: 'Designing Your Story', subtext: 'Crafting visual narrative' },
+  { icon: Sparkles, text: 'Polishing Details', subtext: 'Adding finishing touches' },
+  { icon: CheckCircle2, text: 'Almost Ready', subtext: 'Final quality checks' },
 ];
 
-const errorMessages = [
-  'Having trouble reading your CV...',
-  'Checking file format...',
-  'Trying alternative parsing method...',
-  'Please wait...',
+const inspirationalQuotes = [
+  '"Small side projects can change your career."',
+  '"Your portfolio is your story, make it count."',
+  '"First impressions matter. Make yours unforgettable."',
+  '"Design is intelligence made visible."',
+  '"Simplicity is the ultimate sophistication."',
 ];
 
 export default function AIBuildingPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [currentStageIndex, setCurrentStageIndex] = useState(0);
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [buildState, setBuildState] = useState<BuildState>('idle');
   const [extractedData, setExtractedData] = useState<PortfolioData | null>(null);
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  // Animate progress bar
+  useEffect(() => {
+    if (buildState !== 'error' && buildState !== 'ready') {
+      const interval = setInterval(() => {
+        setProgress(prev => Math.min(prev + Math.random() * 3, 95));
+      }, 200);
+      return () => clearInterval(interval);
+    }
+    if (buildState === 'ready') {
+      setProgress(100);
+    }
+  }, [buildState]);
+
+  // Rotate stages
+  useEffect(() => {
+    const stageInterval = setInterval(() => {
+      if (buildState !== 'error') {
+        setCurrentStageIndex(prev => (prev + 1) % processingStages.length);
+      }
+    }, 3000);
+    return () => clearInterval(stageInterval);
+  }, [buildState]);
+
+  // Rotate quotes
+  useEffect(() => {
+    const quoteInterval = setInterval(() => {
+      setCurrentQuoteIndex(prev => (prev + 1) % inspirationalQuotes.length);
+    }, 5000);
+    return () => clearInterval(quoteInterval);
+  }, []);
 
   useEffect(() => {
-    const messageInterval = setInterval(() => {
-      if (buildState === 'error') {
-        setCurrentMessageIndex((prevIndex: number) => (prevIndex + 1) % errorMessages.length);
-      } else {
-        setCurrentMessageIndex((prevIndex: number) => (prevIndex + 1) % messages.length);
-      }
-    }, 2000); // Rotate messages every 2 seconds
-
     const startBuild = async () => {
-      setBuildState('template_selected'); // Initial state before parsing
+      setBuildState('template_selected');
 
       const storedUploadMeta = localStorage.getItem('uploadMeta');
       const chosenTemplate = localStorage.getItem('chosenTemplate');
@@ -79,34 +106,30 @@ export default function AIBuildingPage() {
 
       let currentExtractedData: PortfolioData | null = null;
 
-      // Check if extracted data already exists in localStorage (for persistence on refresh)
       const storedExtracted = localStorage.getItem('extracted');
       if (storedExtracted && !isRetrying) {
         currentExtractedData = JSON.parse(storedExtracted);
         setExtractedData(currentExtractedData);
-        setBuildState('mapping'); // Skip parsing if already extracted
+        setBuildState('mapping');
       } else {
-        // 1) PARSE
         setBuildState('parsing');
         try {
           const mimeType = cvFileTypeToMime(uploadMeta.cvFileType);
           currentExtractedData = await parseCvWithGemini(uploadMeta.cvFileUrl, mimeType);
           setExtractedData(currentExtractedData);
-          localStorage.setItem('extracted', JSON.stringify(currentExtractedData)); // Persist extracted data
+          localStorage.setItem('extracted', JSON.stringify(currentExtractedData));
         } catch (e: any) {
           console.error('Gemini parsing failed:', e);
           setError(e.message || 'We encountered an issue reading your CV. Please try again or upload a DOCX version.');
           setBuildState('error');
-          
-          // Fallback: if PDF failed because non-extractable, prompt to upload DOCX
+
           if (uploadMeta.cvFileType === 'pdf') {
             toast({
               title: 'PDF Issue',
-              description: 'We couldn’t read this PDF. Please upload a DOCX version for best results.',
+              description: 'We couldn't read this PDF.Please upload a DOCX version for best results.',
               variant: 'destructive',
             });
           }
-          // Don't redirect immediately, allow user to retry
           return;
         }
       }
@@ -117,32 +140,26 @@ export default function AIBuildingPage() {
         return;
       }
 
-      // 2) NORMALIZE + MAP
       setBuildState('mapping');
       const normalized = normalizePortfolioData(currentExtractedData, profilePhotoURL);
       const mapped = mapToTemplate(normalized, chosenTemplate as 'basic' | 'minimalist' | 'modern');
       setPortfolioData(mapped);
-      localStorage.setItem('portfolioData', JSON.stringify(mapped)); // Persist final portfolio data
+      localStorage.setItem('portfolioData', JSON.stringify(mapped));
 
-      // 3) BUILD
       setBuildState('building');
-      await sleep(300); // tiny cushion to complete UI composition
+      await sleep(300);
 
-      // 4) READY
       setBuildState('ready');
-      router.push('/portfolio'); // Navigate to final portfolio page
+      router.push('/portfolio');
     };
 
     startBuild();
-
-    return () => {
-      clearInterval(messageInterval);
-    };
   }, [router, toast, isRetrying]);
 
   const handleRetry = () => {
     setIsRetrying(true);
     setError(null);
+    setProgress(0);
     setBuildState('parsing');
   };
 
@@ -150,44 +167,152 @@ export default function AIBuildingPage() {
     router.push('/create');
   };
 
+  const CurrentIcon = processingStages[currentStageIndex].icon;
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-black text-white font-inter">
-      <div className="animate-spin mb-8 border-4 border-t-transparent border-white rounded-full w-16 h-16"></div>
-      <h1 className="text-3xl font-bold mb-6">
-        {buildState === 'error' ? 'Having Trouble...' : 'Preparing your portfolio...'}
-      </h1>
-      <div className="text-center space-y-2 opacity-80" style={{ height: '50px' }}>
-        <p className="text-sm transition-opacity duration-500 opacity-100">
-          {buildState === 'error' 
-            ? errorMessages[currentMessageIndex] 
-            : messages[currentMessageIndex]}
-        </p>
-      </div>
-      {buildState === 'error' && (
-        <div className="mt-6 text-center">
-          <p className="text-red-400 mb-4">{error}</p>
-          <div className="flex gap-4">
-            <button 
-              onClick={handleRetry}
-              className="px-4 py-2 bg-white text-black rounded-md font-medium hover:bg-gray-200 transition-colors"
-              disabled={isRetrying}
-            >
-              {isRetrying ? 'Retrying...' : 'Try Again'}
-            </button>
-            <button 
-              onClick={handleCancel}
-              className="px-4 py-2 bg-transparent text-white border border-white rounded-md font-medium hover:bg-white/10 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
+    <main className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      {/* Living Background */}
+      <div className="fixed inset-0 z-0">
+        <MeshGradientBackground />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[30%] left-[20%] w-[600px] h-[600px] rounded-full bg-slate-400/10 blur-[180px] animate-pulse" />
+          <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] rounded-full bg-white/5 blur-[150px]" />
         </div>
-      )}
-      <p className="mt-8 text-xs text-gray-400">
-        {buildState === 'error' 
-          ? 'Need help? Contact support.' 
-          : 'This usually takes 10–30 seconds depending on document size.'}
-      </p>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-2xl">
+
+        {/* Animated Icon Container */}
+        <motion.div
+          className="relative mb-12"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Outer Rings */}
+          <div className="absolute inset-0 w-40 h-40 -m-4 rounded-full border border-white/5 animate-[spin_20s_linear_infinite]" />
+          <div className="absolute inset-0 w-48 h-48 -m-8 rounded-full border border-white/[0.03] animate-[spin_30s_linear_infinite_reverse]" />
+          <div className="absolute inset-0 w-56 h-56 -m-12 rounded-full border border-dashed border-white/[0.02] animate-[spin_40s_linear_infinite]" />
+
+          {/* Main Icon Circle */}
+          <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/10 backdrop-blur-xl flex items-center justify-center shadow-[0_0_60px_-15px_rgba(255,255,255,0.15),inset_0_1px_1px_rgba(255,255,255,0.1)]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStageIndex}
+                initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                exit={{ scale: 0.5, opacity: 0, rotate: 20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <CurrentIcon className="w-12 h-12 text-white/70" strokeWidth={1.5} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Pulse Effect */}
+          <div className="absolute inset-0 w-32 h-32 rounded-full bg-white/5 animate-ping" style={{ animationDuration: '2s' }} />
+        </motion.div>
+
+        {/* Stage Text */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStageIndex}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
+              <span className="silver-text">
+                {buildState === 'error' ? 'Something Went Wrong' : processingStages[currentStageIndex].text}
+              </span>
+            </h1>
+            <p className="text-sm tracking-[0.3em] uppercase text-white/40 font-medium">
+              {buildState === 'error' ? 'Please try again' : processingStages[currentStageIndex].subtext}
+            </p>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Progress Bar */}
+        {buildState !== 'error' && (
+          <motion.div
+            className="w-full max-w-xs mb-10"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-slate-400 via-white to-slate-400 rounded-full"
+                style={{ width: `${progress}%` }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Error State */}
+        {buildState === 'error' && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10"
+          >
+            <div className="liquid-silver-glass rounded-2xl p-6 mb-6 border border-red-500/20">
+              <div className="flex items-center gap-3 text-red-400 mb-2">
+                <AlertCircle className="w-5 h-5" />
+                <span className="font-semibold">Error</span>
+              </div>
+              <p className="text-white/60 text-sm">{error}</p>
+            </div>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={handleRetry}
+                disabled={isRetrying}
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black font-semibold hover:scale-105 transition-transform disabled:opacity-50"
+              >
+                <RotateCcw className="w-4 h-4" />
+                {isRetrying ? 'Retrying...' : 'Try Again'}
+              </button>
+              <button
+                onClick={handleCancel}
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 text-white border border-white/10 font-semibold hover:bg-white/20 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Go Back
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Inspirational Quote */}
+        <AnimatePresence mode="wait">
+          <motion.p
+            key={currentQuoteIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.4 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="text-sm text-white/40 italic max-w-md"
+          >
+            {inspirationalQuotes[currentQuoteIndex]}
+          </motion.p>
+        </AnimatePresence>
+
+        {/* Footer Note */}
+        <motion.p
+          className="mt-12 text-xs text-white/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          {buildState === 'error'
+            ? 'Need help? Contact support@ultrafolio.com'
+            : 'This usually takes 10–30 seconds depending on document size.'}
+        </motion.p>
+      </div>
     </main>
   );
 }
