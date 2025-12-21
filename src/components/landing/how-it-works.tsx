@@ -72,19 +72,19 @@ export default function HowItWorks() {
   const steps: StepData[] = [
     {
       id: 'upload',
-      name: dict.step1?.name || 'Upload Your CV',
+      name: dict.step1?.title || 'Upload Your CV',
       description: dict.step1?.description || 'Simply upload your existing resume or CV in PDF format.',
       icon: UploadCloud,
     },
     {
       id: 'generate',
-      name: dict.step2?.name || 'AI Magic',
+      name: dict.step2?.title || 'AI Magic',
       description: dict.step2?.description || 'Our AI extracts your information and generates a beautiful portfolio.',
       icon: Wand2,
     },
     {
       id: 'publish',
-      name: dict.step3?.name || 'Go Live',
+      name: dict.step3?.title || 'Go Live',
       description: dict.step3?.description || 'Publish your portfolio with one click and share it with the world.',
       icon: Rocket,
     },
@@ -97,8 +97,8 @@ export default function HowItWorks() {
 
       {/* Ambient Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-slate-400/10 blur-[150px]" />
-        <div className="absolute bottom-[30%] left-[15%] w-[400px] h-[400px] rounded-full bg-white/5 blur-[120px]" />
+        <div className="absolute top-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[150px]" />
+        <div className="absolute bottom-[30%] left-[15%] w-[400px] h-[400px] rounded-full bg-violet-600/15 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">

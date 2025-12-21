@@ -455,7 +455,7 @@ export default function EditPortfolioPage() {
 
                     <div className="flex flex-col gap-4 py-4">
                         <div className="p-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 rounded-lg text-sm text-amber-800 dark:text-amber-200">
-                            <strong>Note:</strong> {language === 'ar' ? 'هذا هو الرابط العام الفريد الخاص بك. يرجى نسخه وحفظه في مكان آمن.' : 'This is your unique public link. Please copy it and save it in a safe place.'}
+                            <strong>Note:</strong> This is your unique public link. Please copy it and save it in a safe place.
                         </div>
 
                         <div className="flex items-center space-x-2">

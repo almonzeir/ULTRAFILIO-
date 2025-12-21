@@ -126,7 +126,7 @@ export default function AIBuildingPage() {
           if (uploadMeta.cvFileType === 'pdf') {
             toast({
               title: 'PDF Issue',
-              description: 'We couldn't read this PDF.Please upload a DOCX version for best results.',
+              description: 'We could not read this PDF. Please upload a DOCX version for best results.',
               variant: 'destructive',
             });
           }
@@ -175,8 +175,8 @@ export default function AIBuildingPage() {
       <div className="fixed inset-0 z-0">
         <MeshGradientBackground />
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[30%] left-[20%] w-[600px] h-[600px] rounded-full bg-slate-400/10 blur-[180px] animate-pulse" />
-          <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] rounded-full bg-white/5 blur-[150px]" />
+          <div className="absolute top-[30%] left-[20%] w-[600px] h-[600px] rounded-full bg-violet-600/20 blur-[180px] animate-pulse" />
+          <div className="absolute bottom-[20%] right-[20%] w-[500px] h-[500px] rounded-full bg-purple-500/15 blur-[150px]" />
         </div>
       </div>
 

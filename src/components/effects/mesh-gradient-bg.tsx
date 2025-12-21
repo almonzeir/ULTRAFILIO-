@@ -3,8 +3,8 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * MeshGradientBackground - Liquid Silver Theme
- * Creates a living mesh gradient with silver/gray accent colors.
+ * MeshGradientBackground - Purple Glass Theme
+ * Creates a living mesh gradient with purple/violet accent colors.
  */
 export default function MeshGradientBackground() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,11 +34,12 @@ export default function MeshGradientBackground() {
         resize();
         window.addEventListener('resize', resize);
 
-        // Liquid Silver Color Palette
+        // Purple Glass Color Palette
         const colors = [
-            { r: 15, g: 16, b: 18 },      // Deep Charcoal #0f1012
-            { r: 42, g: 45, b: 53 },      // Dark Slate #2a2d35
-            { r: 100, g: 116, b: 139 },   // Silver/Slate #64748b
+            { r: 15, g: 10, b: 25 },      // Deep Purple Black #0f0a19
+            { r: 88, g: 28, b: 135 },     // Purple-900 #581c87
+            { r: 139, g: 92, b: 246 },    // Violet-500 #8b5cf6
+            { r: 168, g: 85, b: 247 },    // Purple-500 #a855f7
         ];
 
         const blobs = colors.map((color, i) => ({
@@ -60,8 +61,8 @@ export default function MeshGradientBackground() {
 
             time += 0.002;
 
-            // Deep charcoal base
-            ctx.fillStyle = '#0f1012';
+            // Deep purple-black base
+            ctx.fillStyle = '#0a0612';
             ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
             blobs.forEach((blob, i) => {
@@ -80,8 +81,8 @@ export default function MeshGradientBackground() {
                     blob.x, blob.y, dynamicRadius
                 );
 
-                gradient.addColorStop(0, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.6)`);
-                gradient.addColorStop(0.6, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.15)`);
+                gradient.addColorStop(0, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.5)`);
+                gradient.addColorStop(0.6, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.12)`);
                 gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                 ctx.globalCompositeOperation = 'screen';

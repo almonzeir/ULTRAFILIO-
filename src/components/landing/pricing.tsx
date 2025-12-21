@@ -178,8 +178,8 @@ export default function Pricing() {
 
       {/* Ambient Light */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full bg-white/5 blur-[150px]" />
-        <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[120px]" />
+        <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full bg-violet-600/15 blur-[150px]" />
+        <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full bg-purple-500/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
