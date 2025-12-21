@@ -1,125 +1,164 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { MacbookFrame } from '@/components/shared/device-frames';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
+import en from '@/locales/en.json';
 import type { Dictionary } from '@/lib/dictionaries';
-import { useEffect, useState } from 'react';
-import { Rocket, Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
+import { ArrowRight } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useShine } from '@/hooks/use-shine';
+import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
 export default function Hero() {
   const { language } = useLanguage();
-  const [dict, setDict] = useState<Dictionary['hero'] | null>(null);
+  const [dict, setDict] = useState<Dictionary['hero']>(en.hero);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const ctaBtnRef = useRef<HTMLButtonElement>(null);
+  const mockupRef = useRef<HTMLDivElement>(null);
+
+  useShine(ctaBtnRef);
+  useShine(mockupRef);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   useEffect(() => {
-    const fetchDictionary = async () => {
-      const dictionary = await getDictionary(language);
-      setDict(dictionary.hero);
+    const fetchDict = async () => {
+      try {
+        const d = await getDictionary(language);
+        if (d && d.hero) setDict(d.hero);
+      } catch (err) {
+        console.error("Hero translation error:", err);
+      }
     };
-    fetchDictionary();
+    fetchDict();
   }, [language]);
 
-  if (!dict) return null;
-
-  const videoSrc = language === 'ar' ? '/hero-video-ar.mp4' : '/hero-video.mp4';
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
-    },
-  };
-
   return (
-    <section className="relative isolate overflow-hidden bg-background">
-      {/* Premium Dynamic Aura */}
-      <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-blue-500/5 blur-[100px] rounded-full" />
-        <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] bg-violet-500/5 blur-[80px] rounded-full animate-bounce [animation-duration:10s]" />
+    <section
+      ref={containerRef}
+      className="relative min-h-[120vh] flex items-center justify-center overflow-hidden"
+    >
+      {/* Living Mesh Gradient Background */}
+      <MeshGradientBackground />
+
+      {/* Ambient Light Orbs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-white/5 blur-[150px] animate-pulse-slow" />
+        <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full bg-slate-400/10 blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-slate-800/10 blur-[200px]" />
       </div>
 
-      <div className="relative container mx-auto px-6 py-24 sm:py-32 lg:px-8">
-        <motion.div
-          className="mx-auto max-w-2xl text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={itemVariants} className="mb-8 flex justify-center">
-            <div className="relative rounded-full px-3 py-1 text-sm leading-6 text-muted-foreground ring-1 ring-gray-900/10 hover:ring-gray-900/20 dark:ring-white/10 dark:hover:ring-white/20 transition-all bg-background/50 backdrop-blur-md">
-              {dict.badge} <Link href="/create" className="font-semibold text-foreground"><span className="absolute inset-0" aria-hidden="true" />{dict.tryNow} <span aria-hidden="true">&rarr;</span></Link>
-            </div>
+      <div className="relative z-10 container mx-auto px-4 md:px-8 pt-32 pb-32">
+        <div className="flex flex-col items-center text-center">
+
+          {/* Floating Badge - Frosted Glass Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-10"
+          >
+            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-semibold tracking-widest uppercase liquid-glass-pill text-white/80">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              Now Available
+            </span>
           </motion.div>
 
-          <motion.h1
-            className="text-5xl font-bold tracking-tight text-foreground sm:text-7xl font-headline"
-            variants={itemVariants}
+          {/* Main Headline - Pro Typography */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8"
           >
-            {dict.title}
-          </motion.h1>
+            <h1 className="hero-title">
+              {dict.title || "Turn Your Resume into a Stunning Portfolio"}
+            </h1>
+          </motion.div>
+
+          {/* Subtitle */}
           <motion.p
-            className="mt-6 text-lg leading-8 text-muted-foreground max-w-xl mx-auto"
-            variants={itemVariants}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 1 }}
+            className="text-lg sm:text-xl md:text-2xl text-white/50 max-w-2xl mb-12 font-medium tracking-tight leading-relaxed"
           >
             {dict.subtitle}
           </motion.p>
 
+          {/* CTA Buttons */}
           <motion.div
-            className="mt-10 flex items-center justify-center gap-x-6"
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="flex flex-col sm:flex-row items-center gap-5"
           >
+            {/* Primary CTA - Liquid Metal Button */}
             <Link href="/create">
-              <Button size="lg" className="rounded-full px-8 py-6 text-lg bg-foreground text-background hover:bg-foreground/90 transition-all hover:scale-105 shadow-xl shadow-black/5 dark:shadow-white/5">
-                <Rocket className="mr-2 h-5 w-5" />
-                {dict.ctaFree}
-              </Button>
+              <button
+                ref={ctaBtnRef}
+                className="liquid-button-primary group relative h-14 sm:h-16 px-10 sm:px-14 rounded-full text-base sm:text-lg font-semibold"
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  {dict.ctaFree}
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
             </Link>
+
+            {/* Secondary CTA - Ghost Glass Button */}
             <Link href="/demo-template">
-              <Button size="lg" variant="ghost" className="rounded-full px-8 py-6 text-lg group hover:bg-muted font-medium">
-                {dict.ctaDemo} <span aria-hidden="true" className="ml-2 group-hover:translate-x-1 transition-transform">&rarr;</span>
-              </Button>
+              <button className="liquid-button-ghost group h-14 sm:h-16 px-10 sm:px-14 rounded-full text-base sm:text-lg font-semibold text-white/80 hover:text-white transition-colors">
+                {dict.ctaDemo}
+              </button>
             </Link>
           </motion.div>
+        </div>
 
-
-        </motion.div>
-
+        {/* Floating Glass Mockup - The "Ice Block" */}
         <motion.div
-          className="mt-16 flow-root sm:mt-24"
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          ref={mockupRef}
+          style={{ y, opacity, willChange: 'transform, opacity' }}
+          className="mt-20 sm:mt-28 relative mx-auto max-w-6xl aspect-video"
         >
-          <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4 dark:bg-white/5 dark:ring-white/10 backdrop-blur-3xl shadow-2xl">
-            <MacbookFrame>
+          {/* Outer Glow */}
+          <div className="absolute -inset-4 bg-gradient-to-b from-white/5 to-transparent rounded-[4rem] blur-xl" />
+
+          {/* Glass Container */}
+          <div className="relative w-full h-full rounded-[2.5rem] sm:rounded-[3rem] liquid-glass-card overflow-hidden">
+            {/* Browser Chrome */}
+            <div className="absolute inset-x-0 top-0 h-10 sm:h-12 bg-white/[0.03] border-b border-white/[0.08] backdrop-blur-xl z-10 flex items-center px-5 gap-2">
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-white/10" />
+                <div className="w-3 h-3 rounded-full bg-white/10" />
+                <div className="w-3 h-3 rounded-full bg-white/10" />
+              </div>
+              <div className="flex-1 flex justify-center">
+                <div className="h-6 w-48 rounded-lg bg-white/[0.05] border border-white/[0.08]" />
+              </div>
+            </div>
+
+            {/* Video Content */}
+            <div className="relative w-full h-full pt-10 sm:pt-12">
               <video
-                src={videoSrc}
+                poster="/image.png"
+                src={language === 'ar' ? '/hero-video-ar.mp4' : '/hero-video.mp4'}
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="rounded-md w-full h-full object-cover grayscale-[20%]"
+                className="w-full h-full object-cover"
+                style={{ willChange: 'transform' }}
               />
-            </MacbookFrame>
+            </div>
           </div>
         </motion.div>
       </div>

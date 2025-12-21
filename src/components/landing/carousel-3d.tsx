@@ -29,15 +29,12 @@ export default function Carousel3D({ items }: Carousel3DProps) {
 
     return (
         <div
-            className="relative w-full h-[800px] flex flex-col items-center justify-center [perspective:1000px] overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom, #1a1a2e 0%, #16162a 50%, #0d0d14 100%)' }}
+            className="relative w-full h-[800px] flex flex-col items-center justify-center [perspective:1000px] overflow-hidden bg-[#fafafa] dark:bg-[#030303]"
         >
-            {/* Background elements - fixed dark colors */}
-            <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ background: 'linear-gradient(to bottom, transparent 0%, transparent 60%, #000000 100%)' }}
-            />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-violet-600/10 blur-[100px] rounded-full pointer-events-none" />
+            {/* Background Grain */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] dark:opacity-[0.05] pointer-events-none" />
+
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-neutral-200 dark:bg-neutral-800 opacity-[0.05] blur-[150px] rounded-full pointer-events-none" />
 
             {/* Carousel Container */}
             <div className="relative w-full max-w-6xl h-[600px] flex items-center justify-center">
@@ -56,62 +53,55 @@ export default function Carousel3D({ items }: Carousel3DProps) {
                         return (
                             <motion.div
                                 key={item.key}
-                                className="absolute w-[340px] md:w-[500px] aspect-[4/5] rounded-[32px] border border-white/10 shadow-2xl overflow-hidden flex flex-col"
-                                style={{ backgroundColor: '#050505' }}
+                                className="absolute w-[340px] md:w-[500px] aspect-[4/5] glass-surface !p-2 border-white/40 dark:border-white/20 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col"
                                 initial={false}
                                 animate={{
-                                    scale: isActive ? 1 : 0.9,
-                                    opacity: isActive ? 1 : 0.6,
-                                    x: isActive ? 0 : offset > 0 ? 50 : -50,
-                                    z: isActive ? 0 : -100,
-                                    rotateY: isActive ? 0 : offset > 0 ? -45 : 45,
+                                    scale: isActive ? 1 : 0.85,
+                                    opacity: isActive ? 1 : 0.4,
+                                    x: isActive ? 0 : offset > 0 ? 80 : -80,
+                                    z: isActive ? 0 : -200,
+                                    rotateY: isActive ? 0 : offset > 0 ? -35 : 35,
                                     zIndex: isActive ? 10 : 5,
-                                    filter: isActive ? 'brightness(1)' : 'brightness(0.6)',
+                                    filter: isActive ? 'brightness(1)' : 'brightness(0.4)',
                                 }}
                                 transition={{
                                     type: 'spring',
-                                    stiffness: 260,
-                                    damping: 20,
+                                    stiffness: 180,
+                                    damping: 25,
                                 }}
                             >
                                 {/* Card Content */}
-                                <div className="flex flex-col h-full relative p-8">
+                                <div className="flex flex-col h-full relative rounded-[2.8rem] overflow-hidden bg-black/95 backdrop-blur-3xl border border-white/10">
 
                                     {/* Text Content */}
-                                    <div className="flex-shrink-0 text-center mb-8 mt-4">
-                                        <h3 className="text-3xl font-bold text-white mb-6 tracking-tight">{item.name}</h3>
-                                        <p className="text-neutral-400 text-lg leading-relaxed px-2">
+                                    <div className="flex-shrink-0 text-center mb-8 mt-12 px-10">
+                                        <h3 className="text-4xl font-black text-white mb-6 tracking-tighter uppercase italic">{item.name}</h3>
+                                        <p className="text-neutral-500 text-lg leading-relaxed font-medium italic">
                                             {item.description}
                                         </p>
                                     </div>
 
                                     {/* Image Container (Inset Interface) */}
-                                    <div className="flex-1 relative w-full rounded-t-xl overflow-hidden shadow-2xl mt-auto">
-                                        <div className="absolute inset-0 bg-neutral-800 animate-pulse -z-10" />
-
+                                    <div className="flex-1 relative w-full overflow-hidden mt-auto">
                                         {/* Mock Browser/App Header */}
-                                        <div className="h-6 bg-neutral-800/80 w-full flex items-center gap-1.5 px-3 border-b border-white/5">
-                                            <div className="w-2 h-2 rounded-full bg-red-500/50" />
-                                            <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
-                                            <div className="w-2 h-2 rounded-full bg-green-500/50" />
+                                        <div className="h-10 bg-white/5 w-full flex items-center gap-1.5 px-6 border-b border-white/5 backdrop-blur-xl">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
+                                            <div className="w-2.5 h-2.5 rounded-full bg-white/10" />
                                         </div>
 
                                         <Image
                                             src={item.image}
                                             alt={item.name}
                                             fill
-                                            className="object-cover object-top"
+                                            className="object-cover object-top p-4"
                                         />
 
                                         {/* Interaction Overlay */}
                                         {isActive && (
-                                            <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
+                                            <div className="absolute inset-0 bg-black/5 transition-colors pointer-events-none" />
                                         )}
                                     </div>
                                 </div>
-
-                                {/* Glossy Overlay */}
-                                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
                             </motion.div>
                         );
                     })}
@@ -120,30 +110,30 @@ export default function Carousel3D({ items }: Carousel3DProps) {
                 {/* Navigation Arrows */}
                 <button
                     onClick={handlePrev}
-                    className="absolute left-4 md:left-12 z-50 p-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-white transition-all hover:scale-110 active:scale-95 group"
+                    className="absolute left-4 md:left-8 z-50 w-20 h-20 rounded-full liquid-glass border border-white/20 text-black dark:text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95 group shadow-2xl"
                     aria-label="Previous"
                 >
-                    <ChevronLeft className="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
+                    <ChevronLeft className="w-8 h-8 group-hover:-translate-x-1 transition-transform" />
                 </button>
 
                 <button
                     onClick={handleNext}
-                    className="absolute right-4 md:right-12 z-50 p-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 backdrop-blur-md text-white transition-all hover:scale-110 active:scale-95 group"
+                    className="absolute right-4 md:right-8 z-50 w-20 h-20 rounded-full liquid-glass border border-white/20 text-black dark:text-white flex items-center justify-center transition-all hover:scale-110 active:scale-95 group shadow-2xl"
                     aria-label="Next"
                 >
-                    <ChevronRight className="w-6 h-6 group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight className="w-8 h-8 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
 
             {/* Pagination Dots */}
-            <div className="flex items-center gap-3 mt-4 z-10">
+            <div className="flex items-center gap-4 mt-8 z-10">
                 {items.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => setActiveIndex(i)}
-                        className={`h-2.5 rounded-full transition-all duration-300 ${i === activeIndex
-                            ? 'w-8 bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]'
-                            : 'w-2.5 bg-neutral-700 hover:bg-neutral-600'
+                        className={`transition-all duration-500 rounded-full shadow-2xl ${i === activeIndex
+                            ? 'w-12 h-2 bg-black dark:bg-white'
+                            : 'w-2 h-2 bg-black/20 dark:bg-white/20 hover:bg-black/40 dark:hover:bg-white/40'
                             }`}
                         aria-label={`Go to slide ${i + 1}`}
                     />

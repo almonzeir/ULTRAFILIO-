@@ -27,7 +27,11 @@ import {
 import { LayoutEditor } from '@/components/LayoutEditor';
 import type { PortfolioData } from '@/templates/types';
 import { useDictionary } from '@/hooks/use-dictionary';
+
 import { cn } from '@/lib/utils';
+import { TEMPLATES } from '@/lib/templates';
+import { CheckCircle2 } from 'lucide-react';
+
 
 // Dynamic Template Imports
 const ModernTemplate = dynamic(() => import('@/templates/ModernTemplate'), {
@@ -100,6 +104,7 @@ export default function EditPortfolioPage() {
     const [activeTab, setActiveTab] = useState('edit');
     const [isDarkMode, setIsDarkMode] = useState(true);
     const [templateId, setTemplateId] = useState('modern');
+    const [isMobileView, setIsMobileView] = useState(false);
 
     // Portfolio Data State
     const [portfolioData, setPortfolioData] = useState<PortfolioData>({
@@ -198,10 +203,10 @@ export default function EditPortfolioPage() {
         setSaving(true);
         try {
             // Map state back to DB columns
-            const updates = {
-                title: portfolioData.personalInfo.fullName, // + "'s Portfolio"? Keeping it simple for now.
+            const updates: Record<string, any> = {
+                title: portfolioData.personalInfo.fullName,
                 subtitle: portfolioData.personalInfo.title,
-                description: portfolioData.about.extendedBio || portfolioData.personalInfo.tagline, // Prefer extendedBio
+                description: portfolioData.about.extendedBio || portfolioData.personalInfo.tagline,
                 email: portfolioData.personalInfo.email,
                 location: portfolioData.personalInfo.location,
                 website: portfolioData.personalInfo.website,
@@ -216,21 +221,38 @@ export default function EditPortfolioPage() {
                 certifications: portfolioData.certifications,
                 languages: portfolioData.languages,
 
-                // section_order: portfolioData.sectionOrder, // Try to save order if column exists
+                template_id: templateId,
                 updated_at: new Date().toISOString(),
             };
 
-            const { error } = await supabase
-                .from('portfolios')
-                .update(updates)
-                .eq('id', portfolioId);
+            // Try to save with section_order first
+            let error;
+            try {
+                const result = await supabase
+                    .from('portfolios')
+                    .update({ ...updates, section_order: portfolioData.sectionOrder })
+                    .eq('id', portfolioId);
+                error = result.error;
+            } catch {
+                error = { message: 'section_order failed' };
+            }
+
+            // If section_order column doesn't exist, save without it
+            if (error && (error.message?.includes('section_order') || error.message?.includes('column'))) {
+                console.log('section_order column not found, saving without it');
+                const result = await supabase
+                    .from('portfolios')
+                    .update(updates)
+                    .eq('id', portfolioId);
+                error = result.error;
+            }
 
             if (error) throw error;
 
             toast({ title: dictionary?.editor?.saved || "Saved", description: dictionary?.editor?.saveSuccess || "Changes saved successfully." });
         } catch (error: any) {
             console.error('Error saving:', error);
-            toast({ variant: 'destructive', title: dictionary?.editor?.error || 'Error', description: dictionary?.editor?.saveError || 'Failed to save changes.' });
+            toast({ variant: 'destructive', title: dictionary?.editor?.error || 'Error', description: error.message || 'Failed to save changes.' });
             throw error;
         } finally {
             setSaving(false);
@@ -465,9 +487,10 @@ export default function EditPortfolioPage() {
                     <div className="flex items-center gap-3">
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="bg-muted/50 p-1 rounded-xl">
                             <TabsList className="bg-transparent border-0 gap-1">
-                                <TabsTrigger value="edit" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.edit}</TabsTrigger>
-                                <TabsTrigger value="layout" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.layout}</TabsTrigger>
-                                <TabsTrigger value="preview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.preview}</TabsTrigger>
+                                <TabsTrigger value="edit" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.edit || 'Edit'}</TabsTrigger>
+                                <TabsTrigger value="layout" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.layout || 'Layout'}</TabsTrigger>
+                                <TabsTrigger value="templates" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">Templates</TabsTrigger>
+                                <TabsTrigger value="preview" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm px-6">{dict.preview || 'Preview'}</TabsTrigger>
                             </TabsList>
                         </Tabs>
 
@@ -769,6 +792,49 @@ export default function EditPortfolioPage() {
                         </CardContent>
                     </Card>
                 </main>
+            ) : activeTab === 'templates' ? (
+                <main className="container py-12 max-w-6xl mx-auto pb-32">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-black tracking-tight mb-2">Choose your aesthetic</h2>
+                        <p className="text-muted-foreground">Select a template to instantly transform your portfolio.</p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {TEMPLATES.map((t) => (
+                            <div
+                                key={t.id}
+                                onClick={() => setTemplateId(t.id)}
+                                className={cn(
+                                    "group relative cursor-pointer overflow-hidden rounded-3xl border-2 transition-all duration-300 bg-card hover:shadow-xl",
+                                    templateId === t.id ? "border-primary shadow-lg ring-4 ring-primary/10" : "border-transparent hover:border-primary/50"
+                                )}
+                            >
+                                <div className={cn(
+                                    "aspect-video w-full bg-muted/50 p-6 flex flex-col items-center justify-center gap-4 transition-colors",
+                                    templateId === t.id ? "bg-primary/5" : "group-hover:bg-primary/5"
+                                )}>
+                                    <div className="w-16 h-16 rounded-full bg-background shadow-sm flex items-center justify-center">
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-full",
+                                            t.id === 'aurora' ? "bg-gradient-to-tr from-purple-500 to-cyan-500" :
+                                                t.id === 'cyber' ? "bg-gradient-to-tr from-cyan-500 to-fuchsia-500" :
+                                                    t.id === 'modern' ? "bg-gradient-to-tr from-blue-500 to-indigo-500" :
+                                                        "bg-gradient-to-tr from-gray-200 to-gray-400 dark:from-gray-700 dark:to-gray-500"
+                                        )} />
+                                    </div>
+                                    <h3 className="font-bold text-lg">{t.name}</h3>
+                                </div>
+                                <div className="p-6">
+                                    <p className="text-sm text-muted-foreground line-clamp-2">{t.description}</p>
+                                </div>
+                                {templateId === t.id && (
+                                    <div className="absolute top-4 right-4 bg-primary text-primary-foreground rounded-full p-1">
+                                        <CheckCircle2 className="w-5 h-5" />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </main>
             ) : (
                 /* Preview Mode - Studio Simulator */
                 <main className="flex-grow flex flex-col items-center py-12 px-6 bg-muted/30 pb-40">
@@ -779,29 +845,78 @@ export default function EditPortfolioPage() {
                                 <p className="text-sm text-muted-foreground">Previewing as external visitor</p>
                             </div>
                             <div className="flex items-center gap-2 px-1 py-1 bg-muted rounded-xl border border-border">
-                                <span className="px-4 py-1.5 rounded-lg bg-background shadow-sm text-xs font-bold">Desktop</span>
-                                <span className="px-4 py-1.5 rounded-lg text-xs font-bold opacity-40">Mobile</span>
+                                <button
+                                    onClick={() => setIsMobileView(false)}
+                                    className={cn(
+                                        "px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
+                                        !isMobileView ? "bg-background shadow-sm" : "opacity-40 hover:opacity-70"
+                                    )}
+                                >
+                                    Desktop
+                                </button>
+                                <button
+                                    onClick={() => setIsMobileView(true)}
+                                    className={cn(
+                                        "px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
+                                        isMobileView ? "bg-background shadow-sm" : "opacity-40 hover:opacity-70"
+                                    )}
+                                >
+                                    Mobile
+                                </button>
                             </div>
                         </div>
 
-                        <div className={cn(
-                            "w-full aspect-video rounded-[2rem] border-[12px] border-zinc-900 shadow-2xl overflow-hidden bg-background relative",
-                            isDarkMode ? 'dark' : ''
-                        )}>
-                            {/* Browser Bar Mockup */}
-                            <div className="absolute top-0 left-0 right-0 h-10 bg-zinc-900 flex items-center px-6 gap-2 z-20">
-                                <div className="flex gap-1.5">
-                                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
-                                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
+                        <div className="flex justify-center">
+                            <div className={cn(
+                                "rounded-[2rem] border-[12px] border-zinc-900 shadow-2xl overflow-hidden bg-background relative transition-all duration-500",
+                                isDarkMode ? 'dark' : '',
+                                isMobileView
+                                    ? "w-[375px] h-[700px]"
+                                    : "w-full aspect-video"
+                            )}>
+                                {/* Browser/Phone Bar Mockup */}
+                                <div className={cn(
+                                    "absolute top-0 left-0 right-0 bg-zinc-900 flex items-center px-4 gap-2 z-20",
+                                    isMobileView ? "h-8 justify-center" : "h-10 px-6"
+                                )}>
+                                    {isMobileView ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-12 h-3 bg-white/10 rounded-full" />
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="flex gap-1.5">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-red-500/50" />
+                                                <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50" />
+                                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50" />
+                                            </div>
+                                            <div className="mx-auto w-1/3 h-5 bg-white/5 rounded-md flex items-center justify-center">
+                                                <span className="text-[10px] text-white/20 font-mono">ultrafolio.ai/p/{portfolioId}</span>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
-                                <div className="mx-auto w-1/3 h-5 bg-white/5 rounded-md flex items-center justify-center">
-                                    <span className="text-[10px] text-white/20 font-mono">ultrafolio.ai/p/{portfolioId}</span>
-                                </div>
-                            </div>
 
-                            <div className="absolute inset-x-0 bottom-0 top-10 overflow-y-auto overflow-x-hidden studio-scrollbar">
-                                <TemplateComponent data={portfolioData} templateId={templateId} isDarkMode={isDarkMode} />
+                                <div className={cn(
+                                    "absolute inset-x-0 bottom-0 overflow-y-auto overflow-x-hidden studio-scrollbar",
+                                    isMobileView ? "top-8" : "top-10"
+                                )}>
+                                    {isMobileView ? (
+                                        /* Mobile: Render at 1280px width and scale down to fit 375px */
+                                        <div
+                                            style={{
+                                                width: '1280px',
+                                                transform: 'scale(0.293)',
+                                                transformOrigin: 'top left',
+                                                height: 'auto'
+                                            }}
+                                        >
+                                            <TemplateComponent data={portfolioData} templateId={templateId} isDarkMode={isDarkMode} />
+                                        </div>
+                                    ) : (
+                                        <TemplateComponent data={portfolioData} templateId={templateId} isDarkMode={isDarkMode} />
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

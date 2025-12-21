@@ -1,0 +1,107 @@
+@tailwind base;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 217.2 91.2% 59.8%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* New Color Tokens */
+    --bg-0: var(--background);
+    --bg-1: var(--card);
+    --bg-2: var(--popover);
+    --text-0: var(--foreground);
+    --text-1: var(--muted-foreground);
+    --stroke: var(--border);
+    --brand: var(--primary);
+    --brand-2: var(--secondary);
+
+    /* Modern Template Dark Theme */
+    --dark-bg: 220 27% 5%;
+    /* #070C15 */
+    --card-bg: 220 27% 15%;
+    /* #1F2533 - Made Lighter */
+    --electric-blue: 217 91% 60%;
+    /* #3B82F6 */
+    --secondary-glow: 221 72% 43%;
+    /* #1D4ED8 */
+    --text-light: 210 17% 90%;
+    /* #E2E8F0 */
+  }
+
+  .dark {
+    --background: var(--dark-bg);
+    --foreground: var(--text-light);
+    --card: var(--card-bg);
+    --card-foreground: var(--text-light);
+    --popover: var(--dark-bg);
+    --popover-foreground: var(--text-light);
+    --primary: var(--electric-blue);
+    --primary-foreground: 220 27% 5%;
+    --secondary: var(--secondary-glow);
+    --secondary-foreground: var(--text-light);
+    --muted: var(--card-bg);
+    --muted-foreground: 210 17% 80%;
+    --accent: var(--electric-blue);
+    --accent-foreground: var(--text-light);
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 27% 12%;
+    /* Darker border */
+    --input: var(--card-bg);
+    --ring: var(--electric-blue);
+
+    /* New Color Tokens for Dark Mode */
+    --bg-0: var(--dark-bg);
+    --bg-1: var(--card-bg);
+    --bg-2: var(--dark-bg);
+    /* Using dark-bg for popover in dark mode */
+    --text-0: var(--text-light);
+    --text-1: var(--muted-foreground);
+    --stroke: var(--border);
+    --brand: var(--electric-blue);
+    --brand-2: var(--secondary-glow);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-[hsl(var(--stroke))];
+  }
+
+  body {
+    @apply bg-[var(--bg-0)] text-[var(--text-0)] scroll-smooth;
+    line-height: 1.6;
+  }
+
+  .dark body {
+    background-color: hsl(var(--dark-bg));
+    color: hsl(var(--text-light));
+  }
+
+  .font-arabic {
+    font-family: 'Tajawal', sans-serif;
+  }
+}

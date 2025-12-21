@@ -108,7 +108,7 @@ export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
                                 variants={fadeInUp}
                                 className="font-heading text-6xl sm:text-8xl lg:text-9xl font-bold leading-[0.9] tracking-tight mb-12 text-slate-900 dark:text-white"
                             >
-                                {personalInfo.fullName.split(' ').map((name, i) => (
+                                {(personalInfo.fullName || 'Your Name').split(' ').map((name, i) => (
                                     <span key={i} className={i === 1 ? "text-slate-400 dark:text-slate-600 block italic font-normal" : "block"}>
                                         {name}
                                     </span>

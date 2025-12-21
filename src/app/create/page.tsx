@@ -16,6 +16,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import type { Dictionary } from '@/lib/dictionaries';
 import { supabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
+import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
 // Portfolio facts to show during loading
 const PORTFOLIO_FACTS = [
@@ -689,18 +690,18 @@ export default function CreatePortfolioPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background font-sans selection:bg-primary/20">
+    <div className="flex flex-col min-h-screen bg-[#050510] font-sans selection:bg-primary/20">
       <Header />
       <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
 
-        {/* --- PREMIUM DYNAMIC AURA --- */}
-        <div className="absolute inset-0 overflow-hidden -z-10 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute bottom-[20%] right-[-5%] w-[40%] h-[40%] bg-blue-500/10 blur-[100px] rounded-full" />
-          <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-violet-500/5 blur-[80px] rounded-full animate-bounce [animation-duration:15s]" />
+        {/* Living Background */}
+        <MeshGradientBackground />
 
-          {/* Subtle Grid Overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--muted)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--muted)/0.3)_1px,transparent_1px)] bg-[size:60px_60px] opacity-20" />
+        {/* Ambient Glows */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-violet-600/15 blur-[150px] rounded-full" />
+          <div className="absolute bottom-[20%] right-[-5%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full" />
+          <div className="absolute top-[30%] right-[15%] w-[30%] h-[30%] bg-indigo-500/10 blur-[100px] rounded-full" />
         </div>
 
         <section className="w-full max-w-5xl mx-auto relative z-10">
@@ -716,23 +717,25 @@ export default function CreatePortfolioPage() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary uppercase tracking-widest mb-6"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-pill text-[11px] font-semibold text-white/60 uppercase tracking-widest mb-6"
             >
               <Sparkles className="w-3 h-3" />
               Next-Gen Portfolio Builder
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-black tracking-tight text-foreground mb-4 font-headline">
-              {dict.title}
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
+              <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+                {dict.title}
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+            <p className="text-xl text-white/50 max-w-2xl mx-auto font-medium">
               {dict.subtitle}
             </p>
           </motion.div>
 
-          {/* Split Panel Container */}
+          {/* Split Panel Container - Liquid Glass */}
           <motion.div
-            className="relative rounded-3xl overflow-hidden bg-card border border-border shadow-2xl"
+            className="relative liquid-glass-card rounded-[2rem] overflow-hidden"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -741,7 +744,7 @@ export default function CreatePortfolioPage() {
 
               {/* LEFT: CV Upload Section (PRIMARY) */}
               <motion.div
-                className="relative bg-card transition-all duration-300 border-b lg:border-b-0 lg:border-r border-border"
+                className="relative transition-all duration-300 border-b lg:border-b-0 lg:border-r border-white/10"
                 onMouseEnter={() => setHoveredSide('left')}
                 onMouseLeave={() => setHoveredSide(null)}
                 animate={{
@@ -758,7 +761,7 @@ export default function CreatePortfolioPage() {
 
               {/* RIGHT: Manual Entry Section */}
               <motion.div
-                className="relative bg-muted/30 p-8 md:p-10 flex flex-col justify-between cursor-pointer transition-all duration-300 group min-h-[400px]"
+                className="relative bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between cursor-pointer transition-all duration-300 group min-h-[400px]"
                 onClick={() => setShowManualForm(true)}
                 onMouseEnter={() => setHoveredSide('right')}
                 onMouseLeave={() => setHoveredSide(null)}
@@ -770,7 +773,7 @@ export default function CreatePortfolioPage() {
                 {/* Decorative Element */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-5">
                   <motion.div
-                    className="w-40 h-40 border-2 border-foreground rounded-2xl"
+                    className="w-40 h-40 border-2 border-white rounded-2xl"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                   />
@@ -779,24 +782,26 @@ export default function CreatePortfolioPage() {
                 {/* Content */}
                 <div className="relative z-10">
                   <motion.div
-                    className="w-14 h-14 rounded-xl bg-card border border-border flex items-center justify-center mb-6 shadow-sm"
+                    className="w-14 h-14 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <Pen className="w-6 h-6 text-foreground" />
+                    <Pen className="w-6 h-6 text-white/70" />
                   </motion.div>
 
                   <motion.h2
-                    className="text-3xl md:text-4xl font-black tracking-tight text-foreground mb-3"
+                    className="text-3xl md:text-4xl font-bold tracking-tight mb-3"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                   >
-                    {dict.manualCard.title}
+                    <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+                      {dict.manualCard.title}
+                    </span>
                   </motion.h2>
                   <motion.p
-                    className="text-base text-muted-foreground max-w-sm"
+                    className="text-base text-white/50 max-w-sm"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
@@ -805,9 +810,9 @@ export default function CreatePortfolioPage() {
                   </motion.p>
                 </div>
 
-                {/* Ghost Button */}
+                {/* Ghost Button - Liquid Glass Style */}
                 <motion.button
-                  className="relative z-10 mt-8 w-full py-4 rounded-xl border-2 border-foreground text-foreground font-bold text-base flex items-center justify-center gap-3 transition-all duration-300 group-hover:bg-foreground group-hover:text-background"
+                  className="relative z-10 mt-8 w-full py-4 rounded-xl liquid-button-ghost text-white font-semibold text-base flex items-center justify-center gap-3 transition-all duration-300 group-hover:bg-white/10 group-hover:border-white/20"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}

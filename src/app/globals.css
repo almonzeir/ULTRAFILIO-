@@ -2,329 +2,913 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+        --primary: 221.2 83.2% 53.3%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --accent: 217.2 91.2% 59.8%;
+        --accent-foreground: 210 40% 98%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 221.2 83.2% 53.3%;
+        --radius: 0.5rem;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
 
-  100% {
-    transform: translateX(-50%);
-  }
-}
+        /* New Color Tokens */
+        --bg-0: var(--background);
+        --bg-1: var(--card);
+        --bg-2: var(--popover);
+        --text-0: var(--foreground);
+        --text-1: var(--muted-foreground);
+        --stroke: var(--border);
+        --brand: var(--primary);
+        --brand-2: var(--secondary);
 
-.animate-marquee {
-  animation: marquee 40s linear infinite;
-}
+        /* Modern Template Dark Theme */
+        --dark-bg: 220 27% 5%;
+        /* #070C15 */
+        --card-bg: 220 27% 15%;
+        /* #1F2533 - Made Lighter */
+        --electric-blue: 217 91% 60%;
+        /* #3B82F6 */
+        --secondary-glow: 221 72% 43%;
+        /* #1D4ED8 */
+        --text-light: 210 17% 90%;
+        /* #E2E8F0 */
+    }
 
-.animate-marquee:hover {
-  animation-play-state: paused;
+    .dark {
+        /* ELECTRIC TEAL PALETTE */
+        --bg-dark: 210 60% 4%;
+        /* #050A14 - Deep Gunmetal */
+        --primary-neon: 186 100% 50%;
+        /* #00F0FF - Electric Cyan */
+        --primary-dim: 200 100% 36%;
+        /* #0077B6 - Deep Teal */
+
+        /* Glass Styles */
+        --glass-surface: rgba(5, 15, 25, 0.7);
+        --glass-border: rgba(0, 240, 255, 0.25);
+        --glass-glow: rgba(0, 240, 255, 0.15);
+
+        --background: var(--bg-dark);
+        --foreground: var(--text-light);
+        --card: 210 50% 8%;
+        --card-foreground: var(--text-light);
+        --popover: var(--bg-dark);
+        --popover-foreground: var(--text-light);
+        --primary: var(--primary-neon);
+        --primary-foreground: 210 60% 4%;
+        --secondary: var(--primary-dim);
+        --secondary-foreground: var(--text-light);
+        --muted: 210 50% 10%;
+        --muted-foreground: 210 17% 70%;
+        --accent: var(--primary-neon);
+        --accent-foreground: var(--text-light);
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 200 60% 15%;
+        --input: 210 50% 10%;
+        --ring: var(--primary-neon);
+
+        /* Color Tokens */
+        --bg-0: var(--bg-dark);
+        --bg-1: 210 50% 8%;
+        --bg-2: var(--bg-dark);
+        --text-0: var(--text-light);
+        --text-1: var(--muted-foreground);
+        --stroke: var(--border);
+        --brand: var(--primary-neon);
+        --brand-2: var(--primary-dim);
+    }
 }
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    * {
+        @apply border-[hsl(var(--stroke))];
+    }
 
-    /* New Color Tokens */
-    --bg-0: var(--background);
-    --bg-1: var(--card);
-    --bg-2: var(--popover);
-    --text-0: var(--foreground);
-    --text-1: var(--muted-foreground);
-    --stroke: var(--border);
-    --brand: var(--primary);
-    --brand-2: var(--secondary);
+    body {
+        @apply bg-[var(--bg-0)] text-[var(--text-0)] scroll-smooth;
+        line-height: 1.6;
+    }
 
-    /* Modern Template Dark Theme */
-    --dark-bg: 220 27% 5%;
-    /* #070C15 */
-    --card-bg: 220 27% 15%;
-    /* #1F2533 - Made Lighter */
-    --electric-blue: 217 91% 60%;
-    /* #3B82F6 */
-    --secondary-glow: 221 72% 43%;
-    /* #1D4ED8 */
-    --text-light: 210 17% 90%;
-    /* #E2E8F0 */
-  }
+    .dark body {
+        background-color: hsl(var(--dark-bg));
+        color: hsl(var(--text-light));
+    }
 
-  .dark {
-    --background: var(--dark-bg);
-    --foreground: var(--text-light);
-    --card: var(--card-bg);
-    --card-foreground: var(--text-light);
-    --popover: var(--dark-bg);
-    --popover-foreground: var(--text-light);
-    --primary: var(--electric-blue);
-    --primary-foreground: 220 27% 5%;
-    --secondary: var(--secondary-glow);
-    --secondary-foreground: var(--text-light);
-    --muted: var(--card-bg);
-    --muted-foreground: 210 17% 80%;
-    --accent: var(--electric-blue);
-    --accent-foreground: var(--text-light);
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 27% 12%;
-    /* Darker border */
-    --input: var(--card-bg);
-    --ring: var(--electric-blue);
+    .font-arabic {
+        font-family: 'Tajawal', sans-serif;
+    }
 
-    /* New Color Tokens for Dark Mode */
-    --bg-0: var(--dark-bg);
-    --bg-1: var(--card-bg);
-    --bg-2: var(--dark-bg);
-    /* Using dark-bg for popover in dark mode */
-    --text-0: var(--text-light);
-    --text-1: var(--muted-foreground);
-    --stroke: var(--border);
-    --brand: var(--electric-blue);
-    --brand-2: var(--secondary-glow);
-  }
-}
+    /* Pro Typography - Inter Tight for Headlines */
+    .font-headline {
+        font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
 
-@layer base {
-  * {
-    @apply border-[hsl(var(--stroke))];
-  }
+    /* Hero Title - Apple/Stripe Pro Style */
+    .hero-title {
+        font-family: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        font-weight: 600 !important;
+        font-size: clamp(2rem, 5vw, 4rem) !important;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+        text-align: center;
+        background: linear-gradient(180deg, #FFFFFF 0%, #9A9A9A 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 
-  body {
-    @apply bg-[var(--bg-0)] text-[var(--text-0)] scroll-smooth;
-    line-height: 1.6;
-  }
+    /* Section Title - Consistent across landing page */
+    .section-headline {
+        font-family: 'Inter Tight', 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+        background: linear-gradient(180deg, #FFFFFF 0%, #B0B0B0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 
-  .dark body {
-    background-color: hsl(var(--dark-bg));
-    color: hsl(var(--text-light));
-  }
+    /* Auth Card - Electric Teal Liquid Glass */
+    .auth-card {
+        width: 100%;
+        max-width: 480px;
+        background: linear-gradient(145deg,
+                rgba(10, 25, 40, 0.75) 0%,
+                rgba(5, 10, 20, 0.85) 100%);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(0, 240, 255, 0.12);
+        border-top: 1px solid rgba(0, 240, 255, 0.3);
+        border-radius: 24px;
+        box-shadow:
+            0 25px 60px -15px rgba(0, 0, 0, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+            0 0 80px -20px rgba(255, 255, 255, 0.1);
+    }
 
-  .font-arabic {
-    font-family: 'Tajawal', sans-serif;
-  }
+    /* Primary Button - Liquid Silver Gradient */
+    .btn-primary-teal {
+        background: linear-gradient(90deg, #e5e7eb 0%, #ffffff 100%);
+        color: #0f1012;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-teal:hover {
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    /* Input Fields - Silver Accent */
+    .input-teal {
+        background: rgba(15, 16, 18, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .input-teal:focus {
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+        outline: none;
+    }
 }
 
 @layer components {
 
-  /* Custom scrollbar for webkit browsers */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.5);
-    border-radius: 3px;
-  }
-
-  .dark ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(156, 163, 175, 0.8);
-  }
-
-  /* Glowing Accent Class */
-  .glowing-shadow {
-    box-shadow: 0 0 10px hsla(var(--brand), 0.5), 0 0 20px hsla(var(--brand), 0.3);
-    transition: all 0.3s ease-in-out;
-  }
-
-  .glowing-shadow:hover {
-    box-shadow: 0 0 15px hsla(var(--brand), 0.7), 0 0 30px hsla(var(--brand), 0.5);
-  }
-
-  /* Section Title Styling */
-  .section-title-wrap {
-    position: relative;
-    padding-bottom: 0.5rem;
-    display: inline-block;
-  }
-
-  .section-title-wrap::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background-color: hsl(var(--brand));
-    border-radius: 2px;
-    box-shadow: 0 0 5px hsl(var(--brand));
-  }
-
-  /* Timeline for Experience Section */
-  .timeline-item {
-    position: relative;
-    padding-left: 3rem;
-    margin-bottom: 3rem;
-  }
-
-  .timeline-item::before {
-    content: '';
-    position: absolute;
-    left: 10px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background-color: hsl(var(--bg-1));
-  }
-
-  .timeline-dot {
-    position: absolute;
-    left: 4px;
-    top: 6px;
-    width: 14px;
-    height: 14px;
-    background-color: hsl(var(--brand));
-    border-radius: 50%;
-    z-index: 10;
-    box-shadow: 0 0 8px hsl(var(--brand));
-    border: 2px solid hsl(var(--bg-0));
-  }
-
-  @media (min-width: 768px) {
-    .timeline-item::before {
-      display: none;
+    /* Custom scrollbar for webkit browsers */
+    ::-webkit-scrollbar {
+        width: 6px;
     }
-  }
 
-  .btn-special {
-    @apply relative overflow-hidden bg-black text-white transition-all duration-300 transform hover:scale-105;
-  }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-  .btn-special::after {
-    content: '';
-    @apply absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent;
-    transition: left 0.6s ease-out;
-  }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.5);
+        border-radius: 3px;
+    }
 
-  .btn-special:hover::after {
-    @apply left-0;
-  }
+    .dark ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+    }
 
-  .dark .btn-special {
-    @apply bg-black text-white;
-  }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(156, 163, 175, 0.8);
+    }
 
-  .dark .btn-special::after {
-    @apply via-black/20;
-  }
+    /* Glowing Accent Class */
+    .glowing-shadow {
+        box-shadow: 0 0 10px hsla(var(--brand), 0.5), 0 0 20px hsla(var(--brand), 0.3);
+        transition: all 0.3s ease-in-out;
+    }
 
-  /* Custom classes from ModernTemplate.tsx */
-  .container-max {
-    @apply max-w-screen-xl mx-auto px-4;
-  }
+    .glowing-shadow:hover {
+        box-shadow: 0 0 15px hsla(var(--brand), 0.7), 0 0 30px hsla(var(--brand), 0.5);
+    }
 
-  .glass {
-    background-color: hsla(var(--bg-1), 0.8);
-    @apply backdrop-blur-md border border-[hsl(var(--stroke))] shadow-lg;
-  }
+    /* Section Title Styling */
+    .section-title-wrap {
+        position: relative;
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
 
-  .chip {
-    @apply inline-flex items-center gap-1 border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] text-[hsl(var(--text-1))] rounded-full px-2.5 py-1 text-xs font-semibold;
-  }
+    .section-title-wrap::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background-color: hsl(var(--brand));
+        border-radius: 2px;
+        box-shadow: 0 0 5px hsl(var(--brand));
+    }
 
-  .brand-glow {
-    box-shadow: 0 0 0 4px hsl(var(--brand) / .18), 0 10px 30px hsl(var(--brand) / .22);
-  }
+    /* Timeline for Experience Section */
+    .timeline-item {
+        position: relative;
+        padding-left: 3rem;
+        margin-bottom: 3rem;
+    }
 
-  .hero-mask {
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
-    mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
-  }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: hsl(var(--bg-1));
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 4px;
+        top: 6px;
+        width: 14px;
+        height: 14px;
+        background-color: hsl(var(--brand));
+        border-radius: 50%;
+        z-index: 10;
+        box-shadow: 0 0 8px hsl(var(--brand));
+        border: 2px solid hsl(var(--bg-0));
+    }
+
+    @media (min-width: 768px) {
+        .timeline-item::before {
+            display: none;
+        }
+    }
+
+    .btn-special {
+        @apply relative overflow-hidden bg-black text-white transition-all duration-300 transform hover:scale-105;
+    }
+
+    .btn-special::after {
+        content: '';
+        @apply absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent;
+        transition: left 0.6s ease-out;
+    }
+
+    .btn-special:hover::after {
+        @apply left-0;
+    }
+
+    .dark .btn-special {
+        @apply bg-black text-white;
+    }
+
+    .dark .btn-special::after {
+        @apply via-black/20;
+    }
+
+    /* Custom classes from ModernTemplate.tsx */
+    .container-max {
+        @apply max-w-screen-xl mx-auto px-4;
+    }
+
+    .chip {
+        @apply inline-flex items-center gap-1 border border-[hsl(var(--stroke))] bg-[hsl(var(--bg-2))] text-[hsl(var(--text-1))] rounded-full px-2.5 py-1 text-xs font-semibold;
+    }
+
+    .brand-glow {
+        box-shadow: 0 0 0 4px hsl(var(--brand) / .18), 0 10px 30px hsl(var(--brand) / .22);
+    }
+
+    .hero-mask {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
+        mask-image: radial-gradient(ellipse at center, black 35%, transparent 70%);
+    }
+
+    /* Liquid Glass - High-End Crystalline Aesthetic */
+    .liquid-glass {
+        @apply relative overflow-hidden backdrop-blur-[40px] saturate-[1.8] border border-white/50 dark:border-white/10;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.15) 100%);
+        box-shadow:
+            inset 0 1px 2px 0 rgba(255, 255, 255, 0.5),
+            0 10px 40px -10px rgba(0, 0, 0, 0.1),
+            0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .dark .liquid-glass {
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+            0 20px 40px -20px rgba(0, 0, 0, 0.5);
+    }
+
+    /* The "Shine" - Multi-Point High Sensitivity Light */
+    .liquid-glass::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.5) 0%, transparent 25%),
+            radial-gradient(circle at var(--x) var(--y), rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* Edge Highlights (Iridescence) */
+    .liquid-glass::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        background: linear-gradient(135deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0) 10%,
+                rgba(255, 255, 255, 0.2) 45%,
+                rgba(255, 255, 255, 0.2) 55%,
+                transparent 90%);
+        opacity: 0.1;
+        pointer-events: none;
+        z-index: 2;
+        transition: opacity 0.7s;
+    }
+
+    .liquid-glass:hover::before {
+        opacity: 1;
+    }
+
+    .liquid-glass:hover::after {
+        opacity: 0.3;
+        transition: opacity 0.3s;
+    }
+
+    /* ========================================
+       LIQUID GLASS DESIGN SYSTEM v2.0
+       Based on Apple Vision Pro / visionOS
+       Physics: Refraction, Caustics, Depth
+       ======================================== */
+
+    /* --- Base Glass Card (Frosted Ice Block) --- */
+    .liquid-glass-card {
+        @apply relative overflow-hidden;
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.02) 50%,
+                rgba(255, 255, 255, 0.05) 100%);
+        backdrop-filter: blur(24px) saturate(140%);
+        -webkit-backdrop-filter: blur(24px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px;
+
+        /* Subtle 3D effect with soft shadows */
+        box-shadow:
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05),
+            0 8px 32px -8px rgba(0, 0, 0, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Cursor-following spotlight */
+    .liquid-glass-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%),
+                rgba(255, 255, 255, 0.06),
+                transparent 40%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        z-index: 1;
+        border-radius: inherit;
+    }
+
+    .liquid-glass-card:hover::before {
+        opacity: 1;
+    }
+
+    .liquid-glass-card:hover {
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow:
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05),
+            0 12px 40px -8px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    /* --- Floating Glass Pill (Nav, Badges) --- */
+    .liquid-glass-pill {
+        @apply relative overflow-hidden;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px) saturate(150%);
+        -webkit-backdrop-filter: blur(20px) saturate(150%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+            0 4px 12px -4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* --- Primary CTA Button (Liquid Metal / Gem) --- */
+    .liquid-button-primary {
+        @apply relative overflow-hidden transition-all duration-500;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(220, 220, 225, 0.9) 100%);
+        color: #0a0a0a;
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 1),
+            inset 0 -2px 4px 0 rgba(0, 0, 0, 0.05),
+            0 0 0 1px rgba(255, 255, 255, 0.2),
+            0 4px 8px -2px rgba(0, 0, 0, 0.3),
+            0 8px 24px -4px rgba(0, 0, 0, 0.2),
+            0 0 40px -10px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Convex surface highlight */
+    .liquid-button-primary::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    /* Cursor shine effect */
+    .liquid-button-primary::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(200px circle at var(--x, 50%) var(--y, 50%),
+                rgba(255, 255, 255, 0.8),
+                transparent 40%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    .liquid-button-primary:hover::after {
+        opacity: 0.5;
+    }
+
+    .liquid-button-primary:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 1),
+            inset 0 -2px 4px 0 rgba(0, 0, 0, 0.05),
+            0 0 0 1px rgba(255, 255, 255, 0.3),
+            0 8px 16px -4px rgba(0, 0, 0, 0.4),
+            0 16px 48px -8px rgba(0, 0, 0, 0.3),
+            0 0 60px -5px rgba(255, 255, 255, 0.5);
+    }
+
+    .liquid-button-primary:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    /* --- Ghost Button (Transparent Glass) --- */
+    .liquid-button-ghost {
+        @apply relative overflow-hidden transition-all duration-500;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .liquid-button-ghost::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0);
+        transition: background 0.4s ease;
+        pointer-events: none;
+    }
+
+    .liquid-button-ghost:hover::before {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .liquid-button-ghost:hover {
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+            0 4px 12px -4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* --- Legacy Support: Original liquid-glass (updated) --- */
+    .liquid-glass {
+        @apply relative overflow-hidden;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+            inset 1px 1px 0 0 rgba(255, 255, 255, 0.08),
+            0 20px 50px -15px rgba(0, 0, 0, 0.4);
+    }
+
+    .liquid-glass::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%),
+                rgba(255, 255, 255, 0.1),
+                transparent 40%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .liquid-glass:hover::before {
+        opacity: 1;
+    }
+
+    /* Light mode adjustments - commented out as site is dark-mode focused
+    @media (prefers-color-scheme: light) {
+        .liquid-glass-card,
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow:
+                inset 1px 1px 0 0 rgba(255, 255, 255, 0.8),
+                0 20px 50px -15px rgba(0, 0, 0, 0.15);
+        }
+    }
+    */
+
+    /* --- Legacy Liquid Button (kept for compatibility) --- */
+    .liquid-button {
+        @apply relative overflow-hidden transition-all duration-500 rounded-full font-semibold flex items-center justify-center gap-3;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(220, 220, 225, 0.9) 100%);
+        color: #0a0a0a;
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 1),
+            0 4px 12px -4px rgba(0, 0, 0, 0.3),
+            0 0 30px -10px rgba(255, 255, 255, 0.3);
+    }
+
+    .liquid-button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(150px circle at var(--x, 50%) var(--y, 50%),
+                rgba(255, 255, 255, 0.6),
+                transparent 40%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    .liquid-button:hover::before {
+        opacity: 1;
+    }
+
+    .liquid-button:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow:
+            inset 0 1px 0 0 rgba(255, 255, 255, 1),
+            0 8px 24px -4px rgba(0, 0, 0, 0.4),
+            0 0 50px -5px rgba(255, 255, 255, 0.5);
+    }
+
+    .liquid-button:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    /* Glass Surface Utility */
+    .glass-surface {
+        @apply liquid-glass-card rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-10;
+    }
+
 }
 
 @layer utilities {
-  .swiper-wrapper {
-    align-items: stretch;
-  }
-
-  @keyframes pulseGlow {
-
-    0%,
-    100% {
-      opacity: 0.4;
+    .animate-marquee {
+        @apply [animation:marquee_40s_linear_infinite];
     }
 
-    50% {
-      opacity: 0.7;
-    }
-  }
-
-  .animate-pulse-slow {
-    animation: pulseGlow 8s ease-in-out infinite;
-  }
-
-  /* Aurora template - twinkling stars */
-  @keyframes twinkle {
-
-    0%,
-    100% {
-      opacity: 0.3;
-      transform: scale(1);
+    .animate-marquee:hover {
+        @apply [animation-play-state:paused];
     }
 
-    50% {
-      opacity: 1;
-      transform: scale(1.2);
+    .swiper-wrapper {
+        align-items: stretch;
     }
-  }
 
-  .animate-twinkle {
-    animation: twinkle 3s ease-in-out infinite;
-  }
+    @keyframes pulseGlow {
 
-  /* Gradient animation for buttons */
-  .bg-size-200 {
-    background-size: 200% 100%;
-  }
+        0%,
+        100% {
+            opacity: 0.4;
+        }
 
-  @keyframes gradientShift {
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    .animate-pulse-slow {
+        animation: pulseGlow 8s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+
+        0%,
+        100% {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+    }
+
+    .animate-twinkle {
+        animation: twinkle 3s ease-in-out infinite;
+    }
+
+    .bg-size-200 {
+        background-size: 200% 100%;
+    }
+
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .animate-gradient {
+        animation: gradientShift 3s ease infinite;
+    }
+}
+
+@keyframes marquee {
     0% {
-      background-position: 0% 50%;
-    }
-
-    50% {
-      background-position: 100% 50%;
+        transform: translateX(0);
     }
 
     100% {
-      background-position: 0% 50%;
+        transform: translateX(-50%);
     }
-  }
+}
 
-  .animate-gradient {
-    animation: gradientShift 3s ease infinite;
-  }
+/* ============================================
+   GLASS & LIQUID SILVER DESIGN SYSTEM
+   ============================================ */
+
+@layer components {
+    .glass {
+        background-color: hsla(var(--bg-1), 0.8);
+        @apply backdrop-blur-md border border-[hsl(var(--stroke))] shadow-lg;
+    }
+
+    /* Liquid Glass - "iPhone 17" Style */
+    .liquid-glass {
+        @apply relative overflow-hidden rounded-[3rem] p-10 transition-all duration-500;
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0) 100%);
+        backdrop-filter: blur(32px) saturate(1.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .dark .liquid-glass {
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 255, 255, 0) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Liquid Button */
+    .liquid-button {
+        @apply relative overflow-hidden transition-all duration-700 rounded-full font-bold flex items-center justify-center gap-2 px-10 py-5;
+        background: #000;
+        color: #fff;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .dark .liquid-button {
+        background: #fff;
+        color: #000;
+    }
+
+    .liquid-button:hover {
+        @apply scale-[1.03] -translate-y-1 shadow-2xl;
+    }
+
+    /* Ghost Liquid Button */
+    .liquid-button-ghost {
+        @apply relative overflow-hidden transition-all duration-700 rounded-full font-bold flex items-center justify-center gap-2 px-10 py-5;
+        background: transparent;
+        color: #000;
+    }
+
+    .dark .liquid-button-ghost {
+        color: #fff;
+    }
+
+    .liquid-button-ghost:hover {
+        @apply bg-black/5 dark:bg-white/5;
+    }
+
+    /* ============================================
+       LIQUID SILVER - Deep Peaceful Premium Look
+       ============================================ */
+
+    /* Dark Deep Background */
+    .liquid-silver-bg {
+        background-color: #0f1012;
+        background-image: radial-gradient(circle at 50% 0%, #2a2d35 0%, #0f1012 70%);
+    }
+
+    /* The "Liquid Silver" Glass Element */
+    .liquid-silver-glass {
+        background: linear-gradient(135deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(150, 155, 165, 0.05) 50%,
+                rgba(20, 20, 25, 0.4) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-top: 1px solid rgba(255, 255, 255, 0.7);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+            0 20px 50px rgba(0, 0, 0, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -20px 40px rgba(0, 0, 0, 0.4);
+        border-radius: 24px;
+        padding: 40px;
+        color: #f1f5f9;
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .liquid-silver-glass:hover {
+        transform: translateY(-4px);
+        box-shadow:
+            0 30px 60px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -20px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Liquid Silver Card - Compact */
+    .liquid-silver-card {
+        background: linear-gradient(145deg,
+                rgba(255, 255, 255, 0.12) 0%,
+                rgba(148, 163, 184, 0.04) 50%,
+                rgba(15, 16, 18, 0.5) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-top-color: rgba(255, 255, 255, 0.5);
+        border-bottom-color: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3),
+            inset 0 -15px 30px rgba(0, 0, 0, 0.3);
+        color: #f1f5f9;
+        transition: all 0.3s ease;
+    }
+
+    .liquid-silver-card:hover {
+        transform: translateY(-2px);
+        border-top-color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Silver Text - Metallic Gradient */
+    .silver-text {
+        background: linear-gradient(to bottom, #ffffff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 700;
+    }
+
+    /* Platinum Text */
+    .platinum-text {
+        background: linear-gradient(180deg, #ffffff 0%, #e5e7eb 40%, #9ca3af 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 600;
+    }
+
+    /* Liquid Silver Button */
+    .liquid-silver-button {
+        @apply relative overflow-hidden rounded-full font-semibold flex items-center justify-center gap-2 transition-all duration-300;
+        background: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(148, 163, 184, 0.1) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-top-color: rgba(255, 255, 255, 0.6);
+        color: #f1f5f9;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .liquid-silver-button:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 12px 32px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        border-top-color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Liquid Silver Input */
+    .liquid-silver-input {
+        background: linear-gradient(180deg,
+                rgba(15, 16, 18, 0.8) 0%,
+                rgba(20, 22, 26, 0.9) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-top-color: rgba(255, 255, 255, 0.25);
+        border-radius: 12px;
+        color: #f1f5f9;
+        box-shadow:
+            inset 0 2px 4px rgba(0, 0, 0, 0.3),
+            0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .liquid-silver-input:focus {
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow:
+            inset 0 2px 4px rgba(0, 0, 0, 0.3),
+            0 0 0 3px rgba(255, 255, 255, 0.08);
+        outline: none;
+    }
+
+    /* Liquid Silver Pill/Badge */
+    .liquid-silver-pill {
+        background: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(148, 163, 184, 0.08) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-top-color: rgba(255, 255, 255, 0.4);
+        border-radius: 9999px;
+        color: rgba(241, 245, 249, 0.8);
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
 }

@@ -1,163 +1,98 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { CheckCircle2, Sparkles, Crown, ArrowRight, PartyPopper } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import Header from '@/components/layout/header';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import confetti from 'canvas-confetti';
+import { Button } from '@/components/ui/button';
+import { CheckCircle2, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import Header from '@/components/layout/header';
 
 export default function CheckoutSuccessPage() {
     const router = useRouter();
-    const [showContent, setShowContent] = useState(false);
+    const [countdown, setCountdown] = useState(10);
 
     useEffect(() => {
-        // Trigger confetti celebration!
-        const duration = 3 * 1000;
-        const animationEnd = Date.now() + duration;
-
-        const randomInRange = (min: number, max: number) => {
-            return Math.random() * (max - min) + min;
-        };
-
-        const interval = setInterval(() => {
-            const timeLeft = animationEnd - Date.now();
-
-            if (timeLeft <= 0) {
-                clearInterval(interval);
-                return;
-            }
-
-            const particleCount = 50 * (timeLeft / duration);
-
-            confetti({
-                particleCount,
-                startVelocity: 30,
-                spread: 360,
-                origin: {
-                    x: randomInRange(0.1, 0.9),
-                    y: Math.random() - 0.2,
-                },
-                colors: ['#8b5cf6', '#6366f1', '#ec4899', '#f59e0b', '#10b981'],
+        const timer = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    router.push('/create');
+                    return 0;
+                }
+                return prev - 1;
             });
-        }, 250);
+        }, 1000);
 
-        // Show content after a brief delay
-        setTimeout(() => setShowContent(true), 500);
-
-        return () => clearInterval(interval);
-    }, []);
+        return () => clearInterval(timer);
+    }, [router]);
 
     return (
-        <div className="flex flex-col min-h-screen bg-background">
+        <div className="min-h-screen bg-[#050A14] flex flex-col">
             <Header />
 
-            <main className="flex-grow flex items-center justify-center py-12 px-6">
+            <main className="flex-1 flex items-center justify-center px-4 pt-20">
+                {/* Background Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500 opacity-10 blur-[200px] rounded-full pointer-events-none" />
+
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-full max-w-lg"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    className="text-center max-w-lg relative z-10"
                 >
-                    <Card className="p-8 text-center relative overflow-hidden">
-                        {/* Gradient background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 via-transparent to-indigo-500/10" />
+                    {/* Success Icon */}
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                        className="mx-auto w-24 h-24 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-8"
+                    >
+                        <CheckCircle2 className="w-12 h-12 text-emerald-400" />
+                    </motion.div>
 
-                        <div className="relative z-10">
-                            {/* Success icon */}
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                                className="mb-6"
-                            >
-                                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/30">
-                                    <CheckCircle2 className="w-10 h-10 text-white" />
-                                </div>
-                            </motion.div>
+                    {/* Title */}
+                    <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+                        Welcome to <span className="text-emerald-400">Pro!</span>
+                    </h1>
 
-                            {/* Title */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                            >
-                                <div className="flex items-center justify-center gap-2 mb-2">
-                                    <Crown className="w-6 h-6 text-amber-500" />
-                                    <h1 className="text-2xl font-bold">Welcome to UltraFolio!</h1>
-                                    <Sparkles className="w-6 h-6 text-violet-500" />
-                                </div>
-                                <p className="text-muted-foreground mb-6">
-                                    Thank you! You now have full access to all features.
-                                </p>
-                            </motion.div>
+                    <p className="text-xl text-white/60 mb-8">
+                        Your payment was successful. You now have access to all Pro features!
+                    </p>
 
-                            {/* Status indicator */}
-                            {showContent && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex items-center justify-center gap-2 text-sm text-green-600 mb-6"
-                                >
-                                    <PartyPopper className="w-4 h-4" />
-                                    All features are now unlocked!
-                                </motion.div>
-                            )}
+                    {/* Features Unlocked */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-8">
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-emerald-400 mb-4 flex items-center justify-center gap-2">
+                            <Sparkles className="w-4 h-4" />
+                            Features Unlocked
+                        </h3>
+                        <ul className="space-y-2 text-white/70">
+                            <li>✓ Unlimited portfolio generations</li>
+                            <li>✓ All premium templates</li>
+                            <li>✓ Custom domain support</li>
+                            <li>✓ Priority support</li>
+                            <li>✓ Remove UltraFolio branding</li>
+                        </ul>
+                    </div>
 
-                            {/* What's unlocked */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className="bg-muted/50 rounded-xl p-4 mb-6 text-left"
-                            >
-                                <p className="text-sm font-medium mb-3 flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4 text-violet-500" />
-                                    What's available to you:
-                                </p>
-                                <ul className="space-y-2 text-sm text-muted-foreground">
-                                    <li className="flex items-center gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                        Unlimited portfolio generations
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                        All premium templates (Aurora, Cyber, etc.)
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                        Custom portfolio URLs
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                        AI-powered CV extraction
-                                    </li>
-                                </ul>
-                            </motion.div>
+                    {/* CTA Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button asChild size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8">
+                            <Link href="/create">
+                                Start Creating
+                                <ArrowRight className="ml-2 w-4 h-4" />
+                            </Link>
+                        </Button>
+                        <Button asChild variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10">
+                            <Link href="/dashboard">View Dashboard</Link>
+                        </Button>
+                    </div>
 
-                            {/* CTA Button */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.5 }}
-                            >
-                                <Button
-                                    onClick={() => router.push('/create')}
-                                    className="w-full h-12 text-lg font-bold bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
-                                >
-                                    Create Your Portfolio
-                                    <ArrowRight className="w-5 h-5 ml-2" />
-                                </Button>
-                            </motion.div>
-
-                            {/* Note */}
-                            <p className="text-xs text-muted-foreground mt-4">
-                                Thank you for using UltraFolio! 💜
-                            </p>
-                        </div>
-                    </Card>
+                    {/* Auto-redirect notice */}
+                    <p className="text-sm text-white/30 mt-8 flex items-center justify-center gap-2">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Redirecting to create page in {countdown}s...
+                    </p>
                 </motion.div>
             </main>
         </div>

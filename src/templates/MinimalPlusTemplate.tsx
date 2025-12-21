@@ -92,7 +92,7 @@ export default function MinimalPlusTemplate({ data }: { data: PortfolioData }) {
                                             variants={fadeInUp}
                                             className="text-5xl md:text-8xl font-bold tracking-tight leading-[1.05] mb-10"
                                         >
-                                            {personalInfo.fullName.split(' ')[0]} is a <span className="text-[#86868b]">{personalInfo.title}</span> <br className="hidden md:block" />
+                                            {(personalInfo.fullName || 'Your Name').split(' ')[0]} is a <span className="text-[#86868b]">{personalInfo.title}</span> <br className="hidden md:block" />
                                             designing things for humans.
                                         </motion.h1>
 

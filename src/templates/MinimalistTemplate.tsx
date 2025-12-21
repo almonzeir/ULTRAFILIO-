@@ -287,7 +287,7 @@ export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
             </div>
 
             <div className="p-6 border-Technical text-[9px] font-bold text-center text-neutral-400 uppercase tracking-[0.8em] bg-neutral-50 dark:bg-neutral-900/10">
-              End_of_Transmission // {personalInfo.fullName.replace(/\s/g, '_')} // (C) {new Date().getFullYear()}
+              End_of_Transmission // {(personalInfo.fullName || 'User').replace(/\s/g, '_')} // (C) {new Date().getFullYear()}
             </div>
           </div>
         </div>

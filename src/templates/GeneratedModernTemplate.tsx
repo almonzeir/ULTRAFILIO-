@@ -109,7 +109,7 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
               INITIALIZING PROFILE SEQUENCE...
             </div>
             <h1 className="font-cyber text-6xl md:text-8xl font-bold leading-none mb-6 transparent-text" style={{ WebkitTextStroke: '1px white' }}>
-              {personalInfo.fullName.toUpperCase()}
+              {(personalInfo.fullName || 'YOUR NAME').toUpperCase()}
             </h1>
             <h2 className="text-3xl font-bold text-[hsl(var(--brand))] mb-8 glitch-hover inline-block cursor-default">
               {personalInfo.title}

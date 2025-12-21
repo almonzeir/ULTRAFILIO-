@@ -90,6 +90,7 @@ function ChooseTemplateContent() {
   const [selected, setSelected] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const portfolioId = searchParams.get('portfolioId');
@@ -97,6 +98,11 @@ function ChooseTemplateContent() {
   const { language } = useLanguage();
   const { theme } = useColorTheme();
   const [dict, setDict] = useState<Dictionary['chooseTemplatePage'] | null>(null);
+
+  // Detect mobile to prevent heavy iframe loading
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -228,7 +234,34 @@ function ChooseTemplateContent() {
 
                       {/* Live Preview Area */}
                       <div className="relative aspect-[16/11] overflow-hidden bg-muted group-hover:bg-muted/50 transition-colors">
-                        {portfolioId ? (
+                        {isMobile ? (
+                          /* Mobile: Beautiful template-specific preview */
+                          <div className={cn(
+                            "absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-500",
+                            template.id === 'aurora' && "bg-gradient-to-br from-purple-600/30 via-pink-500/20 to-cyan-400/30",
+                            template.id === 'modern' && "bg-gradient-to-br from-blue-600/30 via-indigo-500/20 to-purple-500/30",
+                            template.id === 'executive' && "bg-gradient-to-br from-slate-800/40 via-gray-700/30 to-slate-600/40",
+                            template.id === 'creative' && "bg-gradient-to-br from-orange-500/30 via-pink-500/20 to-yellow-400/30",
+                            template.id === 'minimal-plus' && "bg-gradient-to-br from-emerald-500/20 via-teal-400/10 to-green-500/20",
+                            template.id === 'generated' && "bg-gradient-to-br from-cyan-500/30 via-blue-500/20 to-teal-400/30",
+                            template.id === 'minimalist' && "bg-gradient-to-br from-neutral-400/20 via-gray-300/10 to-neutral-500/20",
+                            template.id === 'cyber' && "bg-gradient-to-br from-green-500/30 via-emerald-400/20 to-lime-500/30",
+                            template.id === 'basic' && "bg-gradient-to-br from-slate-500/20 via-gray-400/10 to-slate-600/20",
+                          )}>
+                            <div className="w-full max-w-[200px] space-y-3 backdrop-blur-sm bg-background/40 p-4 rounded-xl border border-white/10">
+                              {/* Mini template mockup */}
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/50 to-secondary/50 mx-auto" />
+                              <div className="h-2 w-3/4 mx-auto rounded-full bg-foreground/20" />
+                              <div className="h-1.5 w-1/2 mx-auto rounded-full bg-foreground/10" />
+                              <div className="grid grid-cols-3 gap-1 pt-2">
+                                <div className="h-6 rounded bg-foreground/10" />
+                                <div className="h-6 rounded bg-foreground/10" />
+                                <div className="h-6 rounded bg-foreground/10" />
+                              </div>
+                            </div>
+                            <div className="mt-4 text-sm font-bold text-foreground/80">{template.name}</div>
+                          </div>
+                        ) : portfolioId ? (
                           <div className="w-[400%] h-[400%] origin-top-left scale-[0.25] select-none pointer-events-none bg-background transition-transform duration-700 group-hover:scale-[0.27]">
                             <iframe
                               src={`/render/${portfolioId}?template=${template.id}&theme=${theme || 'modern'}`}

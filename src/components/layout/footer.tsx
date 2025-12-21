@@ -1,137 +1,166 @@
 'use client';
 
-import { Github, Twitter, Linkedin } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Globe, Cpu } from 'lucide-react';
 import Logo from '@/components/shared/logo';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
+import en from '@/locales/en.json';
 import type { Dictionary } from '@/lib/dictionaries';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { useShine } from '@/hooks/use-shine';
+import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
 export default function Footer() {
-  const [year, setYear] = useState<number | null>(null);
+  const [year, setYear] = useState<number>(new Date().getFullYear());
   const { language } = useLanguage();
-  const [dict, setDict] = useState<Dictionary['footer'] | null>(null);
+  const [dict, setDict] = useState<Dictionary['footer']>(en.footer);
+  const ctaCardRef = useRef<HTMLDivElement>(null);
+  const ctaBtnRef = useRef<HTMLAnchorElement>(null);
+
+  useShine(ctaCardRef);
+  useShine(ctaBtnRef);
 
   useEffect(() => {
-    const fetchDictionary = async () => {
-      const dictionary = await getDictionary(language);
-      setDict(dictionary.footer);
+    const fetchDict = async () => {
+      try {
+        const d = await getDictionary(language);
+        if (d && d.footer) setDict(d.footer);
+      } catch (err) {
+        console.error("Footer translation error:", err);
+      }
     };
-    fetchDictionary();
+    fetchDict();
+    setYear(new Date().getFullYear());
   }, [language]);
 
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
-
-  if (!dict) return null;
-
-  const navigation = {
-    product: [
-      { name: dict.product.features, href: '/#features' },
-      { name: dict.product.templates, href: '/demo-template' },
-      { name: dict.product.pricing, href: '/checkout' },
-    ],
-    company: [
-      { name: dict.company.about, href: '/#how-it-works' },
-      { name: dict.company.blog, href: '/#testimonials' },
-      { name: dict.company.contact, href: 'mailto:support@ultrafolio.dev' },
-    ],
-    legal: [
-      { name: dict.legal.privacy, href: '/privacy' },
-      { name: dict.legal.terms, href: '/terms' },
-    ],
-  };
-
-  const social = [
-    {
-      name: 'Twitter',
-      href: 'https://twitter.com/ultrafolio',
-      icon: (props: any) => <Twitter {...props} />,
-    },
-    {
-      name: 'GitHub',
-      href: 'https://github.com/ultrafolio',
-      icon: (props: any) => <Github {...props} />,
-    },
-    {
-      name: 'LinkedIn',
-      href: 'https://linkedin.com/company/ultrafolio',
-      icon: (props: any) => <Linkedin {...props} />,
-    },
-  ];
-
   return (
-    <footer className="bg-background border-t border-muted/50" aria-labelledby="footer-heading">
-      <h2 id="footer-heading" className="sr-only">
-        {dict.title}
-      </h2>
-      <div className="mx-auto max-w-7xl px-6 pb-8 pt-20 sm:pt-24 lg:px-8 lg:pt-32">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div className="space-y-8">
+    <footer className="relative pt-32 pb-16 overflow-hidden">
+      {/* Living Background */}
+      <MeshGradientBackground />
+
+      {/* Ambient Glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[20%] left-[30%] w-[600px] h-[600px] rounded-full bg-white/5 blur-[150px]" />
+        <div className="absolute bottom-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-slate-400/10 blur-[120px]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12">
+
+        {/* Main CTA Card - Frosted Glass */}
+        <motion.div
+          ref={ctaCardRef}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="mb-24 liquid-glass-card rounded-[2.5rem] sm:rounded-[3rem] p-12 sm:p-16 lg:p-20 text-center"
+        >
+          <div className="max-w-3xl mx-auto">
+            {/* Headline - Metallic Gradient */}
+            <h3 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+              <span className="bg-gradient-to-b from-white via-white to-white/50 bg-clip-text text-transparent">
+                Start Your Legacy
+              </span>
+            </h3>
+
+            {/* Subtitle */}
+            <p className="text-lg sm:text-xl text-white/50 mb-12 font-medium leading-relaxed max-w-xl mx-auto">
+              Deploy your world-class portfolio now with crystalline precision.
+            </p>
+
+            {/* CTA Button - Liquid Metal */}
+            <Link
+              ref={ctaBtnRef}
+              href="/create"
+              className="liquid-button-primary group inline-flex items-center gap-4 h-16 sm:h-20 px-12 sm:px-16 rounded-full text-lg sm:text-xl font-semibold"
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                Launch Now — Free
+                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Footer Links Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20">
+          {/* Brand */}
+          <div className="lg:col-span-2">
             <Logo />
-            <p className="text-base leading-7 text-muted-foreground/80 max-w-sm">
+            <p className="mt-6 text-base sm:text-lg text-white/40 font-medium max-w-sm leading-relaxed">
               {dict.tagline}
             </p>
-            <div className="flex space-x-6">
-              {social.map((item) => (
-                <a key={item.name} href={item.href} className="text-muted-foreground hover:text-foreground transition-colors">
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon className="h-6 w-6" aria-hidden="true" />
-                </a>
-              ))}
-            </div>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-lg font-bold leading-6 text-foreground mb-6">{dict.product.title}</h3>
-                <ul role="list" className="space-y-4">
-                  {navigation.product.map((item) => (
-                    <li key={item.name}>
-                      <a href={item.href} className="text-base leading-6 text-muted-foreground hover:text-foreground transition-colors">
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-lg font-bold leading-6 text-foreground mb-6">{dict.company.title}</h3>
-                <ul role="list" className="space-y-4">
-                  {navigation.company.map((item) => (
-                    <li key={item.name}>
-                      <a href={item.href} className="text-base leading-6 text-muted-foreground hover:text-foreground transition-colors">
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-lg font-bold leading-6 text-foreground mb-6">{dict.legal.title}</h3>
-                <ul role="list" className="space-y-4">
-                  {navigation.legal.map((item) => (
-                    <li key={item.name}>
-                      <a href={item.href} className="text-base leading-6 text-muted-foreground hover:text-foreground transition-colors">
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+
+          {/* Product Links */}
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
+              Product
+            </h4>
+            <nav className="flex flex-col gap-4">
+              {[dict.product.features, dict.product.templates, dict.product.pricing].map(item => (
+                <Link
+                  key={item}
+                  href="#"
+                  className="text-white/60 hover:text-white transition-colors font-medium"
+                >
+                  {item}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Company Links */}
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
+              Company
+            </h4>
+            <nav className="flex flex-col gap-4">
+              {[dict.company.about, dict.company.blog, dict.company.contact].map(item => (
+                <Link
+                  key={item}
+                  href="#"
+                  className="text-white/60 hover:text-white transition-colors font-medium"
+                >
+                  {item}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Legal Links */}
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
+              Legal
+            </h4>
+            <nav className="flex flex-col gap-4">
+              <Link
+                href="/privacy"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.legal.privacy}
+              </Link>
+              <Link
+                href="/terms"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.legal.terms}
+              </Link>
+            </nav>
           </div>
         </div>
-        <div className="mt-16 border-t border-border/50 pt-8 sm:mt-20 lg:mt-24">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm leading-5 text-muted-foreground">&copy; {year || new Date().getFullYear()} {dict.copyright}</p>
-            <div className="flex items-center gap-4">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              <span className="text-sm text-muted-foreground font-medium">All Systems Operational</span>
-            </div>
+
+        {/* Bottom Bar */}
+        <div className="flex flex-col lg:flex-row items-center justify-between pt-8 border-t border-white/10 gap-6">
+          <div className="text-sm text-white/30 font-medium">
+            © {year} Ultrafolio. All rights reserved.
+          </div>
+          <div className="flex items-center gap-6 text-white/20">
+            <ShieldCheck className="w-5 h-5" />
+            <Globe className="w-5 h-5" />
+            <Cpu className="w-5 h-5" />
           </div>
         </div>
       </div>

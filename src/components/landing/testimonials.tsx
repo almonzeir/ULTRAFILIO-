@@ -1,146 +1,162 @@
 'use client';
 
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
+import en from '@/locales/en.json';
 import type { Dictionary } from '@/lib/dictionaries';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Quote, Star } from 'lucide-react';
+import { useShine } from '@/hooks/use-shine';
+import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
+
+interface Testimonial {
+  quote: string;
+  name: string;
+  title: string;
+  image?: string;
+  avatarId: string;
+}
+
+function TestimonialCard({ testimonial, index }: { testimonial: Testimonial; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  useShine(cardRef);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
+      viewport={{ once: true }}
+      whileHover={{ y: -8, transition: { duration: 0.4 } }}
+      className="group relative liquid-glass-card rounded-[2rem] p-8 sm:p-10 transition-all duration-500"
+    >
+      {/* Quote Icon */}
+      <div className="absolute top-6 right-6 text-white/[0.05]">
+        <Quote className="w-12 h-12" />
+      </div>
+
+      {/* Stars */}
+      <div className="flex gap-1 mb-6">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+        ))}
+      </div>
+
+      {/* Quote */}
+      <blockquote className="text-lg sm:text-xl font-medium mb-8 text-white/80 leading-relaxed">
+        "{testimonial.quote}"
+      </blockquote>
+
+      {/* Author */}
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white/10">
+          <Image
+            src={testimonial.image || `https://i.pravatar.cc/150?u=${testimonial.avatarId}`}
+            alt={testimonial.name}
+            width={48}
+            height={48}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div>
+          <div className="font-semibold text-white">{testimonial.name}</div>
+          <div className="text-sm text-white/40">{testimonial.title}</div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function Testimonials() {
   const { language } = useLanguage();
-  const [dict, setDict] = useState<Dictionary['testimonials'] | null>(null);
+  const [dict, setDict] = useState<Dictionary['testimonials']>(en.testimonials);
 
   useEffect(() => {
-    const fetchDictionary = async () => {
-      const dictionary = await getDictionary(language);
-      setDict(dictionary.testimonials);
+    const fetchDict = async () => {
+      try {
+        const d = await getDictionary(language);
+        if (d && d.testimonials) setDict(d.testimonials);
+      } catch (err) {
+        console.error("Testimonials translation error:", err);
+      }
     };
-    fetchDictionary();
+    fetchDict();
   }, [language]);
 
-  if (!dict) {
-    return (
-      <section className="py-24 sm:py-32 bg-foreground text-background dark:bg-white dark:text-black">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <div className="h-8 w-48 mx-auto bg-gray-600/30 rounded animate-pulse" />
-            <div className="h-6 w-80 mx-auto mt-6 bg-gray-500/30 rounded animate-pulse" />
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  const testimonialsData = [
+  const testimonialsData: Testimonial[] = [
     {
-      quote: dict.testimonial1.quote,
-      name: 'Amro Alsharafi',
-      title: dict.testimonial1.title,
-      image: '/amro.png', // Custom image
-      avatarId: 'testimonial-avatar-1',
+      quote: "UltraFolio is a game-changer. I had a stunning portfolio live in 15 minutes without writing a single line of code. The templates are absolutely beautiful.",
+      name: "Amro Alsharafi",
+      title: "UX Designer",
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
+      avatarId: "amro-alsharafi",
     },
     {
-      quote: dict.testimonial2.quote,
-      name: 'Abdalhafith',
-      title: dict.testimonial2.title,
-      avatarId: 'testimonial-avatar-2',
+      quote: "As a developer, I appreciate good design. UltraFolio delivers an Apple-level experience. The ability to download the code is a huge plus for me.",
+      name: "Abdalhafith",
+      title: "Full-Stack Engineer",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
+      avatarId: "abdalhafith-dev",
     },
     {
-      quote: dict.testimonial3.quote,
-      name: 'Mohammed Moota',
-      title: dict.testimonial3.title,
-      avatarId: 'testimonial-avatar-3',
+      quote: "The Arabic language support with proper RTL is fantastic. It's rare to see this level of quality and attention to detail for a global audience.",
+      name: "Mohammed Moota",
+      title: "Product Manager",
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop",
+      avatarId: "mohammed-moota",
     },
     {
-      quote: dict.testimonial4.quote, // Using the 4th testimonial text from dictionary
-      name: 'Osama Alrusabi',
-      title: dict.testimonial4.title,
-      avatarId: 'testimonial-avatar-4',
+      quote: "UltraFolio saves me hours of work every time I need to update my portfolio. It's fast, intuitive, and makes me look great. A truly essential tool.",
+      name: "Osama Alrusabi",
+      title: "Freelance Designer",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
+      avatarId: "osama-alrusabi",
     },
   ];
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: 'easeOut',
-      },
-    },
-  };
-
   return (
-    <motion.section
-      className="py-24 sm:py-32 bg-background text-foreground overflow-hidden relative"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={containerVariants}
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16 relative z-10">
-        <motion.div className="mx-auto max-w-2xl text-center" variants={itemVariants}>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline text-foreground">{dict.title}</h2>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            {dict.subtitle}
+    <section className="relative py-24 sm:py-32 lg:py-48 overflow-hidden">
+      {/* Living Background */}
+      <MeshGradientBackground />
+
+      {/* Ambient Glow */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[20%] left-[25%] w-[500px] h-[500px] rounded-full bg-white/5 blur-[150px]" />
+        <div className="absolute bottom-[25%] right-[15%] w-[450px] h-[450px] rounded-full bg-slate-400/10 blur-[130px]" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16 sm:mb-20"
+        >
+          <span className="inline-block px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase liquid-glass-pill text-white/60 mb-6">
+            Testimonials
+          </span>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+              {dict.title || 'Loved by professionals'}
+            </span>
+          </h2>
+          <p className="text-lg text-white/50 max-w-2xl mx-auto">
+            {dict.subtitle || 'See what our users have to say about their experience.'}
           </p>
         </motion.div>
-      </div>
 
-      {/* Infinite Marquee Container */}
-      <div className="relative flex overflow-x-hidden group">
-
-        {/* Gradients to fade edges - Monochrome */}
-        <div className="absolute top-0 bottom-0 left-0 w-32 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-        <div className="absolute top-0 bottom-0 right-0 w-32 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
-
-        <div className="py-12 animate-marquee flex space-x-8 whitespace-nowrap">
-          {[...testimonialsData, ...testimonialsData].map((testimonial, index) => { // Duplicate for seamless loop
-            const avatar = PlaceHolderImages.find((p) => p.id === testimonial.avatarId);
-            const imageUrl = testimonial.image || (avatar ? avatar.imageUrl : '');
-
-            return (
-              <div key={index} className="w-[350px] sm:w-[500px] flex-shrink-0 inline-block px-1">
-                {/* Monochrome Card */}
-                <div className="h-full bg-background border border-border p-8 rounded-2xl hover:border-foreground/20 transition-colors shadow-sm">
-                  <blockquote className="text-lg leading-7 tracking-tight text-foreground whitespace-normal mb-6 font-medium">
-                    “{testimonial.quote}”
-                  </blockquote>
-                  <figcaption className="flex items-center gap-x-4">
-                    {imageUrl && (
-                      <Image
-                        className="h-12 w-12 rounded-full bg-muted object-cover ring-2 ring-border"
-                        src={imageUrl}
-                        alt={testimonial.name}
-                        width={48}
-                        height={48}
-                      />
-                    )}
-                    <div>
-                      <div className="font-bold text-foreground">{testimonial.name}</div>
-                      <div className="text-sm text-muted-foreground">{testimonial.title}</div>
-                    </div>
-                  </figcaption>
-                </div>
-              </div>
-            );
-          })}
+        {/* Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          {testimonialsData.map((testimonial, index) => (
+            <TestimonialCard key={index} testimonial={testimonial} index={index} />
+          ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

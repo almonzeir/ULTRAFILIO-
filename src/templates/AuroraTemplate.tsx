@@ -712,11 +712,11 @@ export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioDa
                         {/* Name with gradient */}
                         <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tighter">
                             <RevealText className={`block text-transparent bg-clip-text bg-gradient-to-r ${isDark ? 'from-white via-white/80 to-white' : 'from-gray-900 via-gray-700 to-gray-900'}`}>
-                                {personalInfo.fullName.split(' ')[0]}
+                                {(personalInfo.fullName || 'Your Name').split(' ')[0]}
                             </RevealText>
                             <RevealText delay={0.1} className="block text-transparent bg-clip-text" style={{ backgroundImage: `linear-gradient(to right, ${themeConfig.primary}, ${themeConfig.secondary}, ${themeConfig.accent})` }}>
                                 <span style={{ backgroundImage: `linear-gradient(to right, ${themeConfig.primary}, ${themeConfig.secondary}, ${themeConfig.accent})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                    {personalInfo.fullName.split(' ').slice(1).join(' ')}
+                                    {(personalInfo.fullName || 'Your Name').split(' ').slice(1).join(' ')}
                                 </span>
                             </RevealText>
                         </h1>

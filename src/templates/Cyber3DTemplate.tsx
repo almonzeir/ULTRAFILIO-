@@ -197,7 +197,7 @@ export default function Cyber3DTemplate({ data }: { data: PortfolioData }) {
                             <span className="relative inline-block">
                                 <span className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 blur-2xl opacity-30 animate-pulse" />
                                 <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-white">
-                                    {personalInfo.fullName.toUpperCase()}
+                                    {(personalInfo.fullName || 'YOUR NAME').toUpperCase()}
                                 </span>
                             </span>
                         </h1>
