@@ -39,8 +39,8 @@ const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModer
 
 import type { PortfolioData } from '@/templates/types';
 
-export default function RenderPage({ params }: { params: { id: string } }) {
-    const portfolioId = params.id;
+export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: portfolioId } = React.use(params);
     const searchParams = useSearchParams();
     const mode = searchParams.get('mode');
     const { setTheme } = useTheme();

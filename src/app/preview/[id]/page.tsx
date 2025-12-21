@@ -30,8 +30,8 @@ const templates = [
     { id: 'basic', name: 'Classic', icon: FileText, color: 'bg-slate-600' },
 ];
 
-export default function RealPreviewPage({ params }: { params: { id: string } }) {
-    const portfolioId = params.id;
+export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: portfolioId } = React.use(params);
     const router = useRouter();
     const { toast } = useToast();
 
@@ -149,7 +149,7 @@ export default function RealPreviewPage({ params }: { params: { id: string } }) 
                     } ${!isSidebarOpen && 'absolute z-20'}`}
             >
                 <div className="p-6 border-b border-neutral-800 flex items-center justify-between">
-                    <div className="font-bold text-xl tracking-tight bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">
+                    <div className="font-bold text-xl tracking-tight silver-text">
                         UltraFolio
                     </div>
                     <button onClick={() => setIsSidebarOpen(false)} className="p-2 hover:bg-neutral-800 rounded-lg lg:hidden">

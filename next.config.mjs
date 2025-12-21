@@ -5,10 +5,6 @@ const nextConfig = {
     // Don't ignore errors in production - fix them instead!
     ignoreBuildErrors: false,
   },
-  eslint: {
-    // Don't ignore linting in production - fix them instead!
-    ignoreDuringBuilds: false,
-  },
   images: {
     remotePatterns: [
       {
@@ -68,11 +64,8 @@ const nextConfig = {
   poweredByHeader: false,
   // Optimize for production
   reactStrictMode: true,
-  // Enable SWC minification
-  swcMinify: true,
-  experimental: {
-    serverComponentsExternalPackages: ['pdf-parse'],
-  },
+  // External packages for server components (moved from experimental in Next.js 15)
+  serverExternalPackages: ['pdf-parse'],
 };
 
 export default nextConfig;
