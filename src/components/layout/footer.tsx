@@ -148,6 +148,12 @@ export default function Footer() {
               >
                 {dict.legal.terms}
               </Link>
+              <Link
+                href="/refund-policy"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                Refund Policy
+              </Link>
             </nav>
           </div>
         </div>
