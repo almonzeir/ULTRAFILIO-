@@ -1,226 +1,185 @@
-// Paddle Integration for UltraFolio Pro Payments
-// Documentation: https://developer.paddle.com/
+// Paddle API Configuration (server-side only)
+export const PADDLE_API_KEY = process.env.PADDLE_API_KEY;
+export const PADDLE_WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET;
+export const PADDLE_API_URL = 'https://api.paddle.com';
 
-/**
- * Paddle Client Token (for frontend checkout)
- */
-export const PADDLE_CLIENT_TOKEN = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN || '';
-export const PADDLE_ENVIRONMENT = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT || 'sandbox'; // 'sandbox' or 'production'
-
-/**
- * Paddle Price IDs for different plans
- * Replace these with your actual Paddle Price IDs after creating products
- */
+// Price IDs - exported for client-side use
 export const PADDLE_PRICES = {
-    pro_monthly: process.env.NEXT_PUBLIC_PADDLE_PRICE_MONTHLY || 'pri_XXXXXX', // Replace with your monthly price ID
-    pro_yearly: process.env.NEXT_PUBLIC_PADDLE_PRICE_YEARLY || 'pri_YYYYYY',   // Replace with your yearly price ID
-    pro_lifetime: process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME || 'pri_ZZZZZZ', // Replace with your lifetime price ID
-} as const;
+    monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
+    annual: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
+    pro_monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
+    pro_lifetime: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
+};
 
-/**
- * Initialize Paddle on the client side
- * Call this in your layout or app component
- */
-export function initializePaddle(): Promise<void> {
-    return new Promise((resolve) => {
-        if (typeof window === 'undefined') {
+export const PADDLE_DISCOUNT_ID = process.env.PADDLE_DISCOUNT_ID;
+
+// Check if Paddle is loaded
+function isPaddleLoaded(): boolean {
+    return typeof window !== 'undefined' && !!(window as any).Paddle;
+}
+
+// Wait for Paddle to be ready
+function waitForPaddle(maxWait = 5000): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (isPaddleLoaded()) {
             resolve();
             return;
         }
 
-        // Check if already loaded
-        if ((window as any).Paddle) {
-            (window as any).Paddle.Environment.set(PADDLE_ENVIRONMENT);
-            (window as any).Paddle.Initialize({
-                token: PADDLE_CLIENT_TOKEN,
-            });
-            resolve();
-            return;
-        }
-
-        // Load Paddle.js script
-        const script = document.createElement('script');
-        script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
-        script.async = true;
-        script.onload = () => {
-            (window as any).Paddle.Environment.set(PADDLE_ENVIRONMENT);
-            (window as any).Paddle.Initialize({
-                token: PADDLE_CLIENT_TOKEN,
-            });
-            resolve();
-        };
-        document.head.appendChild(script);
+        const startTime = Date.now();
+        const checkInterval = setInterval(() => {
+            if (isPaddleLoaded()) {
+                clearInterval(checkInterval);
+                resolve();
+            } else if (Date.now() - startTime > maxWait) {
+                clearInterval(checkInterval);
+                reject(new Error('Paddle script load timeout'));
+            }
+        }, 100);
     });
 }
 
-/**
- * Open Paddle checkout overlay
- */
-export async function openPaddleCheckout(params: {
-    priceId: string;
-    userId: string;
-    userEmail: string;
-    userName?: string;
-    successUrl?: string;
-}): Promise<void> {
-    if (typeof window === 'undefined' || !(window as any).Paddle) {
-        throw new Error('Paddle not initialized');
+// Initialize Paddle (client-side only)
+export async function initializePaddle(): Promise<void> {
+    if (typeof window === 'undefined') {
+        return;
     }
 
-    await (window as any).Paddle.Checkout.open({
-        items: [{ priceId: params.priceId, quantity: 1 }],
-        customer: {
-            email: params.userEmail,
-        },
-        customData: {
-            user_id: params.userId,
-            user_name: params.userName || '',
-        },
+    try {
+        await waitForPaddle();
+
+        const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+        if (token && (window as any).Paddle) {
+            (window as any).Paddle.Initialize({ token });
+        }
+    } catch (error) {
+        console.warn('Paddle initialization skipped:', error);
+    }
+}
+
+// Open Paddle checkout (client-side only)
+export async function openPaddleCheckout({
+    priceId,
+    userId,
+    userEmail,
+    userName,
+    discountId,
+}: {
+    priceId: string;
+    userId?: string;
+    userEmail?: string;
+    userName?: string;
+    discountId?: string;
+}): Promise<void> {
+    if (typeof window === 'undefined') {
+        throw new Error('Paddle only works in browser');
+    }
+
+    // Wait for Paddle to load
+    await waitForPaddle();
+
+    if (!(window as any).Paddle) {
+        throw new Error('Paddle not available');
+    }
+
+    const checkoutSettings: any = {
+        items: [{ priceId, quantity: 1 }],
         settings: {
             displayMode: 'overlay',
             theme: 'dark',
             locale: 'en',
-            successUrl: params.successUrl || `${window.location.origin}/checkout/success`,
+            successUrl: `${window.location.origin}/dashboard?subscription=success`,
         },
-    });
+        customData: {
+            userId,
+        },
+    };
+
+    if (userEmail) {
+        checkoutSettings.customer = { email: userEmail };
+    }
+
+    const discountToUse = discountId || PADDLE_DISCOUNT_ID;
+    if (discountToUse) {
+        checkoutSettings.discountId = discountToUse;
+    }
+
+    (window as any).Paddle.Checkout.open(checkoutSettings);
 }
 
-/**
- * Server-side: Verify Paddle webhook signature
- */
-export async function verifyPaddleWebhook(
-    payload: string,
-    signature: string
-): Promise<boolean> {
-    const webhookSecret = process.env.PADDLE_WEBHOOK_SECRET || '';
+// Server-side only functions below
+// Only import 'crypto' on server
+let crypto: typeof import('crypto') | null = null;
+if (typeof window === 'undefined') {
+    crypto = require('crypto');
+}
 
-    if (!webhookSecret) {
-        console.warn('Paddle webhook secret not configured');
+// Verify Paddle webhook signature (server-side only)
+export function verifyPaddleWebhook(
+    rawBody: string,
+    signature: string,
+    ts: string
+): boolean {
+    if (!crypto) return false;
+
+    const secret = PADDLE_WEBHOOK_SECRET;
+    if (!secret) {
+        console.error('PADDLE_WEBHOOK_SECRET not configured');
         return false;
     }
 
-    // Paddle uses HMAC-SHA256 for webhook signatures
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-        'raw',
-        encoder.encode(webhookSecret),
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-    );
+    const payload = `${ts}:${rawBody}`;
+    const expectedSignature = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
 
-    const signatureBuffer = await crypto.subtle.sign(
-        'HMAC',
-        key,
-        encoder.encode(payload)
-    );
+    const actualSignature = signature.replace('h1=', '');
 
-    const computedSignature = Buffer.from(signatureBuffer).toString('hex');
-    return computedSignature === signature;
-}
-
-/**
- * Paddle webhook event types
- */
-export type PaddleWebhookEvent =
-    | 'subscription.created'
-    | 'subscription.updated'
-    | 'subscription.canceled'
-    | 'subscription.paused'
-    | 'subscription.resumed'
-    | 'subscription.activated'
-    | 'transaction.completed'
-    | 'transaction.payment_failed';
-
-/**
- * Parse Paddle webhook payload
- */
-export function parsePaddleWebhookPayload(payload: any): {
-    eventType: PaddleWebhookEvent;
-    subscriptionId?: string;
-    customerId?: string;
-    transactionId?: string;
-    userId?: string;
-    userEmail?: string;
-    priceId?: string;
-    status?: string;
-    planType?: 'pro_monthly' | 'pro_yearly' | 'pro_lifetime';
-} {
-    const eventType = payload.event_type as PaddleWebhookEvent;
-    const data = payload.data || {};
-    const customData = data.custom_data || {};
-
-    // Determine plan type from price ID
-    let planType: 'pro_monthly' | 'pro_yearly' | 'pro_lifetime' | undefined;
-    const priceId = data.items?.[0]?.price?.id;
-
-    if (priceId === PADDLE_PRICES.pro_monthly) {
-        planType = 'pro_monthly';
-    } else if (priceId === PADDLE_PRICES.pro_yearly) {
-        planType = 'pro_yearly';
-    } else if (priceId === PADDLE_PRICES.pro_lifetime) {
-        planType = 'pro_lifetime';
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(expectedSignature),
+            Buffer.from(actualSignature)
+        );
+    } catch {
+        return false;
     }
-
-    return {
-        eventType,
-        subscriptionId: data.id,
-        customerId: data.customer_id,
-        transactionId: data.transaction_id,
-        userId: customData.user_id,
-        userEmail: data.customer?.email || customData.email,
-        priceId,
-        status: data.status,
-        planType,
-    };
 }
 
-/**
- * Server-side: Get subscription details from Paddle API
- */
-export async function getPaddleSubscription(subscriptionId: string): Promise<any> {
-    const apiKey = process.env.PADDLE_API_KEY || '';
-    const baseUrl = PADDLE_ENVIRONMENT === 'production'
-        ? 'https://api.paddle.com'
-        : 'https://sandbox-api.paddle.com';
-
-    const response = await fetch(`${baseUrl}/subscriptions/${subscriptionId}`, {
+// Paddle API helper (server-side only)
+export async function paddleApiRequest(
+    endpoint: string,
+    method: 'GET' | 'POST' | 'PATCH' | 'DELETE' = 'GET',
+    body?: object
+) {
+    const response = await fetch(`${PADDLE_API_URL}${endpoint}`, {
+        method,
         headers: {
-            'Authorization': `Bearer ${apiKey}`,
+            'Authorization': `Bearer ${PADDLE_API_KEY}`,
             'Content-Type': 'application/json',
         },
+        body: body ? JSON.stringify(body) : undefined,
     });
 
     if (!response.ok) {
-        throw new Error(`Failed to get subscription: ${response.statusText}`);
+        const error = await response.text();
+        throw new Error(`Paddle API error: ${error}`);
     }
 
     return response.json();
 }
 
-/**
- * Server-side: Cancel a subscription
- */
-export async function cancelPaddleSubscription(subscriptionId: string): Promise<any> {
-    const apiKey = process.env.PADDLE_API_KEY || '';
-    const baseUrl = PADDLE_ENVIRONMENT === 'production'
-        ? 'https://api.paddle.com'
-        : 'https://sandbox-api.paddle.com';
+// Get customer subscriptions
+export async function getCustomerSubscriptions(customerId: string) {
+    return paddleApiRequest(`/customers/${customerId}/subscriptions`);
+}
 
-    const response = await fetch(`${baseUrl}/subscriptions/${subscriptionId}/cancel`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            effective_from: 'next_billing_period', // or 'immediately'
-        }),
-    });
+// Cancel subscription
+export async function cancelSubscription(subscriptionId: string) {
+    return paddleApiRequest(`/subscriptions/${subscriptionId}/cancel`, 'POST');
+}
 
-    if (!response.ok) {
-        throw new Error(`Failed to cancel subscription: ${response.statusText}`);
-    }
-
-    return response.json();
+// Get subscription details
+export async function getSubscription(subscriptionId: string) {
+    return paddleApiRequest(`/subscriptions/${subscriptionId}`);
 }
