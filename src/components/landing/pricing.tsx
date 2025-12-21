@@ -158,6 +158,8 @@ export default function Pricing() {
     return;
 
     // Open Paddle checkout (will work after verification)
+    // Note: Code below is unreachable until Paddle verification is complete
+    /*
     try {
       const priceId = planId === 'pro_monthly'
         ? PADDLE_PRICES.pro_monthly
@@ -165,9 +167,9 @@ export default function Pricing() {
 
       await openPaddleCheckout({
         priceId,
-        userId: user.id,
-        userEmail: user.email || '',
-        userName: user.user_metadata?.display_name,
+        userId: user?.id || '',
+        userEmail: user?.email || '',
+        userName: user?.user_metadata?.display_name,
       });
     } catch (error) {
       toast({
@@ -176,6 +178,7 @@ export default function Pricing() {
         variant: 'destructive',
       });
     }
+    */
   };
 
   const plans = [
