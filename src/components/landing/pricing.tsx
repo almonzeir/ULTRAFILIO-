@@ -12,12 +12,15 @@ import { useShine } from '@/hooks/use-shine';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 import { initializePaddle, openPaddleCheckout, PADDLE_PRICES } from '@/lib/paddle';
 import { useUser } from '@/hooks/useUser';
+import { useToast } from '@/hooks/use-toast';
 
 function PricingCard({ plan, index }: { plan: any; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   useShine(cardRef);
 
   const isPro = plan.id === 'pro';
+  const isAnnual = plan.id === 'annual';
+  const isHighlighted = isPro || isAnnual;
 
   return (
     <motion.div
@@ -27,35 +30,52 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
       viewport={{ once: true }}
       whileHover={{ y: -8, transition: { duration: 0.4 } }}
-      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 ${isPro
+      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 ${isHighlighted
         ? 'ring-1 ring-white/20 shadow-[0_0_60px_-15px_rgba(139,92,246,0.3)]'
         : ''
         }`}
     >
-      {/* Popular Badge */}
-      {isPro && (
+      {/* Badge */}
+      {plan.badge && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-widest uppercase bg-gradient-to-r from-slate-400 to-slate-500 text-white shadow-lg">
-            Most Popular
+          <span className={`px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-widest uppercase shadow-lg ${isPro
+            ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+            : 'bg-gradient-to-r from-violet-500 to-purple-600 text-white'
+            }`}>
+            {plan.badge}
           </span>
         </div>
       )}
 
       <div className="flex-1">
         {/* Plan Name */}
-        <h3 className="text-lg sm:text-xl font-semibold mb-6 text-white/60">
+        <h3 className="text-lg sm:text-xl font-semibold mb-4 text-white/60">
           {plan.name}
         </h3>
 
+        {/* Savings Badge */}
+        {plan.savings && (
+          <div className="mb-4">
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              {plan.savings}
+            </span>
+          </div>
+        )}
+
         {/* Price */}
-        <div className="flex items-baseline gap-2 mb-8">
+        <div className="flex items-baseline gap-2 mb-2">
+          {plan.originalPrice && (
+            <span className="text-2xl text-white/30 line-through font-medium">
+              {plan.originalPrice}
+            </span>
+          )}
           <span className="text-5xl sm:text-6xl font-bold tracking-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
             {plan.price}
           </span>
-          <span className="text-sm text-white/40 font-medium">
-            {plan.period}
-          </span>
         </div>
+        <p className="text-sm text-white/40 font-medium mb-8">
+          {plan.period}
+        </p>
 
         {/* Features */}
         <ul className="space-y-4 mb-10">
@@ -75,13 +95,13 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
       {/* CTA Button */}
       <button
         onClick={plan.onClick}
-        className={`group w-full h-14 sm:h-16 rounded-full font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-500 ${isPro
+        className={`group w-full h-14 sm:h-16 rounded-full font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-500 ${isHighlighted
           ? 'liquid-button-primary'
           : 'liquid-button-ghost text-white/80 hover:text-white'
           }`}
       >
         {plan.buttonText}
-        {isPro && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
+        {isHighlighted && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
       </button>
     </motion.div>
   );
@@ -91,12 +111,19 @@ export default function Pricing() {
   const { language } = useLanguage();
   const router = useRouter();
   const { user } = useUser();
+  const { toast } = useToast();
   const [dict, setDict] = useState<Dictionary['pricing']>(en.pricing);
   const [paddleReady, setPaddleReady] = useState(false);
 
   // Initialize Paddle
   useEffect(() => {
-    initializePaddle().then(() => setPaddleReady(true));
+    initializePaddle()
+      .then(() => setPaddleReady(true))
+      .catch((err) => {
+        console.warn('Paddle init warning:', err);
+        // Still allow checkout attempts - Paddle may load later
+        setPaddleReady(true);
+      });
   }, []);
 
   useEffect(() => {
@@ -123,50 +150,87 @@ export default function Pricing() {
       return;
     }
 
-    if (!paddleReady) {
-      console.error('Paddle not ready');
-      return;
-    }
-
-    // Open Paddle checkout
-    const priceId = planId === 'pro_monthly'
-      ? PADDLE_PRICES.pro_monthly
-      : PADDLE_PRICES.pro_lifetime;
-
-    await openPaddleCheckout({
-      priceId,
-      userId: user.id,
-      userEmail: user.email || '',
-      userName: user.user_metadata?.display_name,
+    // TODO: Remove this once Paddle is verified
+    toast({
+      title: '🚀 Coming Soon!',
+      description: 'Pro subscriptions will be available very soon. Sign up for free to get notified!',
     });
+    return;
+
+    // Open Paddle checkout (will work after verification)
+    // Note: Code below is unreachable until Paddle verification is complete
+    /*
+    try {
+      const priceId = planId === 'pro_monthly'
+        ? PADDLE_PRICES.pro_monthly
+        : PADDLE_PRICES.pro_lifetime;
+
+      await openPaddleCheckout({
+        priceId,
+        userId: user?.id || '',
+        userEmail: user?.email || '',
+        userName: user?.user_metadata?.display_name,
+      });
+    } catch (error) {
+      toast({
+        title: 'Checkout Error',
+        description: 'Unable to open checkout. Please try again later.',
+        variant: 'destructive',
+      });
+    }
+    */
   };
 
   const plans = [
     {
       id: 'free',
-      name: 'Essential',
+      name: 'Free',
       price: '$0',
       period: 'forever',
-      features: dict.free.features ? Object.values(dict.free.features) : [],
+      features: [
+        '1 Portfolio',
+        'Basic Templates',
+        'AI CV Parsing',
+        'Live Editor',
+        'Subdomain Hosting',
+      ],
       buttonText: 'Get Started Free',
       onClick: () => handleSubscribe('free'),
     },
     {
       id: 'pro',
-      name: 'Pro',
+      name: 'Pro Monthly',
       price: '$2',
-      period: '/month first month, then $5',
-      features: dict.premium.features ? Object.values(dict.premium.features).slice(0, 6) : [],
-      buttonText: 'Upgrade to Pro',
+      originalPrice: '$5',
+      period: 'first month, then $5/mo',
+      badge: '60% OFF First Month',
+      features: [
+        'Unlimited Portfolios',
+        'All Premium Templates',
+        'Custom Domain',
+        'Download Source Code',
+        'Priority Support',
+        'No Watermark',
+      ],
+      buttonText: 'Start for $2',
       onClick: () => handleSubscribe('pro_monthly'),
     },
     {
-      id: 'lifetime',
-      name: 'Lifetime',
+      id: 'annual',
+      name: 'Pro Annual',
       price: '$15',
-      period: 'one-time',
-      features: ['Everything in Pro', 'Lifetime updates', 'Priority support'],
-      buttonText: 'Get Lifetime Access',
+      period: '/year',
+      badge: '30 Days Free Trial',
+      savings: 'Save 75% vs Monthly',
+      features: [
+        'Everything in Pro Monthly',
+        '30-Day Free Trial',
+        'Billed Annually',
+        'Best Value',
+        'Priority Support',
+        'Early Access to Features',
+      ],
+      buttonText: 'Try Free for 30 Days',
       onClick: () => handleSubscribe('pro_lifetime'),
     },
   ];
@@ -178,8 +242,8 @@ export default function Pricing() {
 
       {/* Ambient Light */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full bg-white/5 blur-[150px]" />
-        <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[120px]" />
+        <div className="absolute top-[30%] left-[20%] w-[500px] h-[500px] rounded-full bg-violet-600/15 blur-[150px]" />
+        <div className="absolute bottom-[20%] right-[15%] w-[400px] h-[400px] rounded-full bg-purple-500/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

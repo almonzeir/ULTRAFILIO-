@@ -1,42 +1,17 @@
 'use client';
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import type { Locale } from '@/lib/i18n-config';
+import React, { createContext, useContext, ReactNode } from 'react';
 
 interface LanguageContextType {
-  language: Locale;
-  toggleLanguage: () => void;
+  language: 'en';
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Locale>('en');
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.lang = language;
-    root.dir = language === 'ar' ? 'rtl' : 'ltr';
-
-    if (language === 'ar') {
-        root.classList.add('rtl');
-        root.classList.remove('ltr');
-        document.body.classList.add('font-arabic');
-        document.body.classList.remove('font-body');
-    } else {
-        root.classList.add('ltr');
-        root.classList.remove('rtl');
-        document.body.classList.add('font-body');
-        document.body.classList.remove('font-arabic');
-    }
-  }, [language]);
-
-  const toggleLanguage = () => {
-    setLanguage(prevLang => (prevLang === 'en' ? 'ar' : 'en'));
-  };
-
+  // English only - no language switching
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage }}>
+    <LanguageContext.Provider value={{ language: 'en' }}>
       {children}
     </LanguageContext.Provider>
   );

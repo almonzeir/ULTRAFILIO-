@@ -42,8 +42,8 @@ export default function Footer() {
 
       {/* Ambient Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] left-[30%] w-[600px] h-[600px] rounded-full bg-white/5 blur-[150px]" />
-        <div className="absolute bottom-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-slate-400/10 blur-[120px]" />
+        <div className="absolute top-[20%] left-[30%] w-[600px] h-[600px] rounded-full bg-violet-600/15 blur-[150px]" />
+        <div className="absolute bottom-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12">
@@ -147,6 +147,12 @@ export default function Footer() {
                 className="text-white/60 hover:text-white transition-colors font-medium"
               >
                 {dict.legal.terms}
+              </Link>
+              <Link
+                href="/refund-policy"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                Refund Policy
               </Link>
             </nav>
           </div>

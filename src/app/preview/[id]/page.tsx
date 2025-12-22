@@ -177,7 +177,7 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
                                     <div className={`w-8 h-8 rounded-lg ${t.color} flex items-center justify-center shadow-inner`}>
                                         <t.icon size={14} className="text-white" />
                                     </div>
-                                    <span className="font-medium">{language === 'ar' ? t.name : t.name}</span>
+                                    <span className="font-medium">{t.name}</span>
                                     {selectedTemplate === t.id && <div className="ml-auto w-2 h-2 rounded-full bg-green-500 animate-pulse" />}
                                 </button>
                             ))}
@@ -331,7 +331,7 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
 
                         {/* The Template Renders Here via IFRAME for True Native Responsive Behavior */}
                         <iframe
-                            src={`/render/${portfolioId}?theme=${theme}&template=${selectedTemplate}&mode=${isDarkMode ? 'dark' : 'light'}&lang=${language === 'ar' ? 'ar' : 'en'}`}
+                            src={`/render/${portfolioId}?theme=${theme}&template=${selectedTemplate}&mode=${isDarkMode ? 'dark' : 'light'}&lang=en`}
                             className={`w-full h-full border-0 ${viewMode === 'mobile' ? 'rounded-[38px]' : 'rounded-none'} ${isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}
                             title="Portfolio Preview"
                         />

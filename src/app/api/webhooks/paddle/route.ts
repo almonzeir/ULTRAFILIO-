@@ -1,132 +1,156 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabase/server';
-import { parsePaddleWebhookPayload, verifyPaddleWebhook } from '@/lib/paddle';
+import { verifyPaddleWebhook } from '@/lib/paddle';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
     try {
-        const rawBody = await req.text();
-        const signature = req.headers.get('paddle-signature') || '';
+        const rawBody = await request.text();
+        const signature = request.headers.get('paddle-signature') || '';
+        const ts = signature.split(';').find(s => s.startsWith('ts='))?.replace('ts=', '') || '';
+        const h1 = signature.split(';').find(s => s.startsWith('h1=')) || '';
 
-        // Verify webhook signature (optional but recommended)
-        // const isValid = await verifyPaddleWebhook(rawBody, signature);
-        // if (!isValid) {
-        //     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-        // }
+        // Verify webhook signature
+        if (!verifyPaddleWebhook(rawBody, h1, ts)) {
+            console.error('Invalid Paddle webhook signature');
+            return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+        }
 
-        const payload = JSON.parse(rawBody);
-        const webhookData = parsePaddleWebhookPayload(payload);
+        const event = JSON.parse(rawBody);
+        const eventType = event.event_type;
+        const data = event.data;
 
-        console.log('Paddle webhook received:', webhookData.eventType, webhookData);
+        console.log(`Paddle webhook received: ${eventType}`);
 
-        switch (webhookData.eventType) {
+        const supabase = createServerSupabaseClient();
+
+        switch (eventType) {
             case 'subscription.created':
             case 'subscription.activated':
-                // User subscribed - upgrade to Pro
-                if (webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_status: 'active',
-                            subscription_plan: webhookData.planType || 'pro_monthly',
-                            subscription_id: webhookData.subscriptionId,
-                            paddle_customer_id: webhookData.customerId,
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-
-                    console.log(`User ${webhookData.userId} upgraded to ${webhookData.planType}`);
-                }
+                await handleSubscriptionCreated(supabase, data);
                 break;
 
             case 'subscription.updated':
-                // Subscription updated (plan change, etc.)
-                if (webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_plan: webhookData.planType,
-                            subscription_status: webhookData.status === 'active' ? 'active' : 'inactive',
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-                }
+                await handleSubscriptionUpdated(supabase, data);
                 break;
 
             case 'subscription.canceled':
-                // User canceled - downgrade to free
-                if (webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_status: 'canceled',
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-
-                    console.log(`User ${webhookData.userId} canceled subscription`);
-                }
+                await handleSubscriptionCanceled(supabase, data);
                 break;
 
-            case 'subscription.paused':
-                if (webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_status: 'paused',
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-                }
-                break;
-
-            case 'subscription.resumed':
-                if (webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_status: 'active',
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-                }
+            case 'subscription.past_due':
+                await handleSubscriptionPastDue(supabase, data);
                 break;
 
             case 'transaction.completed':
-                // One-time payment or subscription payment succeeded
-                console.log('Transaction completed:', webhookData.transactionId);
-
-                // For lifetime purchases
-                if (webhookData.planType === 'pro_lifetime' && webhookData.userId) {
-                    await supabaseAdmin
-                        .from('users')
-                        .update({
-                            subscription_status: 'lifetime',
-                            subscription_plan: 'pro_lifetime',
-                            updated_at: new Date().toISOString(),
-                        })
-                        .eq('id', webhookData.userId);
-
-                    console.log(`User ${webhookData.userId} purchased lifetime access`);
-                }
+                await handleTransactionCompleted(supabase, data);
                 break;
 
             case 'transaction.payment_failed':
-                // Payment failed
-                console.log('Payment failed for:', webhookData.userId);
+                await handlePaymentFailed(supabase, data);
                 break;
 
             default:
-                console.log('Unhandled webhook event:', webhookData.eventType);
+                console.log(`Unhandled event type: ${eventType}`);
         }
 
         return NextResponse.json({ received: true });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Paddle webhook error:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 });
     }
 }
 
-// Paddle sends GET to verify the endpoint
-export async function GET() {
-    return NextResponse.json({ status: 'Paddle webhook endpoint active' });
+async function handleSubscriptionCreated(supabase: any, data: any) {
+    const customerId = data.customer_id;
+    const subscriptionId = data.id;
+    const status = data.status;
+    const priceId = data.items?.[0]?.price?.id;
+
+    // Determine plan type
+    const planType = priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID ? 'annual' : 'monthly';
+
+    // Find user by Paddle customer ID or email
+    const customerEmail = data.customer?.email;
+
+    if (customerEmail) {
+        const { data: user } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', customerEmail)
+            .single();
+
+        if (user) {
+            await supabase
+                .from('profiles')
+                .update({
+                    paddle_customer_id: customerId,
+                    paddle_subscription_id: subscriptionId,
+                    subscription_status: status,
+                    subscription_plan: planType,
+                    is_pro: true,
+                    updated_at: new Date().toISOString(),
+                })
+                .eq('id', user.id);
+
+            console.log(`Subscription created for user ${user.id}`);
+        }
+    }
+}
+
+async function handleSubscriptionUpdated(supabase: any, data: any) {
+    const subscriptionId = data.id;
+    const status = data.status;
+
+    await supabase
+        .from('profiles')
+        .update({
+            subscription_status: status,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('paddle_subscription_id', subscriptionId);
+
+    console.log(`Subscription ${subscriptionId} updated to ${status}`);
+}
+
+async function handleSubscriptionCanceled(supabase: any, data: any) {
+    const subscriptionId = data.id;
+
+    await supabase
+        .from('profiles')
+        .update({
+            subscription_status: 'canceled',
+            is_pro: false,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('paddle_subscription_id', subscriptionId);
+
+    console.log(`Subscription ${subscriptionId} canceled`);
+}
+
+async function handleSubscriptionPastDue(supabase: any, data: any) {
+    const subscriptionId = data.id;
+
+    await supabase
+        .from('profiles')
+        .update({
+            subscription_status: 'past_due',
+            updated_at: new Date().toISOString(),
+        })
+        .eq('paddle_subscription_id', subscriptionId);
+
+    console.log(`Subscription ${subscriptionId} is past due`);
+}
+
+async function handleTransactionCompleted(supabase: any, data: any) {
+    const customerId = data.customer_id;
+
+    // Log successful transaction
+    console.log(`Transaction completed for customer ${customerId}`);
+}
+
+async function handlePaymentFailed(supabase: any, data: any) {
+    const customerId = data.customer_id;
+
+    // Log failed payment
+    console.log(`Payment failed for customer ${customerId}`);
 }

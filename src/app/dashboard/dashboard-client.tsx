@@ -78,8 +78,8 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
             <div className="fixed inset-0 z-0">
                 <MeshGradientBackground />
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full bg-slate-400/10 blur-[150px]" />
-                    <div className="absolute bottom-[20%] left-[10%] w-[600px] h-[600px] rounded-full bg-white/5 blur-[150px]" />
+                    <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[150px]" />
+                    <div className="absolute bottom-[20%] left-[10%] w-[600px] h-[600px] rounded-full bg-violet-600/15 blur-[150px]" />
                 </div>
             </div>
 
