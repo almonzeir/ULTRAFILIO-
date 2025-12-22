@@ -10,10 +10,10 @@ import Testimonials from '@/components/landing/testimonials';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0a0612] text-white">
-      {/* Purple Gradient Background Overlay */}
+    <div className="min-h-screen bg-[#0f1012] text-white">
+      {/* Silver Gradient Background Overlay */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_rgba(139,92,246,0.15),_transparent_70%)]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,_rgba(100,100,115,0.12),_transparent_70%)]" />
       </div>
 
       <div className="relative z-10">

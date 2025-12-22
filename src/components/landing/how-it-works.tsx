@@ -97,8 +97,8 @@ export default function HowItWorks() {
 
       {/* Ambient Glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-[150px]" />
-        <div className="absolute bottom-[30%] left-[15%] w-[400px] h-[400px] rounded-full bg-violet-600/15 blur-[120px]" />
+        <div className="absolute top-[30%] right-[20%] w-[500px] h-[500px] rounded-full bg-slate-500/8 blur-[150px]" />
+        <div className="absolute bottom-[30%] left-[15%] w-[400px] h-[400px] rounded-full bg-slate-400/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">

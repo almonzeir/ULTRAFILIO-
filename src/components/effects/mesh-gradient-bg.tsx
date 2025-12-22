@@ -3,8 +3,9 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * MeshGradientBackground - Purple Glass Theme
- * Creates a living mesh gradient with purple/violet accent colors.
+ * MeshGradientBackground - Liquid Silver Theme
+ * Creates a smooth, performant mesh gradient with silver/metallic colors.
+ * Optimized for smooth scrolling.
  */
 export default function MeshGradientBackground() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,11 +20,11 @@ export default function MeshGradientBackground() {
         let animationId: number;
         let time = 0;
         let lastFrame = 0;
-        const targetFPS = 30;
+        const targetFPS = 24; // Reduced for smoother performance
         const frameInterval = 1000 / targetFPS;
 
         const resize = () => {
-            const dpr = Math.min(window.devicePixelRatio, 1.5);
+            const dpr = Math.min(window.devicePixelRatio, 1); // Lower DPR for performance
             canvas.width = window.innerWidth * dpr;
             canvas.height = window.innerHeight * dpr;
             canvas.style.width = window.innerWidth + 'px';
@@ -34,22 +35,22 @@ export default function MeshGradientBackground() {
         resize();
         window.addEventListener('resize', resize);
 
-        // Purple Glass Color Palette
+        // Liquid Silver Color Palette
         const colors = [
-            { r: 15, g: 10, b: 25 },      // Deep Purple Black #0f0a19
-            { r: 88, g: 28, b: 135 },     // Purple-900 #581c87
-            { r: 139, g: 92, b: 246 },    // Violet-500 #8b5cf6
-            { r: 168, g: 85, b: 247 },    // Purple-500 #a855f7
+            { r: 20, g: 20, b: 25 },      // Deep charcoal #141419
+            { r: 45, g: 45, b: 55 },      // Steel gray #2d2d37
+            { r: 100, g: 100, b: 115 },   // Silver #646473
+            { r: 75, g: 75, b: 90 },      // Slate #4b4b5a
         ];
 
         const blobs = colors.map((color, i) => ({
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
-            radius: 350 + Math.random() * 300,
+            radius: 400 + Math.random() * 200,
             color,
-            vx: (Math.random() - 0.5) * 0.15,
-            vy: (Math.random() - 0.5) * 0.15,
-            phase: i * Math.PI * 0.7,
+            vx: (Math.random() - 0.5) * 0.1,
+            vy: (Math.random() - 0.5) * 0.1,
+            phase: i * Math.PI * 0.5,
         }));
 
         const animate = (timestamp: number) => {
@@ -59,30 +60,30 @@ export default function MeshGradientBackground() {
             }
             lastFrame = timestamp;
 
-            time += 0.002;
+            time += 0.001; // Slower animation
 
-            // Deep purple-black base
-            ctx.fillStyle = '#0a0612';
+            // Deep dark base
+            ctx.fillStyle = '#0f1012';
             ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
             blobs.forEach((blob, i) => {
-                blob.x += Math.sin(time + blob.phase) * 0.25 + blob.vx;
-                blob.y += Math.cos(time * 0.5 + blob.phase) * 0.25 + blob.vy;
+                blob.x += Math.sin(time + blob.phase) * 0.15 + blob.vx;
+                blob.y += Math.cos(time * 0.5 + blob.phase) * 0.15 + blob.vy;
 
                 if (blob.x < -blob.radius) blob.x = window.innerWidth + blob.radius;
                 if (blob.x > window.innerWidth + blob.radius) blob.x = -blob.radius;
                 if (blob.y < -blob.radius) blob.y = window.innerHeight + blob.radius;
                 if (blob.y > window.innerHeight + blob.radius) blob.y = -blob.radius;
 
-                const dynamicRadius = blob.radius + Math.sin(time + i) * 25;
+                const dynamicRadius = blob.radius + Math.sin(time + i) * 15;
 
                 const gradient = ctx.createRadialGradient(
                     blob.x, blob.y, 0,
                     blob.x, blob.y, dynamicRadius
                 );
 
-                gradient.addColorStop(0, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.5)`);
-                gradient.addColorStop(0.6, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.12)`);
+                gradient.addColorStop(0, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.4)`);
+                gradient.addColorStop(0.6, `rgba(${blob.color.r}, ${blob.color.g}, ${blob.color.b}, 0.08)`);
                 gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
                 ctx.globalCompositeOperation = 'screen';
@@ -106,7 +107,7 @@ export default function MeshGradientBackground() {
         <canvas
             ref={canvasRef}
             className="fixed inset-0 w-full h-full pointer-events-none z-0"
-            style={{ opacity: 0.8 }}
+            style={{ opacity: 0.7 }}
         />
     );
 }
