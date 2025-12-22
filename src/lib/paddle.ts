@@ -8,6 +8,7 @@ export const PADDLE_PRICES = {
     monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
     annual: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
     pro_monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
+    pro_yearly: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
     pro_lifetime: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
 };
 
