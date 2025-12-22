@@ -8,7 +8,7 @@ import en from '@/locales/en.json';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import Link from 'next/link';
 import UserProfileButton from '../auth/user-profile-button';
 import { useUser } from '@/hooks/useUser';
@@ -117,6 +117,7 @@ export default function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-80 liquid-glass p-0">
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full p-8">
                   <div className="flex justify-between items-center mb-12">
                     <Logo />

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, ShieldCheck, Globe, Cpu } from 'lucide-react';
+import { ArrowRight, Linkedin, Instagram } from 'lucide-react';
 import Logo from '@/components/shared/logo';
 import { useEffect, useState, useRef } from 'react';
 import { useLanguage } from '@/context/language-context';
@@ -159,14 +159,28 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col lg:flex-row items-center justify-between pt-8 border-t border-white/10 gap-6">
-          <div className="text-sm text-white/30 font-medium">
-            © {year} Ultrafolio. All rights reserved.
+        <div className="flex flex-col items-center justify-center pt-8 border-t border-white/10 gap-6">
+          <div className="flex items-center gap-6">
+            <Link
+              href="https://www.linkedin.com/company/ultrafolio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all duration-300"
+            >
+              <Linkedin className="w-5 h-5" />
+            </Link>
+            <Link
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all duration-300"
+            >
+              <Instagram className="w-5 h-5" />
+            </Link>
           </div>
-          <div className="flex items-center gap-6 text-white/20">
-            <ShieldCheck className="w-5 h-5" />
-            <Globe className="w-5 h-5" />
-            <Cpu className="w-5 h-5" />
+
+          <div className="text-sm text-white/30 font-medium text-center">
+            © {year} Ultrafolio. All rights reserved.
           </div>
         </div>
       </div>

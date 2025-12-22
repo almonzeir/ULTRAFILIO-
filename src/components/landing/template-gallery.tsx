@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Monitor, Smartphone, Tablet, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import en from '@/locales/en.json';
@@ -119,42 +119,23 @@ export default function TemplateGallery() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 lg:mb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-2xl"
-          >
-            <span className="inline-block px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase liquid-silver-pill mb-6">
-              Templates
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="text-center mb-16 lg:mb-20"
+        >
+          <span className="inline-block px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-widest uppercase liquid-silver-pill mb-6">
+            Templates
+          </span>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            <span className="silver-text">
+              {dict.title}
             </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-              <span className="silver-text">
-                {dict.title}
-              </span>
-            </h2>
-          </motion.div>
-
-          {/* Device Icons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-3"
-          >
-            {[Monitor, Tablet, Smartphone].map((Icon, i) => (
-              <div
-                key={i}
-                className="p-3 liquid-silver-pill hover:scale-110 transition-transform duration-300 cursor-pointer"
-              >
-                <Icon className="w-5 h-5 text-white/60" />
-              </div>
-            ))}
-          </motion.div>
-        </div>
+          </h2>
+        </motion.div>
 
         {/* Templates Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -172,7 +153,7 @@ export default function TemplateGallery() {
           className="mt-16 text-center"
         >
           <Link
-            href="/demo-template"
+            href="/login"
             className="inline-flex items-center gap-3 px-8 py-4 liquid-silver-button rounded-full text-sm font-semibold tracking-wide group"
           >
             View All Templates

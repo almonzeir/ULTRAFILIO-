@@ -30,14 +30,14 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
       viewport={{ once: true }}
       whileHover={{ y: -8, transition: { duration: 0.4 } }}
-      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 ${isHighlighted
-        ? 'ring-1 ring-white/20 shadow-[0_0_60px_-15px_rgba(139,92,246,0.3)]'
+      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 overflow-visible ${isHighlighted
+        ? 'ring-1 ring-white/20 shadow-[0_0_60px_-15px_rgba(255,255,255,0.15)]'
         : ''
         }`}
     >
       {/* Badge */}
       {plan.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <div className="absolute -top-4 left-0 right-0 flex justify-center z-20">
           <span className="px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-widest uppercase shadow-lg bg-gradient-to-r from-white/90 to-white/70 text-black/80 backdrop-blur-sm border border-white/20">
             {plan.badge}
           </span>
@@ -149,7 +149,7 @@ export default function Pricing() {
 
     // TODO: Remove this once Paddle is verified
     toast({
-      title: '🚀 Coming Soon!',
+      title: ' Coming Soon!',
       description: 'Pro subscriptions will be available very soon. Sign up for free to get notified!',
     });
     return;
