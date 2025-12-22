@@ -1,4 +1,5 @@
 'use client';
+// v2.0 - Silver Theme + iPhone 17 3D Glass
 
 import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
