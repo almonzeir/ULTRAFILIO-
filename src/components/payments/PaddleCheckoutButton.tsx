@@ -59,7 +59,6 @@ export function PaddleCheckoutButton({
                 userId: user.id,
                 userEmail: user.email || '',
                 userName: user.user_metadata?.display_name || user.email?.split('@')[0],
-                successUrl: `${window.location.origin}/checkout/success`,
             });
         } catch (error) {
             console.error('Checkout error:', error);
