@@ -51,9 +51,9 @@ export default function Hero() {
 
       {/* Ambient Light Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-violet-600/20 blur-[150px] animate-pulse-slow" />
-        <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full bg-purple-500/15 blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-indigo-900/20 blur-[200px]" />
+        <div className="absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-slate-400/10 blur-[150px] animate-pulse-slow" />
+        <div className="absolute bottom-[20%] right-[10%] w-[500px] h-[500px] rounded-full bg-slate-500/8 blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-slate-800/15 blur-[200px]" />
       </div>
 
       <div className="relative z-10 container mx-auto px-4 md:px-8 pt-32 pb-32">
