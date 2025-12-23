@@ -22,7 +22,7 @@ export default function Header() {
   const [dict, setDict] = React.useState<Dictionary['header']>(en.header);
   const [scrolled, setScrolled] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
-  const { user } = useUser();
+  const { user, isPro } = useUser();
 
   React.useEffect(() => {
     setMounted(true);
@@ -99,7 +99,7 @@ export default function Header() {
             <Link
               key={link.name}
               href={link.href}
-              className="px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-all"
+              className="px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-all outline-none"
             >
               {link.name}
             </Link>
@@ -107,7 +107,7 @@ export default function Header() {
           {user && (
             <Link
               href="/dashboard"
-              className="px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-all"
+              className="px-5 py-2 rounded-full text-xs font-bold tracking-wider uppercase text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/5 transition-all outline-none"
             >
               {dict.dashboard || 'My Portfolios'}
             </Link>

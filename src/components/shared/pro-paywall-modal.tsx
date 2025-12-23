@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Crown, X, Sparkles, Check, Rocket, Gift, PartyPopper, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 interface ProPaywallModalProps {
     isOpen: boolean;
@@ -16,12 +17,7 @@ interface ProPaywallModalProps {
 export default function ProPaywallModal({ isOpen, onClose, templateName, reason = 'template' }: ProPaywallModalProps) {
     const router = useRouter();
 
-    const handleContinueFree = () => {
-        // Close modal - user can continue for free!
-        onClose();
-    };
-
-    const handleLearnMore = () => {
+    const handleUpgrade = () => {
         onClose();
         router.push('/checkout');
     };
@@ -34,7 +30,7 @@ export default function ProPaywallModal({ isOpen, onClose, templateName, reason 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
                 onClick={onClose}
             >
                 <motion.div
@@ -43,127 +39,105 @@ export default function ProPaywallModal({ isOpen, onClose, templateName, reason 
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
                     transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="relative w-full max-w-lg bg-background rounded-2xl shadow-2xl overflow-hidden"
+                    className="relative w-full max-w-2xl bg-[#0a0a0f] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden"
                 >
+                    {/* Background Glows */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-b from-primary/20 to-transparent pointer-events-none" />
+
                     {/* Close button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted transition-colors z-10"
+                        className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors z-10"
                     >
-                        <X className="w-5 h-5 text-muted-foreground" />
+                        <X className="w-5 h-5 text-white/50" />
                     </button>
 
-                    {/* Header gradient - celebration style */}
-                    <div className="relative h-32 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                            className="relative"
-                        >
-                            <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl">
-                                <PartyPopper className="w-10 h-10 text-white" />
-                            </div>
-                        </motion.div>
-
-                        {/* Floating stars */}
-                        {[...Array(5)].map((_, i) => (
+                    <div className="p-8 md:p-12">
+                        {/* Header */}
+                        <div className="text-center mb-10">
                             <motion.div
-                                key={i}
-                                className="absolute"
-                                style={{
-                                    left: `${20 + i * 15}%`,
-                                    top: `${20 + (i % 2) * 40}%`
-                                }}
-                                animate={{
-                                    y: [0, -10, 0],
-                                    rotate: [0, 10, -10, 0],
-                                    scale: [1, 1.2, 1]
-                                }}
-                                transition={{
-                                    duration: 2,
-                                    repeat: Infinity,
-                                    delay: i * 0.3
-                                }}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+                                className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-[#e2e2e2] via-[#ffffff] to-[#888888] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-white/10 relative group"
                             >
-                                <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+                                <div className="absolute inset-0 rounded-[2rem] bg-white/20 blur opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Crown className="w-10 h-10 text-[#0a0a0f] relative z-10" />
                             </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 text-center">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-bold mb-3">
-                            <Gift className="w-3 h-3" />
-                            EARLY ACCESS SPECIAL
+                            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
+                                {reason === 'generation_limit' ? 'Portfolio Limit Reached' : 'Unlock Pro Creative Power'}
+                            </h2>
+                            <p className="text-lg text-white/50 max-w-md mx-auto">
+                                {reason === 'generation_limit'
+                                    ? "You've reached the 3 portfolio limit for free accounts. Upgrade to create unlimited masterpieces."
+                                    : `AI CV Parsing and publishing with premium templates like "${templateName || 'Modern'}" requires Pro access.`
+                                }
+                            </p>
                         </div>
 
-                        <h2 className="text-2xl font-bold mb-2">
-                            🎉 Great News!
-                        </h2>
-                        <p className="text-muted-foreground mb-6">
-                            {reason === 'template'
-                                ? `The ${templateName || 'premium'} template is normally Pro-only, but...`
-                                : "You've hit the daily limit, but guess what..."
-                            }
-                        </p>
-
-                        {/* FREE announcement */}
-                        <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl p-4 mb-6">
-                            <div className="flex items-center justify-center gap-2 mb-1">
-                                <Sparkles className="w-5 h-5" />
-                                <span className="text-xl font-black">IT'S FREE!</span>
-                                <Sparkles className="w-5 h-5" />
+                        {/* Comparison Table */}
+                        <div className="grid md:grid-cols-2 gap-6 mb-10">
+                            {/* Free Plan */}
+                            <div className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                                <h3 className="text-sm font-bold text-white/40 uppercase tracking-widest mb-4">Current Plan</h3>
+                                <ul className="space-y-3">
+                                    <li className="flex items-center gap-3 text-sm text-white/60">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                                        Max 3 Portfolios
+                                    </li>
+                                    <li className="flex items-center gap-3 text-sm text-white/60 line-through opacity-50">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                                        AI CV Extraction
+                                    </li>
+                                    <li className="flex items-center gap-3 text-sm text-white/60">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
+                                        Standard Templates
+                                    </li>
+                                </ul>
                             </div>
-                            <p className="text-sm text-green-100">
-                                All Pro features are unlocked during early access!
-                            </p>
+
+                            {/* Pro Plan */}
+                            <div className="p-6 rounded-3xl bg-primary/10 border border-primary/20 relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 p-3">
+                                    <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                                </div>
+                                <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-white animate-pulse" />
+                                    Pro Plan
+                                </h3>
+                                <ul className="space-y-3">
+                                    <li className="flex items-center gap-3 text-sm text-white font-medium">
+                                        <Check className="w-4 h-4 text-primary" />
+                                        Unlimited Portfolios
+                                    </li>
+                                    <li className="flex items-center gap-3 text-sm text-white font-medium">
+                                        <Check className="w-4 h-4 text-primary" />
+                                        Unlimited AI CV Parsing
+                                    </li>
+                                    <li className="flex items-center gap-3 text-sm text-white font-medium">
+                                        <Check className="w-4 h-4 text-primary" />
+                                        All 10+ Premium Templates
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
 
-                        {/* Features unlocked */}
-                        <div className="bg-muted/50 rounded-xl p-4 mb-6 text-left">
-                            <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                                <Crown className="w-4 h-4 text-amber-500" />
-                                You have full access to:
-                            </p>
-                            <ul className="space-y-2 text-sm text-muted-foreground">
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-green-500" />
-                                    Unlimited portfolio generations
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-green-500" />
-                                    All premium templates including Aurora & Cyber
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-green-500" />
-                                    No branding, full customization
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* CTA Buttons */}
-                        <div className="space-y-3">
+                        {/* CTA */}
+                        <div className="flex flex-col items-center gap-4">
                             <Button
-                                onClick={handleContinueFree}
-                                className="w-full h-12 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-green-500/25"
+                                onClick={handleUpgrade}
+                                className="w-full h-14 rounded-2xl bg-white text-black text-lg font-black hover:bg-white/90 shadow-xl shadow-white/5 transition-all group"
                             >
-                                <Rocket className="w-5 h-5 mr-2" />
-                                Continue for FREE! 🎉
+                                <Rocket className="w-5 h-5 mr-3 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                                Upgrade to Pro – $5/mo
                             </Button>
-
                             <button
-                                onClick={handleLearnMore}
-                                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                onClick={onClose}
+                                className="text-sm font-bold text-white/30 hover:text-white/60 transition-colors uppercase tracking-widest"
                             >
-                                Learn about upcoming Pro plans →
+                                Maybe later
                             </button>
                         </div>
-
-                        <p className="text-xs text-muted-foreground mt-4">
-                            💜 Enjoy early access! Pro subscriptions coming soon.
-                        </p>
                     </div>
                 </motion.div>
             </motion.div>
@@ -174,9 +148,31 @@ export default function ProPaywallModal({ isOpen, onClose, templateName, reason 
 // Pro Badge component for template cards
 export function ProBadge({ className = '' }: { className?: string }) {
     return (
-        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-bold shadow-lg ${className}`}>
-            <Crown className="w-3 h-3" />
-            PRO
+        <div className={cn(
+            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase relative overflow-hidden group border border-white/20 shadow-lg transition-all duration-500",
+            "bg-gradient-to-br from-[#e2e2e2] via-[#ffffff] to-[#999999] text-[#1a1a1a]",
+            className
+        )}>
+            {/* Glossy Reflective Layer */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+
+            {/* Animated Shine Sparkle */}
+            <motion.div
+                animate={{
+                    left: ['-100%', '200%'],
+                    opacity: [0, 1, 0]
+                }}
+                transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1
+                }}
+                className="absolute top-0 w-8 h-full bg-white/40 blur-md skew-x-[30deg] z-10 pointer-events-none"
+            />
+
+            <Crown className="w-3 h-3 transition-transform group-hover:scale-110" />
+            <span className="relative z-10 drop-shadow-sm">PRO</span>
         </div>
     );
 }

@@ -11,12 +11,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser } from '@/hooks/useUser';
-import { LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, LayoutDashboard, Crown, Sparkles } from 'lucide-react';
+import { ProBadge } from '../shared/pro-paywall-modal';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase/client';
 
 export default function UserProfileButton() {
-  const { user } = useUser();
+  const { user, isPro } = useUser();
 
   if (!user) {
     return null;
@@ -56,10 +57,13 @@ export default function UserProfileButton() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {displayName}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <div className="flex items-center justify-between gap-4">
+              <p className="text-sm font-bold leading-none truncate">
+                {displayName}
+              </p>
+              {isPro && <ProBadge className="scale-75 origin-right" />}
+            </div>
+            <p className="text-xs leading-none text-muted-foreground truncate">
               {user.email}
             </p>
           </div>

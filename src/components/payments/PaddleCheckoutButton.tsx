@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Loader2, Sparkles } from 'lucide-react';
-import { initializePaddle, openPaddleCheckout, PADDLE_PRICES } from '@/lib/paddle';
 import { useUser } from '@/hooks/useUser';
 import { useRouter } from 'next/navigation';
+import { usePaddle } from '@/hooks/use-paddle';
 
 interface PaddleCheckoutButtonProps {
     priceId?: string;
@@ -25,44 +25,40 @@ export function PaddleCheckoutButton({
     size = 'default',
 }: PaddleCheckoutButtonProps) {
     const [loading, setLoading] = useState(false);
-    const [paddleReady, setPaddleReady] = useState(false);
     const { user, loading: userLoading } = useUser();
     const router = useRouter();
-
-    // Initialize Paddle on mount
-    useEffect(() => {
-        initializePaddle().then(() => {
-            setPaddleReady(true);
-        });
-    }, []);
+    const { openCheckout, isLoaded } = usePaddle();
 
     const handleCheckout = async () => {
         if (!user) {
-            // Redirect to login if not authenticated
             router.push('/login?redirect=/pricing');
-            return;
-        }
-
-        if (!paddleReady) {
-            console.error('Paddle not ready');
             return;
         }
 
         setLoading(true);
 
         try {
-            // Determine price ID
-            const finalPriceId = priceId || PADDLE_PRICES[planType];
+            const finalPriceId = priceId || (planType === 'pro_lifetime'
+                ? process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID
+                : process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID);
 
-            await openPaddleCheckout({
+            if (!finalPriceId) {
+                console.error('Price ID missing');
+                setLoading(false);
+                return;
+            }
+
+            openCheckout({
                 priceId: finalPriceId,
-                userId: user.id,
-                userEmail: user.email || '',
-                userName: user.user_metadata?.display_name || user.email?.split('@')[0],
+                customerEmail: user.email || '',
+                customData: { userId: user.id },
+                onSuccess: () => {
+                    router.push('/dashboard?success=true');
+                },
+                onClose: () => setLoading(false)
             });
         } catch (error) {
             console.error('Checkout error:', error);
-        } finally {
             setLoading(false);
         }
     };
@@ -70,7 +66,7 @@ export function PaddleCheckoutButton({
     return (
         <Button
             onClick={handleCheckout}
-            disabled={loading || userLoading || !paddleReady}
+            disabled={loading || userLoading || !isLoaded}
             variant={variant}
             size={size}
             className={className}

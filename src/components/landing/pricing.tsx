@@ -10,9 +10,9 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useShine } from '@/hooks/use-shine';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
-import { initializePaddle, openPaddleCheckout, PADDLE_PRICES } from '@/lib/paddle';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/hooks/use-toast';
+import { usePaddle } from '@/hooks/use-paddle';
 
 function PricingCard({ plan, index }: { plan: any; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -109,19 +109,9 @@ export default function Pricing() {
   const router = useRouter();
   const { user } = useUser();
   const { toast } = useToast();
+  const { openCheckout } = usePaddle();
   const [dict, setDict] = useState<Dictionary['pricing']>(en.pricing);
-  const [paddleReady, setPaddleReady] = useState(false);
 
-  // Initialize Paddle
-  useEffect(() => {
-    initializePaddle()
-      .then(() => setPaddleReady(true))
-      .catch((err) => {
-        console.warn('Paddle init warning:', err);
-        // Still allow checkout attempts - Paddle may load later
-        setPaddleReady(true);
-      });
-  }, []);
 
   useEffect(() => {
     const fetchDict = async () => {
@@ -147,26 +137,25 @@ export default function Pricing() {
       return;
     }
 
-    // TODO: Remove this once Paddle is verified
-    toast({
-      title: ' Coming Soon!',
-      description: 'Pro subscriptions will be available very soon. Sign up for free to get notified!',
-    });
-    return;
-
-    // Open Paddle checkout (will work after verification)
-    // Note: Code below is unreachable until Paddle verification is complete
-    /*
+    // Open Paddle checkout
     try {
       const priceId = planId === 'pro_monthly'
-        ? PADDLE_PRICES.pro_monthly
-        : PADDLE_PRICES.pro_lifetime;
+        ? process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID
+        : process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID;
 
-      await openPaddleCheckout({
+      if (!priceId) {
+        toast({ title: "Config Error", description: "Price ID not found.", variant: 'destructive' });
+        return;
+      }
+
+      openCheckout({
         priceId,
-        userId: user?.id || '',
-        userEmail: user?.email || '',
-        userName: user?.user_metadata?.display_name,
+        customerEmail: user?.email || '',
+        customData: { userId: user?.id },
+        onSuccess: () => {
+          toast({ title: "Success!", description: "Welcome to Pro!" });
+          router.push('/dashboard');
+        }
       });
     } catch (error) {
       toast({
@@ -175,7 +164,6 @@ export default function Pricing() {
         variant: 'destructive',
       });
     }
-    */
   };
 
   const plans = [
@@ -197,10 +185,9 @@ export default function Pricing() {
     {
       id: 'pro',
       name: 'Pro Monthly',
-      price: '$2',
-      originalPrice: '$5',
-      period: 'first month, then $5/mo',
-      badge: '60% OFF First Month',
+      price: '$5',
+      period: 'per month',
+      badge: 'Popular',
       features: [
         'Unlimited Portfolios',
         'All Premium Templates',
@@ -209,25 +196,24 @@ export default function Pricing() {
         'Priority Support',
         'No Watermark',
       ],
-      buttonText: 'Start for $2',
+      buttonText: 'Get Started',
       onClick: () => handleSubscribe('pro_monthly'),
     },
     {
-      id: 'annual',
-      name: 'Pro Annual',
+      id: 'lifetime',
+      name: 'Lifetime Access',
       price: '$15',
-      period: '/year',
-      badge: '30 Days Free Trial',
-      savings: 'Save 75% vs Monthly',
+      period: 'one-time payment',
+      badge: 'Best Value',
+      savings: 'Save $45/year',
       features: [
         'Everything in Pro Monthly',
-        '30-Day Free Trial',
-        'Billed Annually',
-        'Best Value',
+        'Pay Once, Own Forever',
+        'All Future Templates',
         'Priority Support',
         'Early Access to Features',
       ],
-      buttonText: 'Try Free for 30 Days',
+      buttonText: 'Get Lifetime Access',
       onClick: () => handleSubscribe('pro_lifetime'),
     },
   ];

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Pen, Layout, Grid, Settings, Eye, ChevronRight, Rocket, Monitor, Tablet, Smartphone } from 'lucide-react';
+import { Pen, Layout, Grid, Settings, Eye, ChevronRight, Rocket, Monitor, Tablet, Smartphone, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ interface SidebarNavProps {
     isPublishing: boolean;
     previewDevice?: 'desktop' | 'tablet' | 'mobile';
     setPreviewDevice?: (device: 'desktop' | 'tablet' | 'mobile') => void;
+    isPro?: boolean;
 }
 
 const NAV_ITEMS = [
@@ -24,7 +25,7 @@ const NAV_ITEMS = [
     // { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
-export function SidebarNav({ activeTab, setActiveTab, onPublish, isPublishing, previewDevice = 'desktop', setPreviewDevice }: SidebarNavProps) {
+export function SidebarNav({ activeTab, setActiveTab, onPublish, isPublishing, previewDevice = 'desktop', setPreviewDevice, isPro = false }: SidebarNavProps) {
     const router = useRouter();
 
     return (
@@ -111,6 +112,11 @@ export function SidebarNav({ activeTab, setActiveTab, onPublish, isPublishing, p
                     disabled={isPublishing}
                     className="w-full h-16 rounded-2xl text-base font-black relative overflow-hidden group transition-all duration-500 transform hover:scale-[1.02] active:scale-[0.98] border-0 bg-white text-black hover:bg-white/90 shadow-lg"
                 >
+                    {!isPro && (
+                        <div className="absolute top-0 right-0 p-1.5">
+                            <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                        </div>
+                    )}
                     {/* Content */}
                     <div className="flex items-center justify-center gap-3 h-full">
                         {isPublishing ? (

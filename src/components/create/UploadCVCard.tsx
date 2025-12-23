@@ -7,13 +7,16 @@ import type { Dictionary } from '@/lib/dictionaries';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { ProBadge } from '@/components/shared/pro-paywall-modal';
+
 interface UploadCVCardProps {
   onContinue: (cvFile: File, photoFile: File | null) => Promise<void>;
   isProcessing: boolean;
   dict: Dictionary['createPage']['uploadCard'];
+  isPro?: boolean;
 }
 
-export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadCVCardProps) {
+export default function UploadCVCard({ onContinue, isProcessing, dict, isPro = false }: UploadCVCardProps) {
   const [cvFile, setCvFile] = React.useState<File | null>(null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(null);
@@ -114,10 +117,16 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
 
   return (
     <div
-      className="h-full flex flex-col p-8 md:p-10"
+      className="h-full flex flex-col p-8 md:p-10 relative overflow-hidden"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      {!isPro && (
+        <div className="absolute top-10 right-10 z-20">
+          <ProBadge className="px-3 py-1.5 text-sm" />
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-6">
         <motion.h2
@@ -255,6 +264,12 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
               </motion.div>
             ) : (
               <>
+                {!isPro && (
+                  <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest border border-primary/20">
+                    <Sparkles className="w-3 h-3" />
+                    AI CV Extraction Powered
+                  </div>
+                )}
                 <p className="text-xl font-bold text-foreground mb-2 tracking-tight">
                   {dict.dropzone.label}
                 </p>
