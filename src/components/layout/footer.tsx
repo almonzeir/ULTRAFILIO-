@@ -12,7 +12,11 @@ import Link from 'next/link';
 import { useShine } from '@/hooks/use-shine';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
-export default function Footer() {
+interface FooterProps {
+  hideCTA?: boolean;
+}
+
+export default function Footer({ hideCTA = false }: FooterProps) {
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const { language } = useLanguage();
   const [dict, setDict] = useState<Dictionary['footer']>(en.footer);
@@ -48,41 +52,43 @@ export default function Footer() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12">
 
-        {/* Main CTA Card - Frosted Glass */}
-        <motion.div
-          ref={ctaCardRef}
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true }}
-          className="mb-24 liquid-glass-card rounded-[2.5rem] sm:rounded-[3rem] p-12 sm:p-16 lg:p-20 text-center"
-        >
-          <div className="max-w-3xl mx-auto">
-            {/* Headline - Metallic Gradient */}
-            <h3 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
-              <span className="bg-gradient-to-b from-white via-white to-white/50 bg-clip-text text-transparent">
-                Start Your Legacy
-              </span>
-            </h3>
+        {/* Main CTA Card - Frosted Glass (hidden on dashboard) */}
+        {!hideCTA && (
+          <motion.div
+            ref={ctaCardRef}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true }}
+            className="mb-24 liquid-glass-card rounded-[2.5rem] sm:rounded-[3rem] p-12 sm:p-16 lg:p-20 text-center"
+          >
+            <div className="max-w-3xl mx-auto">
+              {/* Headline - Metallic Gradient */}
+              <h3 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+                <span className="bg-gradient-to-b from-white via-white to-white/50 bg-clip-text text-transparent">
+                  Start Your Legacy
+                </span>
+              </h3>
 
-            {/* Subtitle */}
-            <p className="text-lg sm:text-xl text-white/50 mb-12 font-medium leading-relaxed max-w-xl mx-auto">
-              Deploy your world-class portfolio now with crystalline precision.
-            </p>
+              {/* Subtitle */}
+              <p className="text-lg sm:text-xl text-white/50 mb-12 font-medium leading-relaxed max-w-xl mx-auto">
+                Deploy your world-class portfolio now with crystalline precision.
+              </p>
 
-            {/* CTA Button - Liquid Metal */}
-            <Link
-              ref={ctaBtnRef}
-              href="/create"
-              className="liquid-button-primary group inline-flex items-center gap-4 h-16 sm:h-20 px-12 sm:px-16 rounded-full text-lg sm:text-xl font-semibold"
-            >
-              <span className="relative z-10 flex items-center gap-3">
-                Launch Now — Free
-                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-          </div>
-        </motion.div>
+              {/* CTA Button - Liquid Metal */}
+              <Link
+                ref={ctaBtnRef}
+                href="/create"
+                className="liquid-button-primary group inline-flex items-center gap-4 h-16 sm:h-20 px-12 sm:px-16 rounded-full text-lg sm:text-xl font-semibold"
+              >
+                <span className="relative z-10 flex items-center gap-3">
+                  Launch Now — Free
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Link>
+            </div>
+          </motion.div>
+        )}
 
         {/* Footer Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20">

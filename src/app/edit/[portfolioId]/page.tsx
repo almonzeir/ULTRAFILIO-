@@ -851,7 +851,7 @@ export default function EditPortfolioPage() {
                         <div className="w-full h-full flex flex-col bg-[#050510]">
                             {/* Preview Controls Bar */}
                             <div className="flex items-center justify-between p-3 bg-black/40 border-b border-white/5">
-                                <div className="text-xs text-white/40">
+                                <div className="hidden sm:block text-xs text-white/40">
                                     Previewing: <span className="text-white font-medium">{AVAILABLE_TEMPLATES.find(t => t.id === templateId)?.name}</span>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -915,7 +915,7 @@ export default function EditPortfolioPage() {
                                             title="Dark Mode"
                                         >
                                             <Moon className="w-3.5 h-3.5" />
-                                            <span className="hidden sm:inline">Dark</span>
+                                            <span>Dark</span>
                                         </button>
                                         <button
                                             onClick={() => setIsDarkMode(false)}
@@ -928,24 +928,11 @@ export default function EditPortfolioPage() {
                                             title="Light Mode"
                                         >
                                             <Sun className="w-3.5 h-3.5" />
-                                            <span className="hidden sm:inline">Light</span>
+                                            <span>Light</span>
                                         </button>
                                     </div>
 
-                                    {/* Unique Style Notice for Cyber */}
-                                    <AnimatePresence>
-                                        {templateId === 'cyber' && (
-                                            <motion.div
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: 20 }}
-                                                className="bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2"
-                                            >
-                                                <Sparkles className="w-3 h-3 text-cyan-400" />
-                                                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Unique 3D Experience • Fixed Aesthetic</span>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
+
                                 </div>
                             </div>
 
@@ -956,11 +943,11 @@ export default function EditPortfolioPage() {
                                         className={cn(
                                             "border-0 select-none bg-neutral-900 transition-all duration-500 shadow-2xl",
                                             previewDevice === 'desktop' && "w-full h-full",
-                                            previewDevice === 'tablet' && "w-[768px] h-[1024px] mx-auto mt-8 rounded-[2rem] border-8 border-neutral-800",
-                                            previewDevice === 'mobile' && "w-[375px] h-[667px] mx-auto mt-8 rounded-[3rem] border-8 border-neutral-800"
+                                            previewDevice === 'tablet' && "w-[768px] h-[1024px] mx-auto mt-4 rounded-[2rem] border-8 border-neutral-800",
+                                            previewDevice === 'mobile' && "w-[375px] h-[667px] mx-auto mt-4 rounded-[2.5rem] border-[6px] border-neutral-800"
                                         )}
                                         style={previewDevice !== 'desktop' ? {
-                                            transform: `scale(${isMobileView ? 0.5 : 0.8})`,
+                                            transform: `scale(${previewDevice === 'tablet' ? 0.35 : 0.45})`,
                                             transformOrigin: 'top center'
                                         } : {}}
                                         title="Portfolio Preview"

@@ -83,7 +83,7 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                 </div>
             </div>
 
-            <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12">
+            <div className="relative z-10 container mx-auto px-4 pt-36 sm:pt-40 md:pt-44 pb-15 sm:pb-18">
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -93,9 +93,8 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                         transition={{ duration: 0.6 }}
                     >
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-                            <span className="silver-text relative inline-block">
+                            <span className="silver-text">
                                 My Portfolios
-                                <Sparkles className="absolute -top-6 -right-8 w-6 h-6 text-white/40 animate-pulse" />
                             </span>
                         </h1>
                         <p className="text-lg text-white/50 font-medium max-w-lg">
@@ -109,7 +108,7 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
                         <Link href="/create">
-                            <button className="liquid-silver-button group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide">
+                            <button className="group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide bg-gradient-to-b from-white to-gray-200 text-gray-900 shadow-[0_4px_20px_rgba(255,255,255,0.3),0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_4px_30px_rgba(255,255,255,0.5),0_0_50px_rgba(255,255,255,0.2)] hover:from-white hover:to-white transition-all duration-300">
                                 <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                                 Create New Portfolio
                             </button>
@@ -190,11 +189,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <Edit className="w-4 h-4" /> Edit
                                             </button>
                                         </Link>
-                                        <Link href={`/portfolio/${portfolio.id}`} target="_blank">
-                                            <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white border border-white/20 font-semibold text-sm hover:bg-white/20 hover:scale-105 transition-all duration-300">
-                                                <Eye className="w-4 h-4" /> View
-                                            </button>
-                                        </Link>
                                     </div>
                                 </div>
 
@@ -220,11 +214,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
                                                     <Link href={`/edit/${portfolio.id}`}>
                                                         <Edit className="mr-2 h-4 w-4" /> Edit
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
-                                                    <Link href={`/portfolio/${portfolio.id}`} target="_blank">
-                                                        <ExternalLink className="mr-2 h-4 w-4" /> Preview
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <AlertDialog>
