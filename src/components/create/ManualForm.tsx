@@ -11,55 +11,63 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, PlusCircle, Trash2 } from 'lucide-react';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { sanitizeInput, containsDangerousPattern } from '@/lib/validation';
 
-// Zod Schema for validation - RELAXED for easier user experience
-// Only name and email are truly required, everything else is optional!
+// Security: Custom refinement to check for dangerous patterns
+const safeString = (maxLength: number = 500) => z.string().max(maxLength).refine(
+  (val) => !val || !containsDangerousPattern(val),
+  { message: 'Invalid characters detected' }
+);
+
+// Zod Schema for validation with security checks
 const experienceSchema = z.object({
-  jobTitle: z.string().optional(),
-  company: z.string().optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
-  description: z.string().optional(),
+  jobTitle: safeString(100).optional(),
+  company: safeString(100).optional(),
+  startDate: safeString(50).optional(),
+  endDate: safeString(50).optional(),
+  description: safeString(2000).optional(),
 });
 
 const educationSchema = z.object({
-  degree: z.string().optional(),
-  institution: z.string().optional(),
-  startYear: z.string().optional(),
-  endYear: z.string().optional(),
+  degree: safeString(100).optional(),
+  institution: safeString(100).optional(),
+  startYear: safeString(20).optional(),
+  endYear: safeString(20).optional(),
 });
 
 const projectSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  technologies: z.string().optional(),
-  link: z.string().optional(),
+  title: safeString(100).optional(),
+  description: safeString(1000).optional(),
+  technologies: safeString(200).optional(),
+  link: z.string().url().optional().or(z.literal('')),
   imageUrl: z.string().optional(),
 });
 
 const certificateSchema = z.object({
-  name: z.string().optional(),
-  organization: z.string().optional(),
-  year: z.string().optional(),
+  name: safeString(100).optional(),
+  organization: safeString(100).optional(),
+  year: safeString(20).optional(),
 });
 
 const languageSchema = z.object({
-  language: z.string().optional(),
-  proficiency: z.string().optional(),
+  language: safeString(50).optional(),
+  proficiency: safeString(50).optional(),
 });
 
-// MAIN FORM: Only name and email are required!
+// MAIN FORM: Only name is required
 const formSchema = z.object({
-  fullName: z.string().min(2, 'Full name is required'),
-  professionalTitle: z.string().optional(), // Optional now!
-  summary: z.string().max(500).optional(),
-  location: z.string().optional(),
-  email: z.string().email('Invalid email address').or(z.literal('')), // Can be empty
-  phone: z.string().optional(),
-  // REMOVED: website field - users haven't created a portfolio yet!
-  linkedin: z.string().optional(),
-  github: z.string().optional(),
-  skills: z.string().optional(),
+  fullName: z.string().min(2, 'Full name is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters in name' }
+  ),
+  professionalTitle: safeString(100).optional(),
+  summary: safeString(500).optional(),
+  location: safeString(100).optional(),
+  email: z.string().email('Invalid email address').max(254).or(z.literal('')),
+  phone: z.string().max(30).optional(),
+  linkedin: z.string().url().optional().or(z.literal('')),
+  github: z.string().url().optional().or(z.literal('')),
+  skills: safeString(500).optional(),
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
   projects: z.array(projectSchema),
@@ -70,9 +78,9 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const ProgressBar = ({ step }: { step: number }) => (
-  <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2.5 mb-12">
+  <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2.5 mb-12">
     <div
-      className="bg-gradient-to-r from-blue-500 to-purple-600 h-2.5 rounded-full transition-all duration-500"
+      className="bg-gradient-to-r from-white/80 to-white h-2.5 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
       style={{ width: `${(step / 3) * 100}%` }}
     />
   </div>
@@ -231,11 +239,11 @@ export default function ManualForm({
               <h3 className="text-2xl font-semibold mb-8">{dict.step1.title}</h3>
 
               {/* Photo Upload with Preview */}
-              <div className="mb-8 p-6 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950 dark:to-purple-950 rounded-xl border-2 border-dashed border-violet-300 dark:border-violet-700">
+              <div className="mb-8 p-6 bg-gradient-to-r from-gray-100 to-slate-100 dark:from-white/5 dark:to-white/10 rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20">
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   {/* Preview Circle */}
                   <div className="relative group">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-white/20 shadow-xl bg-gradient-to-br from-gray-100 to-slate-100 dark:from-white/10 dark:to-white/5 flex items-center justify-center">
                       {photoPreview ? (
                         <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
                       ) : (
@@ -266,12 +274,12 @@ export default function ManualForm({
                   {/* Upload Button */}
                   <div className="flex-1 text-center md:text-left">
                     <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-                      📸 Profile Photo (Optional)
+                      Profile Photo (Optional)
                     </h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                       Upload your photo to personalize your portfolio
                     </p>
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-semibold rounded-xl hover:shadow-lg transition-all transform hover:scale-105">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-white dark:to-gray-200 text-white dark:text-black font-semibold rounded-xl hover:shadow-lg transition-all transform hover:scale-105">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                       </svg>
@@ -284,7 +292,7 @@ export default function ManualForm({
                       />
                     </label>
                     <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                      JPG, PNG, or GIF • Max 5MB
+                      JPG, PNG, or GIF - Max 5MB
                     </p>
                   </div>
                 </div>
@@ -321,7 +329,7 @@ export default function ManualForm({
               </div>
               <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  💡 Only your name is required. Fill what you can, skip the rest!
+                  Only your name is required. Fill what you can, skip the rest!
                 </p>
                 <div className="flex gap-3">
                   <Button onClick={skipToEnd} type="button" variant="ghost" className="text-gray-500">
@@ -386,7 +394,7 @@ export default function ManualForm({
 
               <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  💡 All fields are optional. Add what you have!
+                  All fields are optional. Add what you have!
                 </p>
                 <div className="flex gap-3">
                   <Button onClick={prevStep} type="button" variant="outline">{dict.step2.backButton}</Button>
@@ -418,10 +426,10 @@ export default function ManualForm({
                       <Input {...register(`projects.${index}.technologies`)} placeholder={dict.step3.projects.technologies} className="md:col-span-2" />
 
                       {/* Project Image Upload */}
-                      <div className="md:col-span-2 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 rounded-lg border border-dashed border-blue-300 dark:border-blue-700">
+                      <div className="md:col-span-2 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-white/5 dark:to-white/10 rounded-lg border border-dashed border-gray-300 dark:border-white/20">
                         <div className="flex items-center gap-4">
                           {/* Image Preview */}
-                          <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700">
+                          <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex items-center justify-center border border-gray-200 dark:border-white/10">
                             {projectImages[index]?.preview ? (
                               <img src={projectImages[index].preview!} alt="Project preview" className="w-full h-full object-cover" />
                             ) : (
@@ -433,9 +441,9 @@ export default function ManualForm({
 
                           {/* Upload Button */}
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">📸 Project Screenshot (Optional)</p>
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project Screenshot (Optional)</p>
                             <div className="flex gap-2">
-                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-white text-white dark:text-black text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                 </svg>
