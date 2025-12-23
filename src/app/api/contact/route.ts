@@ -17,11 +17,11 @@ export async function POST(request: NextRequest) {
         }
 
         // Send email notification
-        // FROM: Uses verified domain (will work once ultrafolio.app is verified in Resend)
-        // TO: Your Freehostia inbox
+        // FROM: Using Resend's default domain (no verification needed)
+        // TO: Your personal email
         const { data, error } = await resend.emails.send({
-            from: 'UltraFolio Contact <support@ultrafolio.app>',
-            to: ['support@ultrafolio.app'],
+            from: 'UltraFolio Contact <onboarding@resend.dev>',
+            to: ['faisalkhrisan@gmail.com'],
             subject: `New Contact Form Submission from ${firstName} ${lastName}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

@@ -176,7 +176,6 @@ export default function ContactPage() {
                                             <div className="flex gap-4">
                                                 <a href="https://www.linkedin.com/company/ultrafolio/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/80 transition-colors">LinkedIn</a>
                                                 <a href="https://instagram.com/ultrafolio.app" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/80 transition-colors">Instagram</a>
-                                                <a href="https://x.com/ultrafolioapp" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/80 transition-colors">Twitter/X</a>
                                             </div>
                                         </div>
                                     </div>
