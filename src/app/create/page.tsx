@@ -692,7 +692,7 @@ export default function CreatePortfolioPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#050510] font-sans selection:bg-primary/20">
       <Header />
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 pt-16 md:pt-24 relative overflow-hidden">
+      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 pt-32 md:pt-40 relative overflow-hidden">
 
         {/* Living Background */}
         <MeshGradientBackground />

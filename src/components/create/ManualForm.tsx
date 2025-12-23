@@ -20,23 +20,41 @@ const safeString = (maxLength: number = 500) => z.string().max(maxLength).refine
 );
 
 // Zod Schema for validation with security checks
+// Experience: Job Title and Company Name are required
 const experienceSchema = z.object({
-  jobTitle: safeString(100).optional(),
-  company: safeString(100).optional(),
+  jobTitle: z.string().min(1, 'Job title is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters' }
+  ),
+  company: z.string().min(1, 'Company name is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters' }
+  ),
   startDate: safeString(50).optional(),
   endDate: safeString(50).optional(),
   description: safeString(2000).optional(),
 });
 
+// Education: Degree and Institution are required
 const educationSchema = z.object({
-  degree: safeString(100).optional(),
-  institution: safeString(100).optional(),
+  degree: z.string().min(1, 'Degree is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters' }
+  ),
+  institution: z.string().min(1, 'Institution is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters' }
+  ),
   startYear: safeString(20).optional(),
   endYear: safeString(20).optional(),
 });
 
+// Projects: Title is required
 const projectSchema = z.object({
-  title: safeString(100).optional(),
+  title: z.string().min(1, 'Project title is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters' }
+  ),
   description: safeString(1000).optional(),
   technologies: safeString(200).optional(),
   link: z.string().url().optional().or(z.literal('')),
@@ -54,23 +72,26 @@ const languageSchema = z.object({
   proficiency: safeString(50).optional(),
 });
 
-// MAIN FORM: Only name is required
+// MAIN FORM: Fields marked with * are required
 const formSchema = z.object({
   fullName: z.string().min(2, 'Full name is required').max(100).refine(
     (val) => !containsDangerousPattern(val),
     { message: 'Invalid characters in name' }
   ),
-  professionalTitle: safeString(100).optional(),
+  professionalTitle: z.string().min(2, 'Professional title is required').max(100).refine(
+    (val) => !containsDangerousPattern(val),
+    { message: 'Invalid characters in title' }
+  ),
   summary: safeString(500).optional(),
   location: safeString(100).optional(),
-  email: z.string().email('Invalid email address').max(254).or(z.literal('')),
+  email: z.string().min(1, 'Email is required').email('Invalid email address').max(254),
   phone: z.string().max(30).optional(),
   linkedin: z.string().url().optional().or(z.literal('')),
   github: z.string().url().optional().or(z.literal('')),
   skills: safeString(500).optional(),
-  experience: z.array(experienceSchema),
-  education: z.array(educationSchema),
-  projects: z.array(projectSchema),
+  experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
+  education: z.array(educationSchema).min(1, 'At least one education entry is required'),
+  projects: z.array(projectSchema).min(1, 'At least one project is required'),
   certifications: z.array(certificateSchema),
   languages: z.array(languageSchema),
 });
@@ -193,11 +214,14 @@ export default function ManualForm({
 
 
   const nextStep = async () => {
-    // Only validate required fields - name is the only truly required field!
-    const fieldsToValidate: (keyof FormData)[] =
-      step === 1
-        ? ['fullName'] // Only name required, everything else optional
-        : []; // Other steps have no required fields
+    // Validate required fields based on current step
+    let fieldsToValidate: (keyof FormData)[] = [];
+
+    if (step === 1) {
+      fieldsToValidate = ['fullName', 'professionalTitle', 'email'];
+    } else if (step === 2) {
+      fieldsToValidate = ['experience', 'education'];
+    }
 
     const isValid = await trigger(fieldsToValidate as any);
     if (isValid) {
@@ -222,18 +246,23 @@ export default function ManualForm({
   };
 
   return (
-    <div className="min-h-screen bg-[#050A14] text-white px-3 sm:px-6 py-6 sm:py-12">
+    <div className="min-h-screen bg-[#050A14] text-white px-4 sm:px-6 pt-32 sm:pt-40 pb-12">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="max-w-4xl mx-auto">
           {/* Progress Header */}
-          <div className="flex items-center gap-3 mb-6">
-            {step === 1 && (
-              <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 border border-white/10 hover:bg-white/5">
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            )}
+          <div className="flex items-center gap-2 sm:gap-4 mb-8">
+            {/* Back Button - Goes back to previous step or exits on step 1 */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={step === 1 ? onBack : prevStep}
+              className="shrink-0 h-8 w-8 sm:h-10 sm:w-10 border border-white/10 hover:bg-white/5"
+            >
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
             <ProgressBar step={step} />
-            <span className="text-sm text-white/50 shrink-0">{step}/3</span>
+            <span className="text-xs sm:text-sm text-white/50 shrink-0">{step}/3</span>
           </div>
 
           {/* Glass Card */}
@@ -335,7 +364,7 @@ export default function ManualForm({
                 {/* Step 1 Navigation */}
                 <div className="mt-8 pt-6 border-t border-white/10">
                   <p className="text-sm text-white/40 mb-4 text-center sm:text-left">
-                    Only your name is required. Fill what you can, skip the rest!
+                    Fields marked with * are required. Fill what you can, skip the rest!
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
                     <Button onClick={skipToEnd} type="button" variant="ghost" className="w-full sm:w-auto text-white/50 hover:text-white">
@@ -356,16 +385,31 @@ export default function ManualForm({
                 {/* Experience */}
                 <div className="mb-8">
                   <h4 className="text-xl font-semibold mb-4">{dict.step2.experience.title}</h4>
+                  {errors.experience && typeof errors.experience === 'object' && 'message' in errors.experience && (
+                    <p className="text-red-500 text-sm mb-4">{errors.experience.message as string}</p>
+                  )}
                   {experienceFields.map((field, index) => (
-                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                      <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
-                      <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
+                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border border-white/10 p-4 rounded-lg mb-4 relative">
+                      <div>
+                        <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
+                        {errors.experience?.[index]?.jobTitle && (
+                          <p className="text-red-500 text-sm mt-1">{errors.experience[index]?.jobTitle?.message}</p>
+                        )}
+                      </div>
+                      <div>
+                        <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
+                        {errors.experience?.[index]?.company && (
+                          <p className="text-red-500 text-sm mt-1">{errors.experience[index]?.company?.message}</p>
+                        )}
+                      </div>
                       <Input {...register(`experience.${index}.startDate`)} placeholder={dict.step2.experience.startDate} />
                       <Input {...register(`experience.${index}.endDate`)} placeholder={dict.step2.experience.endDate} />
                       <Textarea {...register(`experience.${index}.description`)} placeholder={dict.step2.experience.description} className="md:col-span-2" rows={3} />
-                      <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {experienceFields.length > 1 && (
+                        <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                   <Button type="button" variant="outline" onClick={() => appendExperience({ jobTitle: '', company: '', startDate: '', endDate: '', description: '' })}>
@@ -376,15 +420,30 @@ export default function ManualForm({
                 {/* Education */}
                 <div className="mb-8">
                   <h4 className="text-xl font-semibold mb-4">{dict.step2.education.title}</h4>
+                  {errors.education && typeof errors.education === 'object' && 'message' in errors.education && (
+                    <p className="text-red-500 text-sm mb-4">{errors.education.message as string}</p>
+                  )}
                   {educationFields.map((field, index) => (
-                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                      <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
-                      <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
+                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border border-white/10 p-4 rounded-lg mb-4 relative">
+                      <div>
+                        <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
+                        {errors.education?.[index]?.degree && (
+                          <p className="text-red-500 text-sm mt-1">{errors.education[index]?.degree?.message}</p>
+                        )}
+                      </div>
+                      <div>
+                        <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
+                        {errors.education?.[index]?.institution && (
+                          <p className="text-red-500 text-sm mt-1">{errors.education[index]?.institution?.message}</p>
+                        )}
+                      </div>
                       <Input {...register(`education.${index}.startYear`)} placeholder={dict.step2.education.startYear} />
                       <Input {...register(`education.${index}.endYear`)} placeholder={dict.step2.education.endYear} />
-                      <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {educationFields.length > 1 && (
+                        <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                   <Button type="button" variant="outline" onClick={() => appendEducation({ degree: '', institution: '', startYear: '', endYear: '' })}>
@@ -425,10 +484,18 @@ export default function ManualForm({
                 {/* Projects */}
                 <div className="mb-8">
                   <h4 className="text-xl font-semibold mb-4">{dict.step3.projects.title}</h4>
+                  {errors.projects && typeof errors.projects === 'object' && 'message' in errors.projects && (
+                    <p className="text-red-500 text-sm mb-4">{errors.projects.message as string}</p>
+                  )}
                   {projectFields.map((field, index) => (
-                    <div key={field.id} className="border p-4 rounded-lg mb-4 relative">
+                    <div key={field.id} className="border border-white/10 p-4 rounded-lg mb-4 relative">
                       <div className="grid md:grid-cols-2 gap-4">
-                        <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
+                        <div>
+                          <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
+                          {errors.projects?.[index]?.title && (
+                            <p className="text-red-500 text-sm mt-1">{errors.projects[index]?.title?.message}</p>
+                          )}
+                        </div>
                         <div>
                           <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
                           {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
@@ -483,9 +550,11 @@ export default function ManualForm({
                           </div>
                         </div>
                       </div>
-                      <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {projectFields.length > 1 && (
+                        <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                   <Button type="button" variant="outline" onClick={() => appendProject({ title: '', description: '', technologies: '', link: '', imageUrl: '' })}>
