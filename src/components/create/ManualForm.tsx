@@ -78,9 +78,9 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 const ProgressBar = ({ step }: { step: number }) => (
-  <div className="w-full bg-gray-200 dark:bg-white/10 rounded-full h-2.5 mb-12">
+  <div className="flex-1 w-full bg-white/5 rounded-full h-2">
     <div
-      className="bg-gradient-to-r from-white/80 to-white h-2.5 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+      className="bg-gradient-to-r from-white/70 to-white h-full rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(255,255,255,0.4)]"
       style={{ width: `${(step / 3) * 100}%` }}
     />
   </div>
@@ -222,308 +222,327 @@ export default function ManualForm({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-black dark:to-gray-900 text-gray-900 dark:text-white px-6 py-20">
+    <div className="min-h-screen bg-[#050A14] text-white px-3 sm:px-6 py-6 sm:py-12">
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="max-w-5xl mx-auto p-8 bg-white dark:bg-gray-950 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800">
-          <div className="flex items-center mb-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Progress Header */}
+          <div className="flex items-center gap-3 mb-6">
             {step === 1 && (
-              <Button variant="ghost" size="icon" onClick={onBack} className="mr-4">
-                <ArrowLeft className="h-6 w-6" />
+              <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 border border-white/10 hover:bg-white/5">
+                <ArrowLeft className="h-5 w-5" />
               </Button>
             )}
             <ProgressBar step={step} />
+            <span className="text-sm text-white/50 shrink-0">{step}/3</span>
           </div>
 
-          {step === 1 && (
-            <div>
-              <h3 className="text-2xl font-semibold mb-8">{dict.step1.title}</h3>
+          {/* Glass Card */}
+          <div className="liquid-glass-card p-4 sm:p-6 md:p-8">
 
-              {/* Photo Upload with Preview */}
-              <div className="mb-8 p-6 bg-gradient-to-r from-gray-100 to-slate-100 dark:from-white/5 dark:to-white/10 rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20">
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                  {/* Preview Circle */}
-                  <div className="relative group">
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-white/20 shadow-xl bg-gradient-to-br from-gray-100 to-slate-100 dark:from-white/10 dark:to-white/5 flex items-center justify-center">
-                      {photoPreview ? (
-                        <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="text-center text-gray-400">
-                          <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            {step === 1 && (
+              <div>
+                <h3 className="text-2xl font-semibold mb-8">{dict.step1.title}</h3>
+
+                {/* Photo Upload with Preview */}
+                <div className="mb-8 p-6 bg-gradient-to-r from-gray-100 to-slate-100 dark:from-white/5 dark:to-white/10 rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20">
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    {/* Preview Circle */}
+                    <div className="relative group">
+                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-white/20 shadow-xl bg-gradient-to-br from-gray-100 to-slate-100 dark:from-white/10 dark:to-white/5 flex items-center justify-center">
+                        {photoPreview ? (
+                          <img src={photoPreview} alt="Profile preview" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-center text-gray-400">
+                            <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            <p className="text-xs">No Photo</p>
+                          </div>
+                        )}
+                      </div>
+                      {photoPreview && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setPhotoPreview(null);
+                            setPhotoFile(null);
+                          }}
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
-                          <p className="text-xs">No Photo</p>
-                        </div>
+                        </button>
                       )}
                     </div>
-                    {photoPreview && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPhotoPreview(null);
-                          setPhotoFile(null);
-                        }}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+
+                    {/* Upload Button */}
+                    <div className="flex-1 text-center md:text-left">
+                      <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+                        Profile Photo (Optional)
+                      </h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Upload your photo to personalize your portfolio
+                      </p>
+                      <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-white dark:to-gray-200 text-white dark:text-black font-semibold rounded-xl hover:shadow-lg transition-all transform hover:scale-105">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
-                      </button>
-                    )}
-                  </div>
-
-                  {/* Upload Button */}
-                  <div className="flex-1 text-center md:text-left">
-                    <h4 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-                      Profile Photo (Optional)
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Upload your photo to personalize your portfolio
-                    </p>
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-900 dark:from-white dark:to-gray-200 text-white dark:text-black font-semibold rounded-xl hover:shadow-lg transition-all transform hover:scale-105">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      <span>{photoPreview ? 'Change Photo' : 'Upload Photo'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handlePhotoChange}
-                        className="hidden"
-                      />
-                    </label>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                      JPG, PNG, or GIF - Max 5MB
-                    </p>
+                        <span>{photoPreview ? 'Change Photo' : 'Upload Photo'}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePhotoChange}
+                          className="hidden"
+                        />
+                      </label>
+                      <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                        JPG, PNG, or GIF - Max 5MB
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <Input {...register('fullName')} placeholder={`${dict.step1.fullName} *`} />
-                  {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Input {...register('fullName')} placeholder={`${dict.step1.fullName} *`} />
+                    {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>}
+                  </div>
+                  <div>
+                    <Input {...register('professionalTitle')} placeholder={`${dict.step1.professionalTitle} *`} />
+                    {errors.professionalTitle && <p className="text-red-500 text-sm mt-1">{errors.professionalTitle.message}</p>}
+                  </div>
+                  <div className="md:col-span-2">
+                    <Textarea {...register('summary')} placeholder={dict.step1.summary} maxLength={250} rows={4} />
+                    {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary.message}</p>}
+                  </div>
+                  <Input {...register('location')} placeholder={dict.step1.location} />
+                  <div>
+                    <Input {...register('email')} type="email" placeholder={`${dict.step1.email} *`} />
+                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                  </div>
+                  <Input {...register('phone')} type="tel" placeholder={dict.step1.phone} />
+                  {/* REMOVED: Website/Portfolio field - user creates portfolio first, gets link after! */}
+                  <div>
+                    <Input {...register('linkedin')} type="url" placeholder="LinkedIn" />
+                    {errors.linkedin && <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>}
+                  </div>
+                  <div>
+                    <Input {...register('github')} type="url" placeholder="GitHub" />
+                    {errors.github && <p className="text-red-500 text-sm mt-1">{errors.github.message}</p>}
+                  </div>
                 </div>
-                <div>
-                  <Input {...register('professionalTitle')} placeholder={`${dict.step1.professionalTitle} *`} />
-                  {errors.professionalTitle && <p className="text-red-500 text-sm mt-1">{errors.professionalTitle.message}</p>}
-                </div>
-                <div className="md:col-span-2">
-                  <Textarea {...register('summary')} placeholder={dict.step1.summary} maxLength={250} rows={4} />
-                  {errors.summary && <p className="text-red-500 text-sm mt-1">{errors.summary.message}</p>}
-                </div>
-                <Input {...register('location')} placeholder={dict.step1.location} />
-                <div>
-                  <Input {...register('email')} type="email" placeholder={`${dict.step1.email} *`} />
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-                </div>
-                <Input {...register('phone')} type="tel" placeholder={dict.step1.phone} />
-                {/* REMOVED: Website/Portfolio field - user creates portfolio first, gets link after! */}
-                <div>
-                  <Input {...register('linkedin')} type="url" placeholder="LinkedIn" />
-                  {errors.linkedin && <p className="text-red-500 text-sm mt-1">{errors.linkedin.message}</p>}
-                </div>
-                <div>
-                  <Input {...register('github')} type="url" placeholder="GitHub" />
-                  {errors.github && <p className="text-red-500 text-sm mt-1">{errors.github.message}</p>}
-                </div>
-              </div>
-              <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Only your name is required. Fill what you can, skip the rest!
-                </p>
-                <div className="flex gap-3">
-                  <Button onClick={skipToEnd} type="button" variant="ghost" className="text-gray-500">
-                    Skip to end →
-                  </Button>
-                  <Button onClick={nextStep} type="button">
-                    {dict.step1.nextButton}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <h3 className="text-2xl font-semibold mb-8">{dict.step2.title}</h3>
-
-              {/* Experience */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-4">{dict.step2.experience.title}</h4>
-                {experienceFields.map((field, index) => (
-                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                    <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
-                    <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
-                    <Input {...register(`experience.${index}.startDate`)} placeholder={dict.step2.experience.startDate} />
-                    <Input {...register(`experience.${index}.endDate`)} placeholder={dict.step2.experience.endDate} />
-                    <Textarea {...register(`experience.${index}.description`)} placeholder={dict.step2.experience.description} className="md:col-span-2" rows={3} />
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                      <Trash2 className="h-4 w-4" />
+                {/* Step 1 Navigation */}
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <p className="text-sm text-white/40 mb-4 text-center sm:text-left">
+                    Only your name is required. Fill what you can, skip the rest!
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                    <Button onClick={skipToEnd} type="button" variant="ghost" className="w-full sm:w-auto text-white/50 hover:text-white">
+                      Skip to end
+                    </Button>
+                    <Button onClick={nextStep} type="button" className="w-full sm:w-auto bg-white text-black hover:bg-white/90">
+                      {dict.step1.nextButton}
                     </Button>
                   </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => appendExperience({ jobTitle: '', company: '', startDate: '', endDate: '', description: '' })}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
-                </Button>
+                </div>
               </div>
+            )}
 
-              {/* Education */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-4">{dict.step2.education.title}</h4>
-                {educationFields.map((field, index) => (
-                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                    <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
-                    <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
-                    <Input {...register(`education.${index}.startYear`)} placeholder={dict.step2.education.startYear} />
-                    <Input {...register(`education.${index}.endYear`)} placeholder={dict.step2.education.endYear} />
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => appendEducation({ degree: '', institution: '', startYear: '', endYear: '' })}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Education
-                </Button>
-              </div>
-
-              {/* Skills */}
+            {step === 2 && (
               <div>
-                <h4 className="text-xl font-semibold mb-4">{dict.step2.skills.title}</h4>
-                <Input {...register('skills')} placeholder={dict.step2.skills.placeholder} />
-              </div>
+                <h3 className="text-2xl font-semibold mb-8">{dict.step2.title}</h3>
 
-              <div className="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  All fields are optional. Add what you have!
-                </p>
-                <div className="flex gap-3">
-                  <Button onClick={prevStep} type="button" variant="outline">{dict.step2.backButton}</Button>
-                  <Button onClick={skipToEnd} type="button" variant="ghost" className="text-gray-500">
-                    Skip to end →
+                {/* Experience */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold mb-4">{dict.step2.experience.title}</h4>
+                  {experienceFields.map((field, index) => (
+                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                      <Input {...register(`experience.${index}.jobTitle`)} placeholder={`${dict.step2.experience.jobTitle} *`} />
+                      <Input {...register(`experience.${index}.company`)} placeholder={`${dict.step2.experience.companyName} *`} />
+                      <Input {...register(`experience.${index}.startDate`)} placeholder={dict.step2.experience.startDate} />
+                      <Input {...register(`experience.${index}.endDate`)} placeholder={dict.step2.experience.endDate} />
+                      <Textarea {...register(`experience.${index}.description`)} placeholder={dict.step2.experience.description} className="md:col-span-2" rows={3} />
+                      <Button type="button" variant="destructive" size="icon" onClick={() => removeExperience(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendExperience({ jobTitle: '', company: '', startDate: '', endDate: '', description: '' })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
                   </Button>
-                  <Button onClick={nextStep} type="button">{dict.step2.nextButton}</Button>
+                </div>
+
+                {/* Education */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold mb-4">{dict.step2.education.title}</h4>
+                  {educationFields.map((field, index) => (
+                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                      <Input {...register(`education.${index}.degree`)} placeholder={`${dict.step2.education.degree} *`} />
+                      <Input {...register(`education.${index}.institution`)} placeholder={`${dict.step2.education.institution} *`} />
+                      <Input {...register(`education.${index}.startYear`)} placeholder={dict.step2.education.startYear} />
+                      <Input {...register(`education.${index}.endYear`)} placeholder={dict.step2.education.endYear} />
+                      <Button type="button" variant="destructive" size="icon" onClick={() => removeEducation(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendEducation({ degree: '', institution: '', startYear: '', endYear: '' })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Education
+                  </Button>
+                </div>
+
+                {/* Skills */}
+                <div>
+                  <h4 className="text-xl font-semibold mb-4">{dict.step2.skills.title}</h4>
+                  <Input {...register('skills')} placeholder={dict.step2.skills.placeholder} />
+                </div>
+
+                {/* Step 2 Navigation */}
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <p className="text-sm text-white/40 mb-4 text-center sm:text-left">
+                    All fields are optional. Add what you have!
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+                    <Button onClick={prevStep} type="button" variant="outline" className="w-full sm:w-auto border-white/20 hover:bg-white/5">
+                      {dict.step2.backButton}
+                    </Button>
+                    <Button onClick={skipToEnd} type="button" variant="ghost" className="w-full sm:w-auto text-white/50 hover:text-white">
+                      Skip to end
+                    </Button>
+                    <Button onClick={nextStep} type="button" className="w-full sm:w-auto bg-white text-black hover:bg-white/90">
+                      {dict.step2.nextButton}
+                    </Button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {step === 3 && (
-            <div>
-              <h3 className="text-2xl font-semibold mb-8">{dict.step3.title}</h3>
+            {step === 3 && (
+              <div>
+                <h3 className="text-2xl font-semibold mb-8">{dict.step3.title}</h3>
 
-              {/* Projects */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-4">{dict.step3.projects.title}</h4>
-                {projectFields.map((field, index) => (
-                  <div key={field.id} className="border p-4 rounded-lg mb-4 relative">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
-                      <div>
-                        <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
-                        {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
-                      </div>
-                      <Textarea {...register(`projects.${index}.description`)} placeholder={dict.step3.projects.description} className="md:col-span-2" rows={2} />
-                      <Input {...register(`projects.${index}.technologies`)} placeholder={dict.step3.projects.technologies} className="md:col-span-2" />
+                {/* Projects */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold mb-4">{dict.step3.projects.title}</h4>
+                  {projectFields.map((field, index) => (
+                    <div key={field.id} className="border p-4 rounded-lg mb-4 relative">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <Input {...register(`projects.${index}.title`)} placeholder={`${dict.step3.projects.projectTitle} *`} />
+                        <div>
+                          <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
+                          {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
+                        </div>
+                        <Textarea {...register(`projects.${index}.description`)} placeholder={dict.step3.projects.description} className="md:col-span-2" rows={2} />
+                        <Input {...register(`projects.${index}.technologies`)} placeholder={dict.step3.projects.technologies} className="md:col-span-2" />
 
-                      {/* Project Image Upload */}
-                      <div className="md:col-span-2 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-white/5 dark:to-white/10 rounded-lg border border-dashed border-gray-300 dark:border-white/20">
-                        <div className="flex items-center gap-4">
-                          {/* Image Preview */}
-                          <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex items-center justify-center border border-gray-200 dark:border-white/10">
-                            {projectImages[index]?.preview ? (
-                              <img src={projectImages[index].preview!} alt="Project preview" className="w-full h-full object-cover" />
-                            ) : (
-                              <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            )}
-                          </div>
-
-                          {/* Upload Button */}
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project Screenshot (Optional)</p>
-                            <div className="flex gap-2">
-                              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-white text-white dark:text-black text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        {/* Project Image Upload */}
+                        <div className="md:col-span-2 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-white/5 dark:to-white/10 rounded-lg border border-dashed border-gray-300 dark:border-white/20">
+                          <div className="flex items-center gap-4">
+                            {/* Image Preview */}
+                            <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 dark:bg-white/10 flex items-center justify-center border border-gray-200 dark:border-white/10">
+                              {projectImages[index]?.preview ? (
+                                <img src={projectImages[index].preview!} alt="Project preview" className="w-full h-full object-cover" />
+                              ) : (
+                                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
-                                {projectImages[index]?.preview ? 'Change' : 'Upload'}
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  onChange={(e) => handleProjectImageChange(index, e)}
-                                  className="hidden"
-                                />
-                              </label>
-                              {projectImages[index]?.preview && (
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => removeProjectImage(index)}
-                                  className="text-red-500 hover:text-red-600"
-                                >
-                                  Remove
-                                </Button>
                               )}
                             </div>
-                            <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+
+                            {/* Upload Button */}
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Project Screenshot (Optional)</p>
+                              <div className="flex gap-2">
+                                <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gray-800 dark:bg-white text-white dark:text-black text-sm font-medium rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors">
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                  </svg>
+                                  {projectImages[index]?.preview ? 'Change' : 'Upload'}
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => handleProjectImageChange(index, e)}
+                                    className="hidden"
+                                  />
+                                </label>
+                                {projectImages[index]?.preview && (
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => removeProjectImage(index)}
+                                    className="text-red-500 hover:text-red-600"
+                                  >
+                                    Remove
+                                  </Button>
+                                )}
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeProject(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                      <Trash2 className="h-4 w-4" />
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendProject({ title: '', description: '', technologies: '', link: '', imageUrl: '' })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                  </Button>
+                </div>
+
+                {/* Certifications */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
+                  {certificationFields.map((field, index) => (
+                    <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
+                      <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
+                      <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
+                      <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
+                      <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendCertification({ name: '', organization: '', year: '' })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Certification
+                  </Button>
+                </div>
+
+                {/* Languages */}
+                <div className="mb-8">
+                  <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
+                  {languageFields.map((field, index) => (
+                    <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
+                      <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
+                      <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
+                      <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button type="button" variant="outline" onClick={() => appendLanguage({ language: '', proficiency: 'Intermediate' })}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add Language
+                  </Button>
+                </div>
+
+
+                {/* Step 3 Navigation */}
+                <div className="mt-8 pt-6 border-t border-white/10">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:justify-between">
+                    <Button onClick={prevStep} type="button" variant="outline" className="w-full sm:w-auto border-white/20 hover:bg-white/5">
+                      {dict.step3.backButton}
+                    </Button>
+                    <Button type="submit" className="w-full sm:w-auto bg-white text-black hover:bg-white/90 font-semibold">
+                      {dict.step3.submitButton}
                     </Button>
                   </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => appendProject({ title: '', description: '', technologies: '', link: '', imageUrl: '' })}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Project
-                </Button>
+                </div>
               </div>
-
-              {/* Certifications */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
-                {certificationFields.map((field, index) => (
-                  <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
-                    <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
-                    <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
-                    <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => appendCertification({ name: '', organization: '', year: '' })}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Certification
-                </Button>
-              </div>
-
-              {/* Languages */}
-              <div className="mb-8">
-                <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
-                {languageFields.map((field, index) => (
-                  <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                    <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
-                    <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
-                    <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button type="button" variant="outline" onClick={() => appendLanguage({ language: '', proficiency: 'Intermediate' })}>
-                  <PlusCircle className="mr-2 h-4 w-4" /> Add Language
-                </Button>
-              </div>
-
-
-              <div className="mt-10 flex justify-between">
-                <Button onClick={prevStep} type="button" variant="outline">{dict.step3.backButton}</Button>
-                <Button type="submit">{dict.step3.submitButton}</Button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </form>
     </div>
