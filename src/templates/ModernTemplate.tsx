@@ -231,20 +231,20 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-panel p-10 md:p-16 rounded-[3rem] relative overflow-hidden group border-2 border-white/5 hover:border-white/10 transition-all"
+              className="glass-panel p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] relative overflow-hidden group border-2 border-white/5 hover:border-white/10 transition-all"
             >
               <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-brand opacity-[0.05] blur-[100px] pointer-events-none" />
-              <p className="text-2xl md:text-4xl leading-tight text-slate-600 dark:text-slate-200 font-medium italic mb-12">
+              <p className="text-lg sm:text-2xl md:text-4xl leading-relaxed sm:leading-tight text-slate-600 dark:text-slate-200 font-medium italic mb-8 sm:mb-12">
                 "{about.extendedBio}"
               </p>
-              <div className="flex flex-wrap gap-6 text-sm font-black uppercase tracking-[0.2em]">
-                <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/5">
-                  <MapPin className="w-4 h-4 text-[hsl(var(--brand))]" />
-                  <span className="text-slate-500">{personalInfo.location || 'Global'}</span>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm font-black uppercase tracking-[0.1em] sm:tracking-[0.2em]">
+                <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 max-w-full">
+                  <MapPin className="w-4 h-4 text-[hsl(var(--brand))] flex-shrink-0" />
+                  <span className="text-slate-500 truncate">{personalInfo.location || 'Global'}</span>
                 </div>
-                <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/5">
-                  <Mail className="w-4 h-4 text-[hsl(var(--brand))]" />
-                  <span className="text-slate-500">{personalInfo.email}</span>
+                <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 max-w-full overflow-hidden">
+                  <Mail className="w-4 h-4 text-[hsl(var(--brand))] flex-shrink-0" />
+                  <span className="text-slate-500 truncate">{personalInfo.email}</span>
                 </div>
               </div>
             </motion.div>
