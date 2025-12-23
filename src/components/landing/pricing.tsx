@@ -175,7 +175,6 @@ export default function Pricing() {
         variant: 'destructive',
       });
     }
-    */
   };
 
   const plans = [

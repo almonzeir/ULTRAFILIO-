@@ -1,297 +1,330 @@
-/* MinimalistTemplate.tsx - Ultra-Technical / Blueprint / Terminal Aesthetic */
+/* MinimalistTemplate.tsx - Modern Swiss / Architectural Typography Aesthetic */
 import React from 'react';
 import type { PortfolioData } from './types';
 import { motion } from 'framer-motion';
+import { Mail, Linkedin, Github, Globe, MapPin, ArrowUpRight, Plus, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const container = {
   initial: { opacity: 0 },
   animate: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.2
+      staggerChildren: 0.1,
+      delayChildren: 0.3
     }
   }
 };
 
 const item = {
-  initial: { opacity: 0, x: -10 },
-  animate: { opacity: 1, x: 0 }
+  initial: { opacity: 0, y: 15 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
-const scanLine = {
-  animate: {
-    y: ['0%', '1000%'],
-    transition: {
-      duration: 8,
-      repeat: Infinity,
-      ease: "linear"
-    }
-  }
-};
-
-export default function MinimalistTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects } = data;
+export default function MinimalistTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+  const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
   return (
-    <div className="min-h-screen bg-[#fafafa] dark:bg-[#080808] text-[#111] dark:text-[#eee] font-mono text-[13px] leading-relaxed selection:bg-[#111] selection:text-white dark:selection:bg-white dark:selection:text-black relative overflow-x-hidden">
-      {/* --- SCANNING LINE --- */}
-      <motion.div
-        variants={scanLine}
-        animate="animate"
-        className="fixed top-0 left-0 w-full h-[1px] bg-[hsl(var(--brand))] opacity-20 pointer-events-none z-[100]"
-      />
+    <div className={cn(
+      "min-h-screen text-[14px] leading-relaxed selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-700 font-sans",
+      isDarkMode ? "bg-[#0a0a0a] text-[#f0f0f0]" : "bg-[#f5f5f5] text-[#1a1a1a]"
+    )}>
+      {/* --- ARCHITECTURAL GRID OVERLAY --- */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03] dark:opacity-[0.05]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#888_1px,transparent_1px),linear-gradient(to_bottom,#888_1px,transparent_1px)] bg-[size:40px_40px]" />
+      </div>
 
-      <style>{`
-        :root {
-          --grid-color: rgba(0,0,0,0.04);
-          --grid-dark: rgba(255,255,255,0.03);
-        }
-        .dark {
-           --grid-color: var(--grid-dark);
-        }
-        
-        body {
-          background-image: 
-            linear-gradient(var(--grid-color) 1px, transparent 1px),
-            linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-          background-size: 32px 32px;
-        }
+      {/* --- NOISE TEXTURE --- */}
+      <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.02] dark:opacity-[0.04] mix-blend-overlay">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#noise)" />
+        </svg>
+      </div>
 
-        .border-technical {
-            border: 1px solid var(--grid-color);
-        }
-        
-        .typewriter {
-            overflow: hidden;
-            border-right: .15em solid [hsl(var(--brand))];
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .15em;
-            animation: 
-              typing 3.5s steps(40, end),
-              blink-caret .75s step-end infinite;
-        }
+      <main className="relative z-10 max-w-[1400px] mx-auto border-x border-black/5 dark:border-white/5 bg-white/30 dark:bg-black/20 backdrop-blur-[1px]">
 
-        @keyframes typing {
-          from { width: 0 }
-          to { width: 100% }
-        }
-
-        @keyframes blink-caret {
-          from, to { border-color: transparent }
-          50% { border-color: [hsl(var(--brand))] }
-        }
-      `}</style>
-
-      <div className="fixed top-0 left-0 w-full h-1 bg-[hsl(var(--brand))] z-[60]"></div>
-
-      <main className="max-w-6xl mx-auto border-x border-dashed border-neutral-300 dark:border-white/10 min-h-screen bg-white/50 dark:bg-black/50 backdrop-blur-[2px] relative z-10">
-
-        {/* --- HEADER --- */}
-        <header className="p-10 border-b border-technical flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 mb-4 font-black">
-                            // PORTFOLIO_CORE_OS_v4.2 // {new Date().getFullYear()}
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-4">
-              {personalInfo.fullName}
-            </h1>
-            <div className="flex items-center gap-4 text-neutral-500 font-bold uppercase tracking-widest text-[11px]">
-              <span>{personalInfo.title}</span>
-              <span className="w-1 h-1 bg-neutral-400 rounded-full"></span>
-              <span>{personalInfo.location || "Remote_Node"}</span>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-col items-end gap-3 text-[11px] font-bold uppercase tracking-widest"
-          >
-            <a href={`mailto:${personalInfo.email}`} className="hover:text-[hsl(var(--brand))] border-b border-transparent hover:border-[hsl(var(--brand))] transition-all underline decoration-neutral-300 underline-offset-4">{personalInfo.email}</a>
-            <a href={personalInfo.linkedInURL} className="hover:text-[hsl(var(--brand))] underline decoration-neutral-300 underline-offset-4 tracking-[0.2em]">LinkedIn_Connect</a>
-            <div className="mt-4 flex items-center gap-3 px-3 py-1 bg-[hsl(var(--brand))]/10 border border-[hsl(var(--brand))]/20 rounded-full">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
-              <span className="text-[hsl(var(--brand))]">Protocol: Active</span>
-            </div>
-          </motion.div>
+        {/* --- HEADER / NAVIGATION BAR --- */}
+        <header className="sticky top-0 z-[100] border-b border-black/10 dark:border-white/10 flex justify-between items-center px-8 md:px-12 py-4 bg-inherit backdrop-blur-md">
+          <div className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40">
+            Design_System_v2 // {new Date().getFullYear()}
+          </div>
+          <div className="flex gap-8 text-[11px] font-bold uppercase tracking-widest overflow-x-auto no-scrollbar py-2">
+            <a href="#about" className="hover:opacity-50 transition-opacity">Index</a>
+            <a href="#projects" className="hover:opacity-50 transition-opacity">Archive</a>
+            <a href="#experience" className="hover:opacity-50 transition-opacity">History</a>
+            <a href="#contact" className="hover:opacity-50 transition-opacity">Contact</a>
+          </div>
         </header>
 
-        {/* --- MAIN DATA GRID --- */}
-        <div className="grid md:grid-cols-[280px_1fr] border-b border-technical">
-          {/* AVATAR BOX */}
-          <div className="border-r border-technical p-10 flex flex-col items-center justify-center bg-neutral-50/50 dark:bg-neutral-900/50 relative overflow-hidden group">
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-[hsl(var(--brand))]/5 to-transparent"></div>
-            <div className="w-48 h-48 border-2 border-technical p-1 relative z-10 group-hover:border-[hsl(var(--brand))]/30 transition-colors">
-              <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-[hsl(var(--brand))]"></div>
-              <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-[hsl(var(--brand))]"></div>
-              {personalInfo.profilePhotoURL ? (
-                <img src={personalInfo.profilePhotoURL} alt="Unit_ID" className="w-full h-full object-cover grayscale contrast-[1.1] brightness-[1.05]" />
-              ) : (
-                <div className="w-full h-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-5xl font-black">?</div>
-              )}
-            </div>
-            <div className="mt-8 text-[10px] text-center w-full font-black tracking-[0.2em] text-neutral-400">
-              UNIT_ID: {personalInfo.portfolioNameAbbr} <br />
-              STATUS: VERIFIED
-            </div>
-          </div>
-
-          {/* BIO PORT */}
-          <div className="p-10 md:p-16 relative">
-            <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl pointer-events-none select-none">01</div>
-            <div className="uppercase text-[11px] font-black mb-8 text-[hsl(var(--brand))] tracking-[0.4em] flex items-center gap-4">
-              <div className="w-8 h-[1px] bg-[hsl(var(--brand))]"></div>
-              User_Bio_Data
-            </div>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 1 }}
-              className="text-xl md:text-3xl font-medium tracking-tight leading-tight max-w-2xl mb-16"
-            >
-              {about.extendedBio}
-            </motion.p>
-
-            <div className="space-y-8">
-              <div className="text-[11px] font-black uppercase tracking-[0.4em] text-neutral-400 underline decoration-neutral-300 underline-offset-8">Skill_Stack_Matrix</div>
-              <div className="flex flex-wrap gap-x-10 gap-y-4">
-                {about.skills?.map((cat, i) => (
-                  cat.tags?.map((tag, j) => (
-                    <motion.div
-                      key={`${i}-${j}`}
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: (i + j) * 0.05 }}
-                      className="flex items-center gap-3 group"
-                    >
-                      <span className="text-[hsl(var(--brand))] font-black group-hover:scale-150 transition-transform">▸</span>
-                      <span className="font-bold tracking-wider group-hover:text-[hsl(var(--brand))] transition-colors">{tag}</span>
-                    </motion.div>
-                  ))
+        {/* --- HERO / IDENTITY --- */}
+        <section id="about" className="pt-32 pb-20 px-8 md:px-12 border-b border-black/10 dark:border-white/10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24"
+          >
+            <div className="flex-1">
+              <h1 className="text-[14vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter uppercase mb-12 font-tight">
+                {personalInfo.fullName.split(' ').map((name, i) => (
+                  <span key={i} className="block">{name}</span>
                 ))}
+              </h1>
+              <div className="flex flex-wrap gap-8 items-center text-xs font-black uppercase tracking-[0.3em]">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-[hsl(var(--brand))] rounded-full animate-pulse" />
+                  <span>{personalInfo.title}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <MapPin size={14} className="opacity-40" />
+                  <span>{personalInfo.location || "Earth_Core"}</span>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* --- WORK DIRECTORY --- */}
-        <div>
-          <div className="p-5 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-technical text-[11px] font-black uppercase tracking-[0.5em] sticky top-0 z-20 backdrop-blur-md flex justify-between">
-            <span>[02] // Project_Repository</span>
-            <span className="animate-pulse">STREAMING_DATA...</span>
-          </div>
+            <div className="w-full lg:w-[450px] space-y-12">
+              <div className="text-xl md:text-3xl font-medium leading-[1.1] tracking-tight text-justify indent-12 md:indent-20">
+                {about.extendedBio}
+              </div>
 
-          {projects.map((project, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="grid md:grid-cols-[1fr_320px] border-b border-technical group hover:bg-[hsl(var(--brand))]/[0.02] transition-colors overflow-hidden"
-            >
-              <div className="p-10 md:p-16 border-r border-technical">
-                <div className="flex items-baseline gap-6 mb-6">
-                  <span className="text-[11px] font-black text-[hsl(var(--brand))]">0{i + 1}_LOG</span>
-                  <h3 className="text-3xl md:text-5xl font-black tracking-tighter group-hover:translate-x-4 transition-transform duration-500 uppercase">{project.name}</h3>
-                </div>
-                <div className="text-[11px] uppercase tracking-[0.3em] font-black text-neutral-400 mb-8 px-2 border-l-2 border-[hsl(var(--brand))]">{project.category}</div>
-                <p className="text-neutral-500 dark:text-neutral-400 text-lg leading-relaxed max-w-xl mb-10 font-medium">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {project.tags?.map((t, idx) => (
-                    <span key={idx} className="bg-neutral-100 dark:bg-neutral-900 border border-technical px-3 py-1 text-[10px] font-black uppercase tracking-widest group-hover:border-[hsl(var(--brand))]/30 transition-colors">{t}</span>
+              {/* SOCIAL / CONTACT LINKS */}
+              <div className="grid grid-cols-2 gap-4">
+                <a href={`mailto:${personalInfo.email}`} className="group flex items-center justify-between p-5 border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+                  <Mail size={16} className="opacity-40" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Email</span>
+                  <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+                <a href={personalInfo.linkedInURL} className="group flex items-center justify-between p-5 border border-black/5 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-all">
+                  <Linkedin size={16} className="opacity-40" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">LinkedIn</span>
+                  <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* --- SKILLS GRID --- */}
+        <section className="border-b border-black/10 dark:border-white/10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y divide-x divide-black/10 dark:divide-white/10 border-r border-black/10 dark:border-white/10">
+            {about.skills?.map((cat, i) => (
+              <div key={i} className="p-10 space-y-8 group hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <div className="text-[10px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.4em]">Index_0{i + 1} // {cat.category}</div>
+                <div className="flex flex-col gap-4">
+                  {cat.tags.map((tag, j) => (
+                    <div key={j} className="flex items-center justify-between text-lg font-bold tracking-tight uppercase group-hover:px-2 transition-all">
+                      <span>{tag}</span>
+                      <Plus size={12} className="opacity-20" />
+                    </div>
                   ))}
                 </div>
               </div>
-              <div className="relative h-80 md:h-auto overflow-hidden bg-neutral-100 dark:bg-neutral-900 flex items-center justify-center">
-                {project.imageURL ? (
-                  <img src={project.imageURL} className="absolute inset-0 w-full h-full object-cover grayscale opacity-20 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000" />
-                ) : (
-                  <div className="text-neutral-300 font-black text-4xl opacity-10">NULL_IMAGE</div>
-                )}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 backdrop-blur-[2px]">
-                  <a href={project.detailsURL} target="_blank" className="bg-white dark:bg-black text-[#111] dark:text-white border-2 border-white dark:border-white px-8 py-4 text-xs font-black uppercase tracking-[0.4em] hover:bg-[hsl(var(--brand))] hover:border-[hsl(var(--brand))] hover:text-white transition-all">
-                    Launch_Shell →
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </section>
 
-        {/* --- FOOTER GRID --- */}
-        <div className="grid md:grid-cols-2">
-          {/* EXPERIENCE LOGS */}
-          <div className="border-r border-technical">
-            <div className="p-5 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-technical text-[11px] font-black uppercase tracking-[0.5em] sticky top-[45px] md:top-[53px] z-10 backdrop-blur-md">
-              [03] // Career_Audit_Logs
+        {/* --- PROJECTS --- */}
+        <section id="projects">
+          <div className="px-8 md:px-12 py-10 bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 flex justify-between items-center">
+            <h2 className="text-xs font-black uppercase tracking-[0.5em]">Selected_Works</h2>
+            <div className="text-[10px] font-bold opacity-30 flex gap-4 uppercase italic">
+              <span>Dynamic_Archive</span>
+              <span className="animate-pulse">Active</span>
             </div>
-            <div className="divide-y divide-technical">
+          </div>
+
+          <div className="divide-y divide-black/10 dark:divide-white/10">
+            {projects.map((project, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ margin: "-100px" }}
+                className="group grid lg:grid-cols-[1.2fr_1fr] min-h-[500px]"
+              >
+                <div className="p-8 md:p-12 lg:p-20 flex flex-col justify-between items-start gap-12 border-r border-black/10 dark:border-white/10">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-4 text-[10px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.3em]">
+                      <span>Ref_{i + 1}</span>
+                      <div className="w-8 h-[1px] bg-current opacity-30" />
+                      <span>{project.category}</span>
+                    </div>
+                    <h3 className="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter">
+                      {project.name}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-10 max-w-xl">
+                    <p className="text-xl md:text-2xl font-medium tracking-tight opacity-70 italic leading-relaxed">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag, idx) => (
+                        <span key={idx} className="px-3 py-1.5 border border-black/10 dark:border-white/10 text-[10px] font-black uppercase tracking-widest bg-white/40 dark:bg-black/40">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <a href={project.detailsURL} target="_blank" className="inline-flex items-center gap-4 py-4 px-10 bg-black dark:bg-white text-white dark:text-black text-xs font-black uppercase tracking-[0.4em] hover:scale-105 transition-transform origin-left">
+                      View_Source <ArrowUpRight size={16} />
+                    </a>
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden bg-white/10 aspect-[4/3] lg:aspect-auto">
+                  {project.imageURL ? (
+                    <img
+                      src={project.imageURL}
+                      alt={project.name}
+                      className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[0.16,1,0.3,1]"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-8xl font-black opacity-5 uppercase tracking-tighter">Mock_0{i + 1}</div>
+                  )}
+                  {/* GRID LINES ON IMAGE */}
+                  <div className="absolute inset-0 pointer-events-none border-[1px] border-white/5 grid grid-cols-3 grid-rows-3" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* --- EXPERIENCE --- */}
+        <section id="experience" className="border-t border-black/10 dark:border-white/10">
+          <div className="grid lg:grid-cols-[400px_1fr] divide-x divide-black/10 dark:divide-white/10">
+            <div className="p-12 md:p-20 space-y-12 bg-black dark:bg-white text-white dark:text-black">
+              <h2 className="text-6xl md:text-8xl font-black uppercase leading-none tracking-tighter">
+                Prof_<br />Log
+              </h2>
+              <p className="text-sm font-bold opacity-60 leading-relaxed uppercase tracking-widest indent-8">
+                A chronicle of technical progression and professional evolution across the digital landscape.
+              </p>
+            </div>
+
+            <div className="divide-y divide-black/10 dark:divide-white/10">
               {experience.map((exp, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="p-10 hover:bg-[hsl(var(--brand))]/5 transition-colors"
-                >
-                  <div className="text-[11px] font-black text-neutral-400 mb-2 tracking-[0.2em]">{exp.dates}</div>
-                  <h4 className="text-2xl font-black mb-1 uppercase tracking-tight">{exp.jobTitle}</h4>
-                  <div className="text-[hsl(var(--brand))] font-black text-[11px] tracking-[0.2em] mb-6">@ {exp.company}</div>
-                  <ul className="space-y-3">
-                    {exp.responsibilities.slice(0, 2).map((res, ridx) => (
-                      <li key={ridx} className="text-[12px] text-neutral-500 font-medium flex gap-3 italic leading-relaxed">
-                        <span className="text-[hsl(var(--brand))]">/</span> {res}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
+                <div key={i} className="p-12 md:p-16 hover:bg-black/5 dark:hover:bg-white/5 transition-colors grid md:grid-cols-[180px_1fr] gap-8">
+                  <div className="text-[11px] font-black uppercase tracking-[0.3em] opacity-40">
+                    {exp.dates}
+                  </div>
+                  <div className="space-y-6">
+                    <div>
+                      <h4 className="text-3xl font-black uppercase tracking-tight italic mb-2 leading-none">
+                        {exp.jobTitle}
+                      </h4>
+                      <div className="text-[12px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.2em]">
+                        @ {exp.company}
+                      </div>
+                    </div>
+                    <ul className="space-y-3 max-w-2xl">
+                      {exp.responsibilities.map((res, idx) => (
+                        <li key={idx} className="text-lg font-medium opacity-60 flex gap-4 leading-snug">
+                          <span className="text-[hsl(var(--brand))] flex-shrink-0">/</span> {res}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- ACADEMIC & TOOLS --- */}
+        <section className="grid lg:grid-cols-2 divide-x divide-black/10 dark:divide-white/10 border-t border-b border-black/10 dark:border-white/10">
+          <div className="p-12 md:p-20 space-y-16">
+            <div className="text-xs font-black uppercase tracking-[0.5em] opacity-40">Academic_Registry</div>
+            <div className="space-y-16">
+              {education?.map((edu, i) => (
+                <div key={i} className="space-y-4">
+                  <div className="text-[10px] font-black opacity-30">{edu.startDate} - {edu.endDate}</div>
+                  <h3 className="text-3xl font-black uppercase tracking-tighter italic">{edu.degree}</h3>
+                  <div className="text-sm font-bold uppercase tracking-widest">/ {edu.institution}</div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* CONTACT MODULE */}
-          <div className="flex flex-col justify-between min-h-[60vh] relative">
-            <div className="p-5 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-technical text-[11px] font-black uppercase tracking-[0.5em]">
-              [04] // Signal_Broadcaster
-            </div>
-
-            <div className="p-10 flex-1 flex flex-col justify-center items-center text-center">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="w-40 h-40 border border-dashed border-[hsl(var(--brand))]/30 rounded-full flex items-center justify-center mb-12"
-              >
-                <div className="w-32 h-32 border border-technical rounded-full flex items-center justify-center">
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-4 h-4 bg-[hsl(var(--brand))] rounded-full shadow-[0_0_20px_[hsl(var(--brand))]]"
-                  />
+          <div className="p-12 md:p-20 space-y-16 bg-black/[0.02] dark:bg-white/[0.02]">
+            <div className="text-xs font-black uppercase tracking-[0.5em] opacity-40">Accreditations_&_Methods</div>
+            <div className="grid sm:grid-cols-2 gap-12">
+              {certifications && (
+                <div className="space-y-6">
+                  <span className="text-[9px] font-black uppercase opacity-30 tracking-[0.3em]">Certificates</span>
+                  <div className="space-y-3">
+                    {certifications.map((cert, j) => (
+                      <div key={j} className="text-base font-bold uppercase tracking-tight border-l-2 border-[hsl(var(--brand))] pl-4">
+                        {cert}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </motion.div>
-
-              <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-8 uppercase">Let&apos;s Connect</h2>
-              <p className="text-neutral-500 font-bold text-[11px] tracking-[0.3em] uppercase max-w-xs mx-auto mb-12">
-                System ready for new inbound collaboration requests.
-                Secure connection established.
-              </p>
-
-              <a href={`mailto:${personalInfo.email || ''}`} className="text-2xl md:text-3xl font-black text-[hsl(var(--brand))] border-b-4 border-[hsl(var(--brand))] hover:bg-[hsl(var(--brand))] hover:text-white px-4 py-2 transition-all leading-none">
-                {(personalInfo.email || 'CONTACT').toUpperCase()}
-              </a>
-            </div>
-
-            <div className="p-6 border-Technical text-[9px] font-bold text-center text-neutral-400 uppercase tracking-[0.8em] bg-neutral-50 dark:bg-neutral-900/10">
-              End_of_Transmission // {(personalInfo.fullName || 'User').replace(/\s/g, '_')} // (C) {new Date().getFullYear()}
+              )}
+              {languages && (
+                <div className="space-y-6">
+                  <span className="text-[9px] font-black uppercase opacity-30 tracking-[0.3em]">Lexicon</span>
+                  <div className="space-y-6">
+                    {languages.map((lang, k) => (
+                      <div key={k}>
+                        <div className="text-xl font-black uppercase italic">{lang.name}</div>
+                        <div className="text-[10px] font-bold opacity-30 uppercase tracking-[0.2em]">{lang.level}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* --- TERMINAL CTA --- */}
+        <footer id="contact" className="p-8 sm:p-12 md:p-32 text-center bg-black dark:bg-white text-white dark:text-black overflow-hidden relative">
+          {/* BACKGROUND DECOR */}
+          <div className="absolute top-0 right-10 text-[20vw] font-black opacity-[0.03] select-none pointer-events-none uppercase italic leading-none">
+            END
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center gap-12">
+            <h2 className="text-4xl sm:text-7xl md:text-[10vw] font-black uppercase leading-[0.85] tracking-tighter">
+              Let&apos;s_Build<br />The_Void
+            </h2>
+
+            <a href={`mailto:${personalInfo.email}`} className="text-sm sm:text-xl md:text-3xl font-black hover:text-[hsl(var(--brand))] transition-colors border-b-2 sm:border-b-4 border-current pb-2 sm:pb-4 px-4 sm:px-12 uppercase italic break-all max-w-full">
+              {personalInfo.email}
+            </a>
+
+            <div className="flex flex-wrap justify-center gap-8 mt-12 opacity-40 text-[10px] font-black uppercase tracking-[0.5em]">
+              <a href={personalInfo.githubURL} className="hover:opacity-100 transition-opacity">GitHub</a>
+              <a href={personalInfo.linkedInURL} className="hover:opacity-100 transition-opacity">LinkedIn</a>
+              <a href={personalInfo.website} className="hover:opacity-100 transition-opacity">Registry</a>
+            </div>
+
+            <div className="mt-20 text-[9px] font-bold opacity-30 uppercase tracking-[0.8em]">
+              © {new Date().getFullYear()} {personalInfo.fullName.replace(' ', '_')} // System_Secure
+            </div>
+          </div>
+        </footer>
+
       </main>
+
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+        
+        .font-tight {
+          font-family: 'Inter Tight', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

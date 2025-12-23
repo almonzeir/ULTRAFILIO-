@@ -55,6 +55,9 @@ export class LemonSqueezy {
         userName?: string;
         customData?: Record<string, string>;
     }): Promise<{ checkoutUrl: string; checkoutId: string }> {
+        const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+            || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9003');
+
         const response = await this.request<any>('/checkouts', {
             method: 'POST',
             body: JSON.stringify({
@@ -70,9 +73,9 @@ export class LemonSqueezy {
                             },
                         },
                         product_options: {
-                            redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success`,
+                            redirect_url: `${baseUrl}/checkout/success`,
                             receipt_button_text: 'Go to UltraFolio',
-                            receipt_link_url: `${process.env.NEXT_PUBLIC_APP_URL}/create`,
+                            receipt_link_url: `${baseUrl}/create`,
                         },
                     },
                     relationships: {

@@ -106,16 +106,16 @@ function TypewriterText({ text, className, delay = 0 }: { text: string; classNam
 
 // --- Main Template Component ---
 
-export default function Cyber3DTemplate({ data }: { data: PortfolioData }) {
+export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
     const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.9]);
 
-    const { personalInfo, about, experience, projects, education } = data;
+    const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
     return (
-        <div ref={containerRef} className="relative min-h-screen bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-300">
+        <div ref={containerRef} className={`relative min-h-screen ${isDarkMode ? 'dark' : ''} bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-500`}>
 
             {/* Background Effects - Sticky so it follows scroll but stays in container */}
             <div className="absolute inset-0 z-0 h-full overflow-hidden">
@@ -479,6 +479,81 @@ export default function Cyber3DTemplate({ data }: { data: PortfolioData }) {
                     </div>
                 </div>
             </section>
+
+            {/* Credentials & Knowledge Section */}
+            {((education && education.length > 0) || (certifications && certifications.length > 0)) && (
+                <section id="credentials" className="relative z-10 py-32 px-6">
+                    <div className="max-w-6xl mx-auto">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            className="bg-[#0a0a1a]/60 backdrop-blur-md border border-cyan-900/30 rounded-2xl p-8 md:p-12 relative overflow-hidden"
+                        >
+                            {/* Circuit decoration */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-[80px] -mr-32 -mt-32" />
+
+                            <div className="grid lg:grid-cols-2 gap-16 relative z-10">
+                                {/* Education */}
+                                {education && education.length > 0 && (
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-10">
+                                            <GraduationCap className="text-cyan-400 w-6 h-6" />
+                                            <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Academic_Registry</h2>
+                                        </div>
+                                        <div className="space-y-8">
+                                            {education.map((edu, i) => (
+                                                <div key={i} className="group border-l-2 border-cyan-900/50 pl-6 hover:border-cyan-400 transition-colors">
+                                                    <div className="text-[10px] text-cyan-500/70 font-mono mb-1 uppercase tracking-widest">{edu.startDate} — {edu.endDate}</div>
+                                                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors">{edu.degree}</h3>
+                                                    <div className="text-gray-400 text-sm font-medium">{edu.institution}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Certifications & Languages */}
+                                <div className="space-y-16">
+                                    {certifications && certifications.length > 0 && (
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-10">
+                                                <Zap className="text-fuchsia-400 w-6 h-6" />
+                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Accredited_Nodes</h2>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                {certifications.map((cert, i) => (
+                                                    <div key={i} className="flex items-center gap-3 px-4 py-3 bg-fuchsia-950/20 border border-fuchsia-900/30 rounded-lg group hover:border-fuchsia-500/50 transition-all">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-fuchsia-500 animate-pulse" />
+                                                        <span className="text-xs font-bold text-gray-300 uppercase tracking-widest group-hover:text-white transition-colors">{cert}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {languages && languages.length > 0 && (
+                                        <div>
+                                            <div className="flex items-center gap-3 mb-10">
+                                                <Globe className="text-violet-400 w-6 h-6" />
+                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Linguistic_Uplink</h2>
+                                            </div>
+                                            <div className="flex flex-wrap gap-8">
+                                                {languages.map((lang, i) => (
+                                                    <div key={i} className="flex flex-col items-start gap-1">
+                                                        <div className="text-[10px] text-violet-400 font-mono uppercase tracking-widest opacity-60">{lang.level || 'Mastery'}</div>
+                                                        <div className="text-2xl font-black text-white italic tracking-tighter">{lang.name}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                </section>
+            )}
 
             {/* Contact Section */}
             <section id="contact" className="relative z-10 py-32 px-6">

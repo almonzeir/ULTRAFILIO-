@@ -18,11 +18,25 @@ const staggerContainer = {
     }
 };
 
-export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
-    const { personalInfo, about, experience, projects, education } = data;
+export default function ExecutiveTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+    const { personalInfo, about, experience, projects, education, certifications, languages } = data;
+
+    // Consolidate skills by category - groups all skills with same category together
+    const consolidatedSkills = React.useMemo(() => {
+        if (!about.skills) return [];
+        const groups: Record<string, { category: string, icon?: string, tags: Set<string> }> = {};
+        about.skills.forEach(skill => {
+            const key = skill.category || 'Core Skills';
+            if (!groups[key]) {
+                groups[key] = { category: key, icon: skill.icon, tags: new Set() };
+            }
+            skill.tags.forEach(t => groups[key].tags.add(t));
+        });
+        return Object.values(groups).map(g => ({ ...g, tags: Array.from(g.tags) }));
+    }, [about.skills]);
 
     return (
-        <div className="min-h-screen bg-white dark:bg-[#050507] text-slate-800 dark:text-slate-200 font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black">
+        <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-white dark:bg-[#050507] text-slate-800 dark:text-slate-200 font-sans selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-500`}>
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
         
@@ -196,6 +210,28 @@ export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Core Competencies (Skills) */}
+                        {consolidatedSkills.length > 0 && (
+                            <div className="mt-40">
+                                <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 block">Core_Competencies</span>
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-20 gap-y-12">
+                                    {consolidatedSkills.map((skill, i) => (
+                                        <div key={i}>
+                                            <h4 className="font-heading text-xl font-bold mb-4 flex items-center gap-3">
+                                                <div className="w-1 h-3 bg-[hsl(var(--brand))] opacity-50" />
+                                                {skill.category}
+                                            </h4>
+                                            <div className="flex flex-wrap gap-x-6 gap-y-2">
+                                                {skill.tags.map(tag => (
+                                                    <span key={tag} className="text-[11px] font-bold uppercase tracking-widest text-slate-500 whitespace-nowrap">{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </section>
 
@@ -280,15 +316,69 @@ export default function ExecutiveTemplate({ data }: { data: PortfolioData }) {
                     </div>
                 </section>
 
+                {/* --- ACADEMIC & ACCREDITATIONS --- */}
+                {((education && education.length > 0) || (certifications && certifications.length > 0)) && (
+                    <section className="py-40 px-8 sm:px-12 lg:px-24 border-t border-slate-100 dark:border-white/5">
+                        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32">
+                            {/* Education */}
+                            {education && education.length > 0 && (
+                                <div>
+                                    <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 block">Academic_Foundation</span>
+                                    <div className="space-y-16">
+                                        {education.map((edu, idx) => (
+                                            <div key={idx} className="group">
+                                                <div className="text-[10px] font-black text-[hsl(var(--brand))] mb-2 uppercase tracking-[0.2em]">{edu.startDate} — {edu.endDate}</div>
+                                                <h3 className="font-heading text-3xl font-bold mb-2 group-hover:italic transition-all">{edu.degree}</h3>
+                                                <div className="text-sm font-bold uppercase tracking-widest text-slate-500">{edu.institution}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Certifications & Languages */}
+                            <div className="space-y-32">
+                                {certifications && certifications.length > 0 && (
+                                    <div>
+                                        <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 block">Professional_Accreditations</span>
+                                        <div className="grid gap-6">
+                                            {certifications.map((cert, idx) => (
+                                                <div key={idx} className="flex items-center gap-6 group">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--brand))] opacity-30 group-hover:opacity-100 transition-opacity" />
+                                                    <span className="text-sm font-bold uppercase tracking-[0.2em] text-slate-600 dark:text-slate-400 italic">{cert}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {languages && languages.length > 0 && (
+                                    <div>
+                                        <span className="text-xs font-black uppercase tracking-[0.4em] text-slate-400 mb-12 block">Linguistic_Proficiency</span>
+                                        <div className="flex flex-wrap gap-x-12 gap-y-6">
+                                            {languages.map((lang, idx) => (
+                                                <div key={idx}>
+                                                    <div className="text-[10px] font-black text-slate-400 mb-1 uppercase italic tracking-widest">{lang.level || 'Mastery'}</div>
+                                                    <div className="font-heading text-2xl font-bold uppercase">{lang.name}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </section>
+                )}
+
                 {/* --- FOOTER / CONTACT --- */}
-                <footer id="contact" className="bg-slate-900 dark:bg-black text-white pt-40 pb-20 px-8 sm:px-12 lg:px-24">
+                <footer id="contact" className="bg-slate-900 dark:bg-black text-white pt-20 sm:pt-40 pb-20 px-4 sm:px-8 lg:px-24">
                     <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-32">
                         <div>
-                            <h2 className="font-heading text-6xl md:text-8xl font-bold mb-12 italic">Let&apos;s talk strategy.</h2>
+                            <h2 className="font-heading text-4xl sm:text-6xl md:text-8xl font-bold mb-12 italic">Let&apos;s talk strategy.</h2>
                             <div className="grid gap-12 font-medium tracking-wide">
                                 <div className="space-y-2">
                                     <div className="text-xs uppercase tracking-[0.4em] text-slate-500 mb-4">Direct_Line</div>
-                                    <a href={`mailto:${personalInfo.email}`} className="text-2xl md:text-4xl hover:text-[hsl(var(--brand))] transition-colors border-b border-white/10 pb-2 block w-max">{personalInfo.email}</a>
+                                    <a href={`mailto:${personalInfo.email}`} className="text-lg sm:text-2xl md:text-4xl hover:text-[hsl(var(--brand))] transition-colors border-b border-white/10 pb-2 block w-max break-all max-w-full">{personalInfo.email}</a>
                                 </div>
                                 <div className="flex gap-12 pt-12 border-t border-white/5">
                                     <a href={personalInfo.linkedInURL} className="text-xs font-black uppercase tracking-[0.3em] hover:text-[hsl(var(--brand))] transition-colors">LINKEDIN</a>

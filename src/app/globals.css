@@ -658,6 +658,10 @@ html {
         @apply liquid-glass-card rounded-[2rem] sm:rounded-[3rem] p-8 sm:p-10;
     }
 
+    .glass-card {
+        @apply liquid-glass-card;
+    }
+
 }
 
 @layer utilities {
@@ -725,8 +729,24 @@ html {
         }
     }
 
-    .animate-gradient {
+    .animate-gradient-x {
         animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes bounce-slight {
+
+        0%,
+        100% {
+            transform: translateY(0) rotate(0);
+        }
+
+        50% {
+            transform: translateY(-3px) rotate(5deg);
+        }
+    }
+
+    .animate-bounce-slight {
+        animation: bounce-slight 2s ease-in-out infinite;
     }
 }
 

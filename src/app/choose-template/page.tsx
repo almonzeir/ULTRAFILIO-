@@ -16,9 +16,12 @@ import { motion } from 'framer-motion';
 
 const templates = [
   {
-    id: 'aurora',
-    name: 'Aurora',
     description: 'Award-winning design with aurora backgrounds, bento grids, and magnetic effects.',
+  },
+  {
+    id: 'liquid-silk',
+    name: 'Liquid Silk',
+    description: 'Architectural minimalism with mesh gradients and fluid architectural typography.',
   },
   {
     id: 'modern',
@@ -203,7 +206,7 @@ function ChooseTemplateContent() {
             {templates.map((template, index) => {
               const isSelected = selected === template.id;
               // Randomly assign badges for demo purposes
-              const isNew = template.id === 'aurora' || template.id === 'cyber';
+              const isNew = template.id === 'aurora' || template.id === 'cyber' || template.id === 'liquid-silk';
               const isPopular = template.id === 'modern' || template.id === 'executive';
 
               return (
@@ -239,6 +242,7 @@ function ChooseTemplateContent() {
                           <div className={cn(
                             "absolute inset-0 flex flex-col items-center justify-center p-6 transition-all duration-500",
                             template.id === 'aurora' && "bg-gradient-to-br from-purple-600/30 via-pink-500/20 to-cyan-400/30",
+                            template.id === 'liquid-silk' && "bg-gradient-to-br from-violet-600/20 via-indigo-500/30 to-purple-400/20",
                             template.id === 'modern' && "bg-gradient-to-br from-blue-600/30 via-indigo-500/20 to-purple-500/30",
                             template.id === 'executive' && "bg-gradient-to-br from-slate-800/40 via-gray-700/30 to-slate-600/40",
                             template.id === 'creative' && "bg-gradient-to-br from-orange-500/30 via-pink-500/20 to-yellow-400/30",
