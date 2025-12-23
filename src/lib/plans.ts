@@ -1,6 +1,6 @@
 // Plan definitions and feature gating logic
 
-export type PlanType = 'free' | 'pro_monthly' | 'pro_lifetime';
+export type PlanType = 'free' | 'pro_monthly' | 'pro_annual';
 
 export interface PlanDetails {
     id: PlanType;
@@ -54,17 +54,16 @@ export const PLANS: Record<PlanType, PlanDetails> = {
             canPublishProTemplates: true,
         },
     },
-    pro_lifetime: {
-        id: 'pro_lifetime',
-        name: 'Pro Lifetime',
-        price: 15,
-        period: 'lifetime',
+    pro_annual: {
+        id: 'pro_annual',
+        name: 'Pro Annual',
+        price: 45,
+        period: 'month', // Effectively annual
         features: [
             'Everything in Pro Monthly',
-            'One-time payment, forever access',
-            'All future templates included',
-            'Lifetime updates',
-            'VIP support',
+            'All 9 premium templates',
+            'Annual Commitment',
+            'Priority support',
             'Early access to new features',
         ],
         limits: {
@@ -91,5 +90,5 @@ export function getUserDailyLimit(userPlan: PlanType): number {
 }
 
 export function isPro(userPlan: PlanType): boolean {
-    return userPlan === 'pro_monthly' || userPlan === 'pro_lifetime';
+    return userPlan === 'pro_monthly' || userPlan === 'pro_annual';
 }

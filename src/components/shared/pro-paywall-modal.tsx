@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crown, X, Sparkles, Check, Rocket, Gift, PartyPopper, Star } from 'lucide-react';
+import { Crown, X, Sparkles, Check, Rocket, Gift, PartyPopper, Star, Trophy } from 'lucide-react';
+import { useUser } from '@/hooks/useUser';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProPaywallModalProps {
     isOpen: boolean;
@@ -17,9 +19,53 @@ interface ProPaywallModalProps {
 export default function ProPaywallModal({ isOpen, onClose, templateName, reason = 'template' }: ProPaywallModalProps) {
     const router = useRouter();
 
-    const handleUpgrade = () => {
-        onClose();
-        router.push('/checkout');
+    const { supabase, user, refreshUser } = useUser();
+    const { toast } = useToast();
+    const [isClaiming, setIsClaiming] = React.useState(false);
+
+    const handleUpgrade = async () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        setIsClaiming(true);
+        try {
+            toast({
+                title: "Activating Early Access...",
+                description: "Granting your professional status.",
+            });
+
+            const { error } = await supabase
+                .from('users')
+                .update({
+                    is_pro: true,
+                    subscription_plan: 'annual',
+                    subscription_status: 'active'
+                })
+                .eq('id', user.id);
+
+            if (error) throw error;
+
+            await refreshUser?.();
+
+            toast({
+                title: "Welcome to Pro! 🎉",
+                description: "Your Early Access is now active. Enjoy all premium features!",
+            });
+
+            onClose();
+            router.push('/dashboard');
+        } catch (error) {
+            console.error("Error claiming early access:", error);
+            toast({
+                title: "Activation Failed",
+                description: "Please try again later or contact support.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsClaiming(false);
+        }
     };
 
     if (!isOpen) return null;
@@ -62,15 +108,19 @@ export default function ProPaywallModal({ isOpen, onClose, templateName, reason 
                                 className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-[#e2e2e2] via-[#ffffff] to-[#888888] flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-white/10 relative group"
                             >
                                 <div className="absolute inset-0 rounded-[2rem] bg-white/20 blur opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <Crown className="w-10 h-10 text-[#0a0a0f] relative z-10" />
+                                <Trophy className="w-10 h-10 text-[#0a0a0f] relative z-10" />
                             </motion.div>
-                            <h2 className="text-3xl md:text-4xl font-black text-white mb-3">
-                                {reason === 'generation_limit' ? 'Portfolio Limit Reached' : 'Unlock Pro Creative Power'}
+                            <h2 className="text-3xl md:text-4xl font-black text-white mb-3 tracking-tighter">
+                                {reason === 'generation_limit' ? 'Portfolio Limit Reached' : 'Claim Early Access'}
                             </h2>
-                            <p className="text-lg text-white/50 max-w-md mx-auto">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 mb-6 mx-auto">
+                                <Trophy className="w-3.5 h-3.5 text-white/70" />
+                                <span className="text-[10px] font-black text-white/70 uppercase tracking-[0.2em]">FREE for first 1000 users</span>
+                            </div>
+                            <p className="text-lg text-white/50 max-w-md mx-auto leading-relaxed">
                                 {reason === 'generation_limit'
-                                    ? "You've reached the 3 portfolio limit for free accounts. Upgrade to create unlimited masterpieces."
-                                    : `AI CV Parsing and publishing with premium templates like "${templateName || 'Modern'}" requires Pro access.`
+                                    ? "You've reached the 3 portfolio limit, but you're in luck! All Pro features are open for the first 1000 users."
+                                    : `Unlock premium templates like "${templateName || 'Modern'}" and AI CV parsing for free while we launch.`
                                 }
                             </p>
                         </div>
@@ -126,10 +176,12 @@ export default function ProPaywallModal({ isOpen, onClose, templateName, reason 
                         <div className="flex flex-col items-center gap-4">
                             <Button
                                 onClick={handleUpgrade}
-                                className="w-full h-14 rounded-2xl bg-white text-black text-lg font-black hover:bg-white/90 shadow-xl shadow-white/5 transition-all group"
+                                disabled={isClaiming}
+                                className="w-full h-14 rounded-2xl bg-white text-black text-lg font-black hover:bg-neutral-200 shadow-xl shadow-white/5 transition-all group relative overflow-hidden"
                             >
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
                                 <Rocket className="w-5 h-5 mr-3 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                                Upgrade to Pro – $5/mo
+                                Claim Free Pro Access
                             </Button>
                             <button
                                 onClick={onClose}
