@@ -68,7 +68,7 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
             <div className="inline-block px-4 py-1 border border-[hsl(var(--brand))] text-[hsl(var(--brand))] text-xs tracking-[0.4em] uppercase mb-8 font-mono">
               SYSTEM_INIT // VERSION_4.0
             </div>
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-cyber font-black leading-none tracking-tighter mb-8 neon-text">
+            <h1 className="text-3xl sm:text-6xl md:text-8xl lg:text-9xl font-cyber font-black leading-none tracking-tighter mb-8 neon-text break-words">
               {personalInfo.fullName.split(' ')[0]} <br />
               <span className="text-transparent border-text text-outline-[hsl(var(--brand))]">
                 {personalInfo.fullName.split(' ').slice(1).join(' ')}
@@ -174,10 +174,10 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
       {/* --- PROJECTS GRID --- */}
       <section id="projects" className="py-20 px-6 bg-[#080808] border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-cyber text-4xl mb-12 flex items-end gap-4">
-            PROJECT_DATABASE
-            <span className="text-sm font-mono text-[hsl(var(--brand))] mb-2 opacity-70">
-                      // {projects.length} RECORDS FOUND
+          <h2 className="font-cyber text-xl sm:text-4xl mb-12 flex flex-wrap items-end gap-4">
+            <span className="break-words">PROJECT_DB</span>
+            <span className="text-[10px] sm:text-sm font-mono text-[hsl(var(--brand))] mb-1 sm:mb-2 opacity-70">
+                      // {projects.length} RECORDS
             </span>
           </h2>
 
@@ -197,7 +197,7 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
                   <div className="text-xs font-mono text-[hsl(var(--brand))] mb-2">
                     DIR: {project.category}
                   </div>
-                  <h3 className="text-xl font-bold font-cyber text-white mb-4 group-hover:text-[hsl(var(--brand))] transition-colors">
+                  <h3 className="text-lg sm:text-xl font-bold font-cyber text-white mb-4 group-hover:text-[hsl(var(--brand))] transition-colors break-words">
                     {project.name}
                   </h3>
                   <p className="text-sm text-gray-500 mb-6 border-l border-gray-700 pl-3 leading-relaxed">
@@ -245,9 +245,9 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
             <div className="space-y-12">
               {certifications && certifications.length > 0 && (
                 <div className="cyber-card p-8 md:p-12">
-                  <h2 className="font-cyber text-xl sm:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
+                  <h2 className="font-cyber text-base sm:text-xl md:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
                     <span className="w-4 h-[1px] bg-[hsl(var(--brand))] flex-shrink-0"></span>
-                    <span className="truncate">SECURITY_CLEARENCE</span>
+                    <span className="break-words">SECURITY_KEYS</span>
                   </h2>
                   <div className="grid gap-4">
                     {certifications.map((cert, i) => (
@@ -263,9 +263,9 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
 
               {languages && languages.length > 0 && (
                 <div className="cyber-card p-8 md:p-12">
-                  <h2 className="font-cyber text-xl sm:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
+                  <h2 className="font-cyber text-base sm:text-xl md:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
                     <span className="w-4 h-[1px] bg-[hsl(var(--brand))] flex-shrink-0"></span>
-                    <span className="truncate">LEXICON_UPLINK</span>
+                    <span className="break-words">LANG_UPLINK</span>
                   </h2>
                   <div className="flex flex-wrap gap-8">
                     {languages.map((lang, i) => (
@@ -290,8 +290,8 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
           </div>
         </div>
 
-        <h2 className="text-3xl font-cyber font-bold mb-8">ESTABLISH_UPLINK</h2>
-        <a href={`mailto:${personalInfo.email}`} className="text-xl md:text-3xl font-mono hover:text-[hsl(var(--brand))] hover:neon-text transition-all tracking-tighter">
+        <h2 className="text-xl sm:text-3xl font-cyber font-bold mb-8 break-words">ESTABLISH_UPLINK</h2>
+        <a href={`mailto:${personalInfo.email}`} className="text-base sm:text-xl md:text-3xl font-mono hover:text-[hsl(var(--brand))] hover:neon-text transition-all tracking-tighter truncate max-w-full inline-block">
           {personalInfo.email}
         </a>
 

@@ -47,16 +47,13 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
       <main className="relative z-10 max-w-[1400px] mx-auto border-x border-black/5 dark:border-white/5 bg-white/30 dark:bg-black/20 backdrop-blur-[1px]">
 
         {/* --- HEADER / NAVIGATION BAR --- */}
-        <header className="sticky top-0 z-[100] border-b border-black/10 dark:border-white/10 flex justify-between items-center px-8 md:px-12 py-4 bg-inherit backdrop-blur-md">
-          <div className="text-[10px] font-black uppercase tracking-[0.5em] opacity-40">
-            Design_System_v2 // {new Date().getFullYear()}
-          </div>
-          <div className="flex gap-8 text-[11px] font-bold uppercase tracking-widest overflow-x-auto no-scrollbar py-2">
+        <header className="sticky top-0 z-[100] border-b border-black/10 dark:border-white/10 flex justify-center items-center px-4 sm:px-8 md:px-12 py-3 sm:py-4 bg-inherit backdrop-blur-md">
+          <nav className="flex gap-6 sm:gap-10 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest">
             <a href="#about" className="hover:opacity-50 transition-opacity">Index</a>
             <a href="#projects" className="hover:opacity-50 transition-opacity">Archive</a>
             <a href="#experience" className="hover:opacity-50 transition-opacity">History</a>
             <a href="#contact" className="hover:opacity-50 transition-opacity">Contact</a>
-          </div>
+          </nav>
         </header>
 
         {/* --- HERO / IDENTITY --- */}
@@ -67,8 +64,8 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col lg:flex-row justify-between items-start gap-12 lg:gap-24"
           >
-            <div className="flex-1">
-              <h1 className="text-[14vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter uppercase mb-12 font-tight">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-4xl sm:text-[14vw] md:text-[10vw] font-black leading-[0.8] tracking-tighter uppercase mb-8 sm:mb-12 font-tight break-words">
                 {personalInfo.fullName.split(' ').map((name, i) => (
                   <span key={i} className="block">{name}</span>
                 ))}
@@ -85,8 +82,8 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
               </div>
             </div>
 
-            <div className="w-full lg:w-[450px] space-y-12">
-              <div className="text-xl md:text-3xl font-medium leading-[1.1] tracking-tight text-justify indent-12 md:indent-20">
+            <div className="w-full lg:w-[450px] space-y-8 sm:space-y-12">
+              <div className="text-lg sm:text-xl md:text-3xl font-medium leading-[1.1] tracking-tight text-justify indent-8 sm:indent-12 md:indent-20 break-words">
                 {about.extendedBio}
               </div>
 
@@ -128,10 +125,10 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
 
         {/* --- PROJECTS --- */}
         <section id="projects">
-          <div className="px-8 md:px-12 py-10 bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 flex justify-between items-center">
-            <h2 className="text-xs font-black uppercase tracking-[0.5em]">Selected_Works</h2>
-            <div className="text-[10px] font-bold opacity-30 flex gap-4 uppercase italic">
-              <span>Dynamic_Archive</span>
+          <div className="px-4 sm:px-8 md:px-12 py-6 sm:py-10 bg-black/5 dark:bg-white/5 border-b border-black/10 dark:border-white/10 flex flex-wrap justify-between items-center gap-4">
+            <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] sm:tracking-[0.5em]">Selected_Works</h2>
+            <div className="text-[8px] sm:text-[10px] font-bold opacity-30 flex gap-2 sm:gap-4 uppercase italic">
+              <span>Archive</span>
               <span className="animate-pulse">Active</span>
             </div>
           </div>
@@ -145,31 +142,31 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
                 viewport={{ margin: "-100px" }}
                 className="group grid lg:grid-cols-[1.2fr_1fr] min-h-[500px]"
               >
-                <div className="p-8 md:p-12 lg:p-20 flex flex-col justify-between items-start gap-12 border-r border-black/10 dark:border-white/10">
-                  <div className="space-y-6">
-                    <div className="flex items-center gap-4 text-[10px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.3em]">
+                <div className="p-4 sm:p-8 md:p-12 lg:p-20 flex flex-col justify-between items-start gap-8 sm:gap-12 border-r border-black/10 dark:border-white/10">
+                  <div className="space-y-4 sm:space-y-6 w-full">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[9px] sm:text-[10px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.2em] sm:tracking-[0.3em]">
                       <span>Ref_{i + 1}</span>
-                      <div className="w-8 h-[1px] bg-current opacity-30" />
-                      <span>{project.category}</span>
+                      <div className="w-4 sm:w-8 h-[1px] bg-current opacity-30" />
+                      <span className="break-words">{project.category}</span>
                     </div>
-                    <h3 className="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter">
+                    <h3 className="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-black uppercase leading-none tracking-tighter break-words hyphens-auto">
                       {project.name}
                     </h3>
                   </div>
 
-                  <div className="space-y-10 max-w-xl">
-                    <p className="text-xl md:text-2xl font-medium tracking-tight opacity-70 italic leading-relaxed">
+                  <div className="space-y-6 sm:space-y-10 max-w-xl w-full">
+                    <p className="text-base sm:text-xl md:text-2xl font-medium tracking-tight opacity-70 italic leading-relaxed break-words">
                       {project.description}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {project.tags.map((tag, idx) => (
-                        <span key={idx} className="px-3 py-1.5 border border-black/10 dark:border-white/10 text-[10px] font-black uppercase tracking-widest bg-white/40 dark:bg-black/40">
+                        <span key={idx} className="px-2 sm:px-3 py-1 sm:py-1.5 border border-black/10 dark:border-white/10 text-[8px] sm:text-[10px] font-black uppercase tracking-widest bg-white/40 dark:bg-black/40">
                           {tag}
                         </span>
                       ))}
                     </div>
-                    <a href={project.detailsURL} target="_blank" className="inline-flex items-center gap-4 py-4 px-10 bg-black dark:bg-white text-white dark:text-black text-xs font-black uppercase tracking-[0.4em] hover:scale-105 transition-transform origin-left">
-                      View_Source <ArrowUpRight size={16} />
+                    <a href={project.detailsURL} target="_blank" className="inline-flex items-center gap-2 sm:gap-4 py-3 sm:py-4 px-6 sm:px-10 bg-black dark:bg-white text-white dark:text-black text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] hover:scale-105 transition-transform origin-left">
+                      View <ArrowUpRight size={14} />
                     </a>
                   </div>
                 </div>
@@ -182,7 +179,7 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
                       className="absolute inset-0 w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[0.16,1,0.3,1]"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-8xl font-black opacity-5 uppercase tracking-tighter">Mock_0{i + 1}</div>
+                    <div className="w-full h-full flex items-center justify-center text-4xl sm:text-6xl md:text-8xl font-black opacity-5 uppercase tracking-tighter">Mock_{i + 1}</div>
                   )}
                   {/* GRID LINES ON IMAGE */}
                   <div className="absolute inset-0 pointer-events-none border-[1px] border-white/5 grid grid-cols-3 grid-rows-3" />
@@ -194,35 +191,36 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
 
         {/* --- EXPERIENCE --- */}
         <section id="experience" className="border-t border-black/10 dark:border-white/10">
-          <div className="grid lg:grid-cols-[400px_1fr] divide-x divide-black/10 dark:divide-white/10">
-            <div className="p-12 md:p-20 space-y-12 bg-black dark:bg-white text-white dark:text-black">
-              <h2 className="text-6xl md:text-8xl font-black uppercase leading-none tracking-tighter">
-                Prof_<br />Log
+          <div className="grid lg:grid-cols-[280px_1fr] xl:grid-cols-[350px_1fr] divide-y lg:divide-y-0 lg:divide-x divide-black/10 dark:divide-white/10">
+            <div className="p-6 sm:p-10 md:p-16 space-y-6 sm:space-y-10 bg-black dark:bg-white text-white dark:text-black">
+              <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase leading-none tracking-tighter">
+                Prof<br />Log
               </h2>
-              <p className="text-sm font-bold opacity-60 leading-relaxed uppercase tracking-widest indent-8">
-                A chronicle of technical progression and professional evolution across the digital landscape.
+              <p className="text-[10px] sm:text-xs font-bold opacity-60 leading-relaxed uppercase tracking-wider">
+                A chronicle of technical progression and professional evolution.
               </p>
             </div>
 
             <div className="divide-y divide-black/10 dark:divide-white/10">
               {experience.map((exp, i) => (
-                <div key={i} className="p-12 md:p-16 hover:bg-black/5 dark:hover:bg-white/5 transition-colors grid md:grid-cols-[180px_1fr] gap-8">
-                  <div className="text-[11px] font-black uppercase tracking-[0.3em] opacity-40">
+                <div key={i} className="p-6 sm:p-12 md:p-16 hover:bg-black/5 dark:hover:bg-white/5 transition-colors grid md:grid-cols-[140px_1fr] lg:grid-cols-[180px_1fr] gap-4 sm:gap-8">
+                  <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] opacity-40">
                     {exp.dates}
                   </div>
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6 min-w-0">
                     <div>
-                      <h4 className="text-3xl font-black uppercase tracking-tight italic mb-2 leading-none">
+                      <h4 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight italic mb-2 leading-none break-words">
                         {exp.jobTitle}
                       </h4>
-                      <div className="text-[12px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.2em]">
+                      <div className="text-[11px] sm:text-[12px] font-black text-[hsl(var(--brand))] uppercase tracking-[0.1em] sm:tracking-[0.2em] break-words">
                         @ {exp.company}
                       </div>
                     </div>
-                    <ul className="space-y-3 max-w-2xl">
+                    <ul className="space-y-2 sm:space-y-3 max-w-2xl">
                       {exp.responsibilities.map((res, idx) => (
-                        <li key={idx} className="text-lg font-medium opacity-60 flex gap-4 leading-snug">
-                          <span className="text-[hsl(var(--brand))] flex-shrink-0">/</span> {res}
+                        <li key={idx} className="text-sm sm:text-lg font-medium opacity-60 flex gap-2 sm:gap-4 leading-snug">
+                          <span className="text-[hsl(var(--brand))] flex-shrink-0">/</span>
+                          <span className="break-words">{res}</span>
                         </li>
                       ))}
                     </ul>
@@ -234,29 +232,29 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
         </section>
 
         {/* --- ACADEMIC & TOOLS --- */}
-        <section className="grid lg:grid-cols-2 divide-x divide-black/10 dark:divide-white/10 border-t border-b border-black/10 dark:border-white/10">
-          <div className="p-12 md:p-20 space-y-16">
-            <div className="text-xs font-black uppercase tracking-[0.5em] opacity-40">Academic_Registry</div>
-            <div className="space-y-16">
+        <section className="grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-black/10 dark:divide-white/10 border-t border-b border-black/10 dark:border-white/10">
+          <div className="p-6 sm:p-12 md:p-20 space-y-8 sm:space-y-16">
+            <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] sm:tracking-[0.5em] opacity-40">Academic_Log</div>
+            <div className="space-y-8 sm:space-y-16">
               {education?.map((edu, i) => (
-                <div key={i} className="space-y-4">
-                  <div className="text-[10px] font-black opacity-30">{edu.startDate} - {edu.endDate}</div>
-                  <h3 className="text-3xl font-black uppercase tracking-tighter italic">{edu.degree}</h3>
-                  <div className="text-sm font-bold uppercase tracking-widest">/ {edu.institution}</div>
+                <div key={i} className="space-y-2 sm:space-y-4">
+                  <div className="text-[9px] sm:text-[10px] font-black opacity-30">{edu.startDate} - {edu.endDate}</div>
+                  <h3 className="text-base sm:text-xl md:text-3xl font-black uppercase tracking-tighter italic break-words hyphens-auto leading-tight">{edu.degree}</h3>
+                  <div className="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider sm:tracking-widest break-words">/ {edu.institution}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="p-12 md:p-20 space-y-16 bg-black/[0.02] dark:bg-white/[0.02]">
-            <div className="text-xs font-black uppercase tracking-[0.5em] opacity-40">Accreditations_&_Methods</div>
-            <div className="grid sm:grid-cols-2 gap-12">
+          <div className="p-6 sm:p-12 md:p-20 space-y-8 sm:space-y-16 bg-black/[0.02] dark:bg-white/[0.02]">
+            <div className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] sm:tracking-[0.5em] opacity-40">Credentials</div>
+            <div className="grid gap-8 sm:gap-12">
               {certifications && (
-                <div className="space-y-6">
-                  <span className="text-[9px] font-black uppercase opacity-30 tracking-[0.3em]">Certificates</span>
-                  <div className="space-y-3">
+                <div className="space-y-4 sm:space-y-6">
+                  <span className="text-[8px] sm:text-[9px] font-black uppercase opacity-30 tracking-[0.2em] sm:tracking-[0.3em]">Certificates</span>
+                  <div className="space-y-2 sm:space-y-3">
                     {certifications.map((cert, j) => (
-                      <div key={j} className="text-base font-bold uppercase tracking-tight border-l-2 border-[hsl(var(--brand))] pl-4">
+                      <div key={j} className="text-xs sm:text-sm md:text-base font-bold uppercase tracking-tight border-l-2 border-[hsl(var(--brand))] pl-3 sm:pl-4 break-words hyphens-auto leading-relaxed">
                         {cert}
                       </div>
                     ))}
@@ -264,13 +262,13 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
                 </div>
               )}
               {languages && (
-                <div className="space-y-6">
-                  <span className="text-[9px] font-black uppercase opacity-30 tracking-[0.3em]">Lexicon</span>
-                  <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
+                  <span className="text-[8px] sm:text-[9px] font-black uppercase opacity-30 tracking-[0.2em] sm:tracking-[0.3em]">Languages</span>
+                  <div className="space-y-4 sm:space-y-6">
                     {languages.map((lang, k) => (
                       <div key={k}>
-                        <div className="text-xl font-black uppercase italic">{lang.name}</div>
-                        <div className="text-[10px] font-bold opacity-30 uppercase tracking-[0.2em]">{lang.level}</div>
+                        <div className="text-base sm:text-xl font-black uppercase italic break-words">{lang.name}</div>
+                        <div className="text-[9px] sm:text-[10px] font-bold opacity-30 uppercase tracking-[0.1em] sm:tracking-[0.2em]">{lang.level}</div>
                       </div>
                     ))}
                   </div>
@@ -287,12 +285,12 @@ export default function MinimalistTemplate({ data, isDarkMode }: { data: Portfol
             END
           </div>
 
-          <div className="relative z-10 flex flex-col items-center gap-12">
-            <h2 className="text-4xl sm:text-7xl md:text-[10vw] font-black uppercase leading-[0.85] tracking-tighter">
+          <div className="relative z-10 flex flex-col items-center gap-8 sm:gap-12">
+            <h2 className="text-3xl sm:text-7xl md:text-[10vw] font-black uppercase leading-[0.85] tracking-tighter break-words">
               Let&apos;s_Build<br />The_Void
             </h2>
 
-            <a href={`mailto:${personalInfo.email}`} className="text-sm sm:text-xl md:text-3xl font-black hover:text-[hsl(var(--brand))] transition-colors border-b-2 sm:border-b-4 border-current pb-2 sm:pb-4 px-4 sm:px-12 uppercase italic break-all max-w-full">
+            <a href={`mailto:${personalInfo.email}`} className="text-sm sm:text-xl md:text-3xl font-black hover:text-[hsl(var(--brand))] transition-colors border-b-2 sm:border-b-4 border-current pb-2 sm:pb-4 px-4 sm:px-12 uppercase italic max-w-full truncate">
               {personalInfo.email}
             </a>
 

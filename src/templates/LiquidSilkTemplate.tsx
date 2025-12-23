@@ -56,14 +56,14 @@ export default function LiquidSilkTemplate({ data, isDarkMode = true, colorTheme
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] opacity-40">Initialize_Archive // v2.0.4</span>
                     </div>
 
-                    <h1 className="text-[13vw] sm:text-[15vw] lg:text-[13vw] font-black leading-[0.8] sm:leading-[0.75] tracking-tighter text-center mb-8 sm:mb-16 px-2">
+                    <h1 className="text-5xl sm:text-[13vw] lg:text-[13vw] font-black leading-[0.8] sm:leading-[0.75] tracking-tighter text-center mb-8 sm:mb-16 px-2">
                         {personalInfo.fullName.split(' ').map((word, i) => (
                             <span key={i} className="block overflow-hidden relative">
                                 <motion.span
                                     initial={{ y: "100%" }}
                                     animate={{ y: 0 }}
                                     transition={{ delay: 0.1 * i, duration: 2, ease: [0.16, 1, 0.3, 1] }}
-                                    className="block bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent pb-[0.05em]"
+                                    className="block bg-gradient-to-b from-white to-white/30 bg-clip-text text-transparent pb-[0.05em] break-words"
                                 >
                                     {word}
                                 </motion.span>
@@ -153,9 +153,9 @@ export default function LiquidSilkTemplate({ data, isDarkMode = true, colorTheme
             </section>
 
             {/* --- REFREACTIVE ARTIFACTS (Projects) --- */}
-            <section className="relative py-48 z-10">
+            <section className="relative py-24 sm:py-48 z-10">
                 <div className="px-4 sm:px-6 lg:px-24 mb-16 sm:mb-32 flex flex-col md:flex-row justify-between items-end gap-6 sm:gap-12">
-                    <h2 className="text-[12vw] lg:text-[10vw] font-black tracking-tighter leading-none m-0">ARTIFACTS_<br /><span className="text-white/20">SPOTLIGHT</span></h2>
+                    <h2 className="text-4xl sm:text-[10vw] lg:text-[10vw] font-black tracking-tighter leading-none m-0 break-words">ARTIFACTS_<br /><span className="text-white/20">SPOTLIGHT</span></h2>
                     <div className="max-w-xs text-right opacity-30 text-xs font-bold leading-relaxed uppercase tracking-widest hidden lg:block">
                         A curated selection of experiments and production-ready deployments. Each node represents a leap in digital architecture.
                     </div>
@@ -247,10 +247,10 @@ export default function LiquidSilkTemplate({ data, isDarkMode = true, colorTheme
                         whileInView={{ opacity: 1, scale: 1 }}
                         className="text-center space-y-12 sm:space-y-20 w-full"
                     >
-                        <h2 className="text-[14vw] sm:text-[12vw] font-black tracking-tighter leading-none m-0">END_TRANS.<br /><span className="text-white/20">SYNC_NOW</span></h2>
+                        <h2 className="text-4xl sm:text-[10vw] font-black tracking-tighter leading-none m-0 break-words">END_TRANS.<br /><span className="text-white/20">SYNC_NOW</span></h2>
 
                         <div className="flex flex-col items-center gap-8 sm:gap-12 w-full px-2">
-                            <a href={`mailto:${personalInfo.email}`} className="text-base sm:text-2xl md:text-5xl font-black hover:opacity-50 transition-opacity border-b-2 sm:border-b-4 border-white pb-2 sm:pb-4 break-all max-w-full truncate">
+                            <a href={`mailto:${personalInfo.email}`} className="text-sm sm:text-2xl md:text-5xl font-black hover:opacity-50 transition-opacity border-b-2 sm:border-b-4 border-white pb-2 sm:pb-4 max-w-full truncate">
                                 {personalInfo.email}
                             </a>
 

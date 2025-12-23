@@ -291,7 +291,7 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
         ) : (
           <>
             {dict.continueButton}
-            <Sparkles className="w-5 h-5" />
+            <ArrowRight className="w-5 h-5" />
           </>
         )}
       </motion.button>

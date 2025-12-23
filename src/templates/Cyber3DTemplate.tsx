@@ -191,9 +191,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="relative"
+                        className="relative px-2"
                     >
-                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 relative">
+                        <h1 className="text-3xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 relative break-words">
                             <span className="relative inline-block">
                                 <span className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 blur-2xl opacity-30 animate-pulse" />
                                 <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-white">
@@ -375,8 +375,8 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         className="flex items-center gap-4 mb-16 justify-end"
                     >
                         <div className="flex-1 h-[1px] bg-gradient-to-l from-fuchsia-500/50 to-transparent" />
-                        <Cpu className="text-fuchsia-500 animate-pulse" />
-                        <h2 className="text-3xl md:text-4xl font-bold text-white">
+                        <Cpu className="text-fuchsia-500 animate-pulse flex-shrink-0" />
+                        <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-white whitespace-nowrap">
                             <span className="text-fuchsia-500">&lt;</span>Projects<span className="text-fuchsia-500"> /&gt;</span>
                         </h2>
                     </motion.div>
@@ -497,9 +497,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                                 {/* Education */}
                                 {education && education.length > 0 && (
                                     <div>
-                                        <div className="flex items-center gap-3 mb-10">
-                                            <GraduationCap className="text-cyan-400 w-6 h-6" />
-                                            <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Academic_Registry</h2>
+                                        <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                            <GraduationCap className="text-cyan-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                            <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Academic_Registry</h2>
                                         </div>
                                         <div className="space-y-8">
                                             {education.map((edu, i) => (
@@ -517,9 +517,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                                 <div className="space-y-16">
                                     {certifications && certifications.length > 0 && (
                                         <div>
-                                            <div className="flex items-center gap-3 mb-10">
-                                                <Zap className="text-fuchsia-400 w-6 h-6" />
-                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Accredited_Nodes</h2>
+                                            <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                                <Zap className="text-fuchsia-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                                <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Security_Clearance</h2>
                                             </div>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 {certifications.map((cert, i) => (
@@ -534,9 +534,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
 
                                     {languages && languages.length > 0 && (
                                         <div>
-                                            <div className="flex items-center gap-3 mb-10">
-                                                <Globe className="text-violet-400 w-6 h-6" />
-                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Linguistic_Uplink</h2>
+                                            <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                                <Globe className="text-violet-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                                <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Lexicon_Uplink</h2>
                                             </div>
                                             <div className="flex flex-wrap gap-8">
                                                 {languages.map((lang, i) => (
@@ -563,12 +563,12 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8">
+                        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-8 break-words">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-400">
-                                ESTABLISH_CONNECTION
+                                ESTABLISH_UPLINK
                             </span>
                         </h2>
-                        <p className="text-gray-400 text-lg mb-12 max-w-xl mx-auto">
+                        <p className="text-gray-400 text-base sm:text-lg mb-12 max-w-xl mx-auto">
                             Ready to collaborate? Initialize a new connection and let&apos;s build something extraordinary together.
                         </p>
 

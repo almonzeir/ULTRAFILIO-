@@ -39,14 +39,14 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
             </div>
 
             {/* --- FLOATING NAVIGATION --- */}
-            <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[100]">
+            <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-[calc(100%-2rem)] sm:w-auto max-w-[calc(100%-2rem)]">
                 <motion.div
                     initial={{ y: -50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="flex items-center gap-6 px-8 py-3 bg-white/40 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-full shadow-2xl"
+                    className="flex items-center gap-3 sm:gap-6 px-4 sm:px-8 py-2 sm:py-3 bg-white/40 dark:bg-black/40 backdrop-blur-2xl border border-white/20 dark:border-white/10 rounded-full shadow-2xl overflow-x-auto"
                 >
-                    <div className="text-sm font-bold tracking-tight pr-4 border-r border-white/10">{personalInfo.fullName}</div>
-                    <div className="flex gap-6 text-[11px] font-semibold text-[#86868b] uppercase tracking-[0.1em]">
+                    <div className="text-xs sm:text-sm font-bold tracking-tight pr-3 sm:pr-4 border-r border-white/10 whitespace-nowrap truncate max-w-[120px] sm:max-w-none">{personalInfo.fullName}</div>
+                    <div className="flex gap-3 sm:gap-6 text-[10px] sm:text-[11px] font-semibold text-[#86868b] uppercase tracking-[0.1em] whitespace-nowrap">
                         <a href="#about" className="hover:text-blue-500 transition-colors">Vision</a>
                         <a href="#projects" className="hover:text-blue-500 transition-colors">Space</a>
                         <a href="#experience" className="hover:text-blue-500 transition-colors">Flow</a>
@@ -77,7 +77,7 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-6xl md:text-[5rem] font-black tracking-tight leading-[0.95] mb-12"
+                        className="text-3xl sm:text-5xl md:text-[5rem] font-black tracking-tight leading-[0.95] mb-8 sm:mb-12 break-words"
                     >
                         Design. <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500">Scale.</span> <br />
                         Transform Reality.
@@ -87,7 +87,7 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4 }}
-                        className="text-2xl md:text-3xl font-medium text-[#86868b] max-w-3xl mb-12"
+                        className="text-lg sm:text-2xl md:text-3xl font-medium text-[#86868b] max-w-3xl mb-8 sm:mb-12 break-words"
                     >
                         {personalInfo.tagline}
                     </motion.p>
@@ -107,10 +107,10 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                 <section id="about" className="grid lg:grid-cols-3 gap-6">
                     <motion.div
                         {...fadeInUp}
-                        className="lg:col-span-2 p-12 rounded-[40px] bg-white/40 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-3xl flex flex-col justify-center"
+                        className="lg:col-span-2 p-6 sm:p-12 rounded-[24px] sm:rounded-[40px] bg-white/40 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-3xl flex flex-col justify-center"
                     >
-                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-blue-500 mb-8">The Philosophy</h2>
-                        <div className="text-3xl md:text-5xl font-medium leading-[1.1] tracking-tight text-balance">
+                        <h2 className="text-xs font-black uppercase tracking-[0.4em] text-blue-500 mb-4 sm:mb-8">The Philosophy</h2>
+                        <div className="text-xl sm:text-3xl md:text-5xl font-medium leading-[1.1] tracking-tight text-balance break-words">
                             {about.extendedBio}
                         </div>
                     </motion.div>
@@ -211,8 +211,8 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                 </section>
 
                 {/* --- CAREER FLOW (Experience) --- */}
-                <section id="experience" className="space-y-16">
-                    <h2 className="text-[8vw] font-black tracking-tighter text-center">Protocol_Run.</h2>
+                <section id="experience" className="space-y-10 sm:space-y-16">
+                    <h2 className="text-4xl sm:text-[6vw] md:text-[8vw] font-black tracking-tighter text-center break-words">Protocol_Run.</h2>
 
                     <div className="space-y-6">
                         {experience.map((exp, i) => (
@@ -225,10 +225,10 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                                     <div className="text-xl font-black text-blue-500 mb-2">{exp.dates}</div>
                                     <div className="text-[11px] font-black uppercase tracking-[0.2em] opacity-40">Session_Lock</div>
                                 </div>
-                                <div className="flex-1 space-y-6">
+                                <div className="flex-1 space-y-4 sm:space-y-6 min-w-0">
                                     <div>
-                                        <h4 className="text-4xl font-black tracking-tight mb-2 group-hover:translate-x-2 transition-transform">{exp.jobTitle}</h4>
-                                        <div className="text-lg font-medium opacity-60">@ {exp.company}</div>
+                                        <h4 className="text-2xl sm:text-4xl font-black tracking-tight mb-2 group-hover:translate-x-2 transition-transform break-words">{exp.jobTitle}</h4>
+                                        <div className="text-base sm:text-lg font-medium opacity-60 break-words">@ {exp.company}</div>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
                                         {exp.responsibilities.map((res, ridx) => (
@@ -252,8 +252,8 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                                 {education.map((edu, i) => (
                                     <div key={i} className="space-y-2">
                                         <div className="text-sm font-bold opacity-40">{edu.startDate} — {edu.endDate}</div>
-                                        <h4 className="text-3xl font-black tracking-tight">{edu.degree}</h4>
-                                        <p className="text-lg font-medium opacity-60">{edu.institution}</p>
+                                        <h4 className="text-xl sm:text-3xl font-black tracking-tight break-words">{edu.degree}</h4>
+                                        <p className="text-base sm:text-lg font-medium opacity-60 break-words">{edu.institution}</p>
                                     </div>
                                 ))}
                             </div>
@@ -292,24 +292,24 @@ export default function MinimalPlusTemplate({ data, isDarkMode }: { data: Portfo
                 </section>
 
                 {/* --- CONTACT & FOOTER --- */}
-                <section id="contact" className="text-center py-20 sm:py-40">
+                <section id="contact" className="text-center py-16 sm:py-40 px-2">
                     <motion.div {...fadeInUp}>
-                        <h2 className="text-[12vw] sm:text-[10vw] font-black tracking-tighter mb-10 sm:mb-16 leading-[0.85]">Beyond_Boundaries</h2>
+                        <h2 className="text-3xl sm:text-[8vw] md:text-[10vw] font-black tracking-tighter mb-8 sm:mb-16 leading-[0.85] break-words hyphens-auto">Beyond_Boundaries</h2>
                         <a
                             href={`mailto:${personalInfo.email}`}
-                            className="group relative inline-flex items-center justify-center p-6 sm:p-12 bg-white/40 dark:bg-white/5 border-2 border-white/20 backdrop-blur-3xl rounded-full text-base sm:text-3xl font-black hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-700 break-all max-w-full"
+                            className="group relative inline-flex items-center justify-center p-4 sm:p-12 bg-white/40 dark:bg-white/5 border-2 border-white/20 backdrop-blur-3xl rounded-full text-sm sm:text-3xl font-black hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all duration-700 max-w-full"
                         >
                             <span className="truncate">{personalInfo.email}</span>
                             <ArrowUpRight className="ml-2 sm:ml-4 w-5 h-5 sm:w-8 sm:h-8 group-hover:scale-125 transition-transform flex-shrink-0" />
                         </a>
 
-                        <div className="flex flex-wrap justify-center gap-6 sm:gap-12 mt-20 sm:mt-32 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] opacity-40">
+                        <div className="flex flex-wrap justify-center gap-4 sm:gap-12 mt-16 sm:mt-32 text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] opacity-40">
                             <a href={personalInfo.githubURL} className="hover:opacity-100 hover:text-blue-500 transition-all">GitHub</a>
                             <a href={personalInfo.linkedInURL} className="hover:opacity-100 hover:text-blue-500 transition-all">LinkedIn</a>
                             <a href={personalInfo.website} className="hover:opacity-100 hover:text-blue-500 transition-all">Registry</a>
                         </div>
 
-                        <div className="mt-40 text-[9px] font-bold opacity-20 uppercase tracking-[1em]">
+                        <div className="mt-20 sm:mt-40 text-[8px] sm:text-[9px] font-bold opacity-20 uppercase tracking-[0.5em] sm:tracking-[1em] break-words">
                             © {new Date().getFullYear()} {personalInfo.fullName.replace(' ', '_')} // Crystalline_Systems
                         </div>
                     </motion.div>

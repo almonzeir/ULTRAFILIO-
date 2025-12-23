@@ -1221,27 +1221,10 @@ export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioDa
 
             {/* ===== FOOTER ===== */}
             <footer className={`relative z-10 px-6 py-8 border-t ${cardBorder}`}>
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="max-w-7xl mx-auto flex items-center justify-center">
                     <p className={`text-sm ${textMuted}`}>
-                        © {new Date().getFullYear()} {personalInfo.fullName}. Crafted with passion.
+                        © {new Date().getFullYear()} {personalInfo.fullName}.
                     </p>
-                    <div className="flex gap-6">
-                        {personalInfo.githubURL && (
-                            <a href={personalInfo.githubURL} target="_blank" rel="noopener" className={`${textMuted} hover:text-white transition-colors`}>
-                                <Github className="w-5 h-5" />
-                            </a>
-                        )}
-                        {personalInfo.linkedInURL && (
-                            <a href={personalInfo.linkedInURL} target="_blank" rel="noopener" className={`${textMuted} hover:text-white transition-colors`}>
-                                <Linkedin className="w-5 h-5" />
-                            </a>
-                        )}
-                        {personalInfo.email && (
-                            <a href={`mailto:${personalInfo.email}`} className={`${textMuted} hover:text-white transition-colors`}>
-                                <Mail className="w-5 h-5" />
-                            </a>
-                        )}
-                    </div>
                 </div>
             </footer>
         </div>

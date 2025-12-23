@@ -79,11 +79,11 @@ export default function Footer({ hideCTA = false }: FooterProps) {
               <Link
                 ref={ctaBtnRef}
                 href="/create"
-                className="liquid-button-primary group inline-flex items-center gap-4 h-16 sm:h-20 px-12 sm:px-16 rounded-full text-lg sm:text-xl font-semibold"
+                className="liquid-button-primary group inline-flex items-center gap-3 sm:gap-4 h-14 sm:h-20 px-8 sm:px-16 rounded-full text-base sm:text-xl font-semibold"
               >
-                <span className="relative z-10 flex items-center gap-3">
+                <span className="relative z-10 flex items-center gap-2 sm:gap-3 whitespace-nowrap">
                   Launch Now — Free
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 sm:w-6 sm:h-6 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
             </div>
