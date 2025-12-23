@@ -69,6 +69,25 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/create', request.url));
     }
 
+    // List of reserved paths that should NOT be treated as slugs
+    const reservedPaths = [
+        'dashboard', 'create', 'edit', 'settings', 'login', 'signup',
+        'checkout', 'pricing', 'about', 'contact', 'blog', 'api',
+        'p', 'portfolio', 'render', 'admin', 'privacy', 'terms',
+        'forgot-password', 'reset-password', 'refund-policy',
+        'choose-profile-type', 'choose-template', 'template-preview',
+        'builder', 'ai-building', 'demo'
+    ];
+
+    const firstSegment = pathname.split('/')[1];
+
+    if (firstSegment && !reservedPaths.includes(firstSegment) && !pathname.includes('.')) {
+        console.log(`Rewriting ${pathname} to /p${pathname}`);
+        const url = request.nextUrl.clone();
+        url.pathname = `/p${pathname}`;
+        return NextResponse.rewrite(url);
+    }
+
     // Add security headers
     response.headers.set('X-DNS-Prefetch-Control', 'on');
     response.headers.set('X-Frame-Options', 'SAMEORIGIN');

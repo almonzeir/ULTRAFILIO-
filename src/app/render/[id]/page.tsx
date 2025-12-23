@@ -53,8 +53,8 @@ import type { PortfolioData } from '@/templates/types';
 import { useColorTheme } from '@/context/color-theme-context';
 import type { ColorTheme } from '@/lib/color-themes';
 
-export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id: portfolioId } = React.use(params);
+export default function RealPreviewPage({ params }: { params: { id: string } }) {
+    const { id: portfolioId } = params;
     const searchParams = useSearchParams();
     const themeParam = searchParams.get('theme') || searchParams.get('mode');
     const colorParam = searchParams.get('color') as ColorTheme | null;

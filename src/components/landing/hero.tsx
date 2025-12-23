@@ -137,7 +137,7 @@ export default function Hero() {
             <div className="relative w-full h-full pt-10 sm:pt-12">
               <video
                 poster="/image.png"
-                src="/hero-video.mp4"
+                src="https://zbazasdknnoiuknrarvz.supabase.co/storage/v1/object/public/portfolios/hero-video.mp4"
                 autoPlay
                 loop
                 muted

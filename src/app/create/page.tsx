@@ -6,10 +6,11 @@ import ManualForm from '@/components/create/ManualForm';
 import { useRouter } from 'next/navigation';
 import type { PortfolioData } from '@/templates/types';
 import { useToast } from '@/hooks/use-toast';
+import { generateUniqueSlug } from '@/lib/slugs';
 import { useUser } from '@/hooks/useUser';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Loader2, Sparkles, ArrowRight, Pen } from 'lucide-react';
+import { Loader2, Sparkles, ArrowRight, Pen, Crown } from 'lucide-react';
 import Header from '@/components/layout/header';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
@@ -17,8 +18,10 @@ import type { Dictionary } from '@/lib/dictionaries';
 import { supabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
+import { cn } from '@/lib/utils';
 
 import ProcessingScreen from '@/components/create/ProcessingScreen';
+import ProPaywallModal from '@/components/shared/pro-paywall-modal';
 
 const AuthPrompt = ({ dict }: { dict: Dictionary['createPage']['authPrompt'] }) => (
   <section className="min-h-screen bg-background text-foreground px-6 py-20 flex items-center justify-center">
@@ -46,21 +49,44 @@ export default function CreatePortfolioPage() {
   const [hoveredSide, setHoveredSide] = React.useState<'left' | 'right' | null>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { user, loading } = useUser();
+  const { user, isPro, loading } = useUser();
   const { language } = useLanguage();
   const [dict, setDict] = React.useState<Dictionary['createPage'] | null>(null);
+  const [portfolioCount, setPortfolioCount] = React.useState<number>(0);
+  const [isPaywallOpen, setIsPaywallOpen] = React.useState(false);
+  const [paywallReason, setPaywallReason] = React.useState<'template' | 'generation_limit'>('generation_limit');
 
   React.useEffect(() => {
-    const fetchDictionary = async () => {
+    const fetchPortfolioCount = async () => {
+      if (!user) return;
+      const { count, error } = await supabase
+        .from('portfolios')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id);
+
+      if (!error && count !== null) {
+        setPortfolioCount(count);
+      }
+    };
+
+    const fetchDict = async () => {
       const dictionary = await getDictionary(language);
       setDict(dictionary.createPage);
     };
-    fetchDictionary();
-  }, [language]);
+
+    fetchPortfolioCount();
+    fetchDict();
+  }, [user, language]);
 
   const handleManualFormSubmit = async (formData: any) => {
     if (!user) {
       toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in.' });
+      return;
+    }
+
+    if (portfolioCount >= 3 && !isPro) {
+      setPaywallReason('generation_limit');
+      setIsPaywallOpen(true);
       return;
     }
 
@@ -135,6 +161,9 @@ export default function CreatePortfolioPage() {
         display_name: portfolioData.personalInfo.fullName,
       }, { onConflict: 'id' });
 
+      // Generate a unique slug from the user's full name
+      const slug = await generateUniqueSlug(portfolioData.personalInfo.fullName);
+
       const { data: portfolio, error } = await supabase
         .from('portfolios')
         .insert({
@@ -155,7 +184,8 @@ export default function CreatePortfolioPage() {
           certifications: portfolioData.certifications,
           languages: portfolioData.languages,
           template_id: 'executive',
-          status: 'draft'
+          status: 'draft',
+          slug: slug
         })
         .select()
         .single();
@@ -187,6 +217,18 @@ export default function CreatePortfolioPage() {
   const handleGeneratePortfolio = async (cvFile: File, photoFile: File | null) => {
     if (!user) {
       toast({ variant: 'destructive', title: 'Authentication Error', description: 'You must be logged in to create a portfolio.' });
+      return;
+    }
+
+    if (portfolioCount >= 3 && !isPro) {
+      setPaywallReason('generation_limit');
+      setIsPaywallOpen(true);
+      return;
+    }
+
+    if (!isPro) {
+      setPaywallReason('template');
+      setIsPaywallOpen(true);
       return;
     }
 
@@ -573,13 +615,24 @@ export default function CreatePortfolioPage() {
                   onContinue={handleGeneratePortfolio}
                   isProcessing={isProcessing}
                   dict={dict.uploadCard}
+                  isPro={isPro}
                 />
               </motion.div>
 
               {/* RIGHT: Manual Entry Section */}
               <motion.div
-                className="relative bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between cursor-pointer transition-all duration-300 group min-h-[400px]"
-                onClick={() => setShowManualForm(true)}
+                className={cn(
+                  "relative bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between transition-all duration-300 group min-h-[400px]",
+                  portfolioCount < 3 || isPro ? "cursor-pointer" : "cursor-default"
+                )}
+                onClick={() => {
+                  if (portfolioCount >= 3 && !isPro) {
+                    setPaywallReason('generation_limit');
+                    setIsPaywallOpen(true);
+                  } else {
+                    setShowManualForm(true);
+                  }
+                }}
                 onMouseEnter={() => setHoveredSide('right')}
                 onMouseLeave={() => setHoveredSide(null)}
                 animate={{
@@ -587,6 +640,26 @@ export default function CreatePortfolioPage() {
                 }}
                 transition={{ duration: 0.3 }}
               >
+                {/* Limit Overlay for Manual Entry */}
+                {portfolioCount >= 3 && !isPro && (
+                  <div className="absolute inset-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-[0_0_40px_-10px_rgba(255,255,255,0.1)]">
+                      <Crown className="w-8 h-8 text-white/50" />
+                    </div>
+                    <h3 className="text-2xl font-black text-white mb-3 tracking-tight">Limit Reached</h3>
+                    <p className="text-white/40 mb-8 max-w-[200px] mx-auto text-sm font-medium">
+                      You've hit the 3-portfolio limit. Upgrade to unlock unlimited manual creation.
+                    </p>
+                    <Link href="/checkout" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        size="sm"
+                        className="bg-white text-black font-black rounded-xl hover:bg-white/90 shadow-[0_10px_20px_-5px_rgba(255,255,255,0.3)] transition-all"
+                      >
+                        Upgrade to Pro
+                      </Button>
+                    </Link>
+                  </div>
+                )}
                 {/* Decorative Element */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-5">
                   <motion.div
@@ -646,6 +719,12 @@ export default function CreatePortfolioPage() {
 
         </section>
       </main>
+
+      <ProPaywallModal
+        isOpen={isPaywallOpen}
+        onClose={() => setIsPaywallOpen(false)}
+        reason={paywallReason}
+      />
     </div>
   );
 }

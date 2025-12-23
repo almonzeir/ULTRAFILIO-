@@ -563,8 +563,8 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-400">
+                        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-8 px-2">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-400 break-words">
                                 ESTABLISH_CONNECTION
                             </span>
                         </h2>

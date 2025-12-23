@@ -33,6 +33,7 @@ import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 import { useDictionary } from '@/hooks/use-dictionary';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProPaywallModal from '@/components/shared/pro-paywall-modal';
 
 const DEFAULT_SECTION_ORDER = ['hero', 'about', 'experience', 'projects', 'education', 'certifications', 'skills', 'contact'];
 
@@ -54,7 +55,7 @@ export default function EditPortfolioPage() {
     const params = useParams();
     const portfolioId = params.portfolioId as string;
     const router = useRouter();
-    const { user, loading: userLoading } = useUser();
+    const { user, isPro, loading: userLoading } = useUser();
     const { toast } = useToast();
     const { dictionary, language } = useDictionary();
 
@@ -210,8 +211,16 @@ export default function EditPortfolioPage() {
         }
     };
 
+    const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+
     const handlePublish = async () => {
         if (!portfolioId) return;
+
+        if (!isPro) {
+            setIsPaywallOpen(true);
+            return;
+        }
+
         setPublishing(true);
         try {
             await handleSave(true);
@@ -339,6 +348,7 @@ export default function EditPortfolioPage() {
                     isPublishing={publishing}
                     previewDevice={previewDevice}
                     setPreviewDevice={setPreviewDevice}
+                    isPro={isPro}
                 />
 
                 {/* --- MAIN CONTENT AREA --- */}
@@ -1022,6 +1032,12 @@ export default function EditPortfolioPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <ProPaywallModal
+                isOpen={isPaywallOpen}
+                onClose={() => setIsPaywallOpen(false)}
+                templateName={AVAILABLE_TEMPLATES.find(t => t.id === templateId)?.name}
+            />
         </div>
     );
 }

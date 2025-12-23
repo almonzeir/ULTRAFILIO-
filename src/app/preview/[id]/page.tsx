@@ -30,8 +30,8 @@ const templates = [
     { id: 'basic', name: 'Classic', icon: FileText, color: 'bg-slate-600' },
 ];
 
-export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id: portfolioId } = React.use(params);
+export default function RealPreviewPage({ params }: { params: { id: string } }) {
+    const { id: portfolioId } = params;
     const router = useRouter();
     const { toast } = useToast();
 

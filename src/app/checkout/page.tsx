@@ -17,12 +17,18 @@ import Header from '@/components/layout/header';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { LEMONSQUEEZY_VARIANTS } from '@/lib/lemonsqueezy';
+import { usePaddle } from '@/hooks/use-paddle';
+
+const PADDLE_PLANS = {
+    pro_monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
+    pro_lifetime: process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID || '',
+};
 
 export default function CheckoutPage() {
     const router = useRouter();
     const { toast } = useToast();
-    const [loading, setLoading] = useState<string | null>(null);
+    const [loading, setLoading] = React.useState<string | null>(null);
+    const { openCheckout } = usePaddle();
 
     const handleCheckout = async (planType: 'pro_monthly' | 'pro_lifetime') => {
         setLoading(planType);
@@ -35,28 +41,22 @@ export default function CheckoutPage() {
                 return;
             }
 
-            const variantId = LEMONSQUEEZY_VARIANTS[planType];
-            if (!variantId) {
+            const priceId = PADDLE_PLANS[planType];
+            if (!priceId) {
                 toast({ variant: 'destructive', title: "Configuration Error", description: "Product ID not configured." });
                 return;
             }
 
-            const response = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`
+            openCheckout({
+                priceId,
+                customerEmail: session.user.email || '',
+                customData: { userId: session.user.id },
+                onSuccess: (data) => {
+                    toast({ title: "Success!", description: "Welcome to UltraFolio Pro." });
+                    router.push('/dashboard');
                 },
-                body: JSON.stringify({ variantId })
+                onClose: () => setLoading(null)
             });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error || 'Failed to start checkout');
-            }
-
-            const { url } = await response.json();
-            window.location.href = url; // Redirect to Lemon Squeezy
 
         } catch (error: any) {
             console.error('Checkout error:', error);
@@ -121,7 +121,7 @@ export default function CheckoutPage() {
 
                         <div className="flex items-center gap-2 text-sm text-gray-500 pt-4 border-t border-white/5">
                             <ShieldCheck className="w-4 h-4" />
-                            Secure payment via Lemon Squeezy. Cancel anytime.
+                            Secure payment via Paddle. Cancel anytime.
                         </div>
                     </motion.div>
 
