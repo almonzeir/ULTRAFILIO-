@@ -14,10 +14,12 @@ import type { Dictionary } from '@/lib/dictionaries';
 import { Loader2, ArrowRight, UserPlus, CheckCircle2, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { validateEmail, validatePassword, validateDisplayName, checkRateLimit, sanitizeInput, getPasswordStrength } from '@/lib/validation';
 
 export default function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -48,28 +50,53 @@ export default function SignupForm() {
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Rate limiting check
+    if (!checkRateLimit('signup-attempt', 3, 60000)) {
+      setError('Too many signup attempts. Please wait a minute and try again.');
+      return;
+    }
+
+    // Validate display name
+    const nameValidation = validateDisplayName(displayName);
+    if (!nameValidation.isValid) {
+      setError(nameValidation.error || 'Invalid name');
+      return;
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setError(emailValidation.error || 'Invalid email');
+      return;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.error || 'Invalid password');
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match. Please try again.');
+      return;
+    }
+
     setLoading(true);
 
-    // Basic validation
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      setLoading(false);
-      return;
-    }
-
-    if (!displayName.trim()) {
-      setError('Please enter your name.');
-      setLoading(false);
-      return;
-    }
-
     try {
+      // Use sanitized values
+      const sanitizedEmail = emailValidation.sanitizedValue || email.trim().toLowerCase();
+      const sanitizedName = nameValidation.sanitizedValue || sanitizeInput(displayName.trim());
+
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
+        email: sanitizedEmail,
         password,
         options: {
           data: {
-            display_name: displayName,
+            display_name: sanitizedName,
           },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
@@ -79,7 +106,7 @@ export default function SignupForm() {
         if (signUpError.message.includes('already registered')) {
           setError('This email is already registered. Please login instead.');
         } else {
-          setError(signUpError.message);
+          setError('An error occurred during signup. Please try again.');
         }
         setLoading(false);
         return;
@@ -96,7 +123,7 @@ export default function SignupForm() {
           .from('users')
           .insert({
             id: data.user!.id,
-            display_name: displayName,
+            display_name: sanitizedName,
           });
 
         if (profileError) console.error('Profile creation error:', profileError);
@@ -104,7 +131,8 @@ export default function SignupForm() {
         router.push('/create');
       }
     } catch (error: any) {
-      setError(error.message || 'An unexpected error occurred. Please try again.');
+      // Don't expose internal error messages
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -267,14 +295,84 @@ export default function SignupForm() {
                     <Input
                       id="password"
                       type="password"
-                      placeholder="At least 6 characters"
+                      placeholder="Create a strong password"
                       required
-                      minLength={6}
+                      minLength={8}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       disabled={loading}
                       className="h-12 rounded-xl input-teal placeholder:text-white/30"
                     />
+                    {/* Password Strength Indicator */}
+                    {password && (
+                      <div className="space-y-2 pt-2">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((level) => (
+                            <div
+                              key={level}
+                              className={`h-1 flex-1 rounded-full transition-colors ${getPasswordStrength(password).score >= level
+                                ? getPasswordStrength(password).score <= 2
+                                  ? 'bg-red-500'
+                                  : getPasswordStrength(password).score <= 3
+                                    ? 'bg-yellow-500'
+                                    : 'bg-emerald-500'
+                                : 'bg-white/10'
+                                }`}
+                            />
+                          ))}
+                        </div>
+                        <p className={`text-xs font-medium ${getPasswordStrength(password).score <= 2
+                          ? 'text-red-400'
+                          : getPasswordStrength(password).score <= 3
+                            ? 'text-yellow-400'
+                            : 'text-emerald-400'
+                          }`}>
+                          {getPasswordStrength(password).label}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Confirm Password Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="ml-1 text-xs font-semibold uppercase tracking-widest text-[#94a3b8]/60">
+                      Confirm Password
+                    </Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      disabled={loading}
+                      className="h-12 rounded-xl input-teal placeholder:text-white/30"
+                    />
+                    {/* Password Match Indicator */}
+                    {confirmPassword && (
+                      <p className={`text-xs font-medium ${password === confirmPassword ? 'text-emerald-400' : 'text-red-400'
+                        }`}>
+                        {password === confirmPassword ? '✓ Passwords match' : '✗ Passwords do not match'}
+                      </p>
+                    )}
+                    {/* Password Requirements - Under Confirm Password */}
+                    <div className="text-xs text-white/40 space-y-1 pt-2">
+                      <p className={password.length >= 8 ? 'text-emerald-400' : ''}>
+                        • At least 8 characters
+                      </p>
+                      <p className={/[A-Z]/.test(password) ? 'text-emerald-400' : ''}>
+                        • One uppercase letter (A-Z)
+                      </p>
+                      <p className={/[a-z]/.test(password) ? 'text-emerald-400' : ''}>
+                        • One lowercase letter (a-z)
+                      </p>
+                      <p className={/[0-9]/.test(password) ? 'text-emerald-400' : ''}>
+                        • One number (0-9)
+                      </p>
+                      <p className={/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]/.test(password) ? 'text-emerald-400' : ''}>
+                        • One special character (!@#$%...)
+                      </p>
+                    </div>
                   </div>
 
                   <Button

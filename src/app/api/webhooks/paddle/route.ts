@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
         console.log(`Paddle webhook received: ${eventType}`);
 
-        const supabase = createServerSupabaseClient();
+        const supabase = await createServerSupabaseClient();
 
         switch (eventType) {
             case 'subscription.created':

@@ -87,7 +87,7 @@ export default function Footer() {
         {/* Footer Links Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-16 mb-20">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
             <Logo />
             <p className="mt-6 text-base sm:text-lg text-white/40 font-medium max-w-sm leading-relaxed">
               {dict.tagline}
@@ -95,47 +95,65 @@ export default function Footer() {
           </div>
 
           {/* Product Links */}
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
               Product
             </h4>
-            <nav className="flex flex-col gap-4">
-              {[dict.product.features, dict.product.templates, dict.product.pricing].map(item => (
-                <Link
-                  key={item}
-                  href="#"
-                  className="text-white/60 hover:text-white transition-colors font-medium"
-                >
-                  {item}
-                </Link>
-              ))}
+            <nav className="flex flex-col gap-4 items-center md:items-start">
+              <Link
+                href="/#how-it-works"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.product.features}
+              </Link>
+              <Link
+                href="/#templates"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.product.templates}
+              </Link>
+              <Link
+                href="/#pricing"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.product.pricing}
+              </Link>
             </nav>
           </div>
 
           {/* Company Links */}
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
               Company
             </h4>
-            <nav className="flex flex-col gap-4">
-              {[dict.company.about, dict.company.blog, dict.company.contact].map(item => (
-                <Link
-                  key={item}
-                  href="#"
-                  className="text-white/60 hover:text-white transition-colors font-medium"
-                >
-                  {item}
-                </Link>
-              ))}
+            <nav className="flex flex-col gap-4 items-center md:items-start">
+              <Link
+                href="/about"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.company.about}
+              </Link>
+              <Link
+                href="/blog"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.company.blog}
+              </Link>
+              <Link
+                href="/contact"
+                className="text-white/60 hover:text-white transition-colors font-medium"
+              >
+                {dict.company.contact}
+              </Link>
             </nav>
           </div>
 
           {/* Legal Links */}
-          <div>
+          <div className="flex flex-col items-center md:items-start">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white/30 mb-6">
               Legal
             </h4>
-            <nav className="flex flex-col gap-4">
+            <nav className="flex flex-col gap-4 items-center md:items-start">
               <Link
                 href="/privacy"
                 className="text-white/60 hover:text-white transition-colors font-medium"

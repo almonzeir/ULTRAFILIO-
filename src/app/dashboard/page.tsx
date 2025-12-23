@@ -48,7 +48,7 @@ interface Portfolio {
 }
 
 export default async function Dashboard() {
-    const supabase = createServerSupabaseClient();
+    const supabase = await createServerSupabaseClient();
 
     const {
         data: { user },

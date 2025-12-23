@@ -47,8 +47,10 @@ export default function Header() {
 
   const navLinks = [
     { name: dict.features, href: '/#how-it-works' },
-    { name: dict.templates, href: '/demo-template' },
+    { name: dict.templates, href: '/#templates' },
     { name: dict.pricing, href: '/#pricing' },
+    { name: 'About', href: '/about' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (

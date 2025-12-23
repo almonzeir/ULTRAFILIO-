@@ -102,7 +102,7 @@ export default function Hero() {
             </Link>
 
             {/* Secondary CTA - Ghost Glass Button */}
-            <Link href="/demo-template">
+            <Link href="/#templates">
               <button className="liquid-button-ghost group h-14 sm:h-16 px-10 sm:px-14 rounded-full text-base sm:text-lg font-semibold text-white/80 hover:text-white transition-colors">
                 {dict.ctaDemo}
               </button>
@@ -114,7 +114,7 @@ export default function Hero() {
         <motion.div
           ref={mockupRef}
           style={{ y, opacity, willChange: 'transform, opacity' }}
-          className="mt-20 sm:mt-28 relative mx-auto max-w-6xl aspect-video"
+          className="mt-12 sm:mt-28 relative mx-auto max-w-6xl aspect-[4/3] sm:aspect-video"
         >
           {/* Outer Glow */}
           <div className="absolute -inset-4 bg-gradient-to-b from-white/5 to-transparent rounded-[4rem] blur-xl" />
