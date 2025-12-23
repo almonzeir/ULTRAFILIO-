@@ -692,7 +692,7 @@ export default function CreatePortfolioPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#050510] font-sans selection:bg-primary/20">
       <Header />
-      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
+      <main className="flex-grow flex flex-col items-center justify-center p-4 md:p-8 pt-16 md:pt-24 relative overflow-hidden">
 
         {/* Living Background */}
         <MeshGradientBackground />
@@ -713,16 +713,6 @@ export default function CreatePortfolioPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-pill text-[11px] font-semibold text-white/60 uppercase tracking-widest mb-6"
-            >
-              <Sparkles className="w-3 h-3" />
-              Next-Gen Portfolio Builder
-            </motion.div>
-
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
               <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
                 {dict.title}

@@ -83,18 +83,18 @@ html {
     }
 
     .dark {
-        /* ELECTRIC TEAL PALETTE */
+        /* LIQUID SILVER PALETTE */
         --bg-dark: 210 60% 4%;
         /* #050A14 - Deep Gunmetal */
-        --primary-neon: 186 100% 50%;
-        /* #00F0FF - Electric Cyan */
-        --primary-dim: 200 100% 36%;
-        /* #0077B6 - Deep Teal */
+        --primary-neon: 0 0% 95%;
+        /* #F2F2F2 - Silver White */
+        --primary-dim: 0 0% 70%;
+        /* #B3B3B3 - Muted Silver */
 
         /* Glass Styles */
         --glass-surface: rgba(5, 15, 25, 0.7);
-        --glass-border: rgba(0, 240, 255, 0.25);
-        --glass-glow: rgba(0, 240, 255, 0.15);
+        --glass-border: rgba(255, 255, 255, 0.15);
+        --glass-glow: rgba(255, 255, 255, 0.1);
 
         --background: var(--bg-dark);
         --foreground: var(--text-light);
@@ -112,7 +112,7 @@ html {
         --accent-foreground: var(--text-light);
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 210 40% 98%;
-        --border: 200 60% 15%;
+        --border: 200 10% 20%;
         --input: 210 50% 10%;
         --ring: var(--primary-neon);
 

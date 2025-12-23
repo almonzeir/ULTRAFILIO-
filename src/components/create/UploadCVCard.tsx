@@ -152,10 +152,9 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
           className="hidden"
           accept="image/png, image/jpeg, image/webp"
         />
-        <button
-          type="button"
+        <div
           onClick={() => photoFileInputRef.current?.click()}
-          className="relative group"
+          className="relative group cursor-pointer"
         >
           <div className={cn(
             "w-16 h-16 rounded-full border-2 border-dashed transition-all duration-300 flex items-center justify-center overflow-hidden bg-muted/50",
@@ -178,7 +177,7 @@ export default function UploadCVCard({ onContinue, isProcessing, dict }: UploadC
               <X className="w-3 h-3 text-white" />
             </button>
           )}
-        </button>
+        </div>
         <div className="flex-1">
           <p className="text-sm font-medium text-foreground">{dict.photoLabel}</p>
           <p className="text-xs text-muted-foreground">Optional</p>
