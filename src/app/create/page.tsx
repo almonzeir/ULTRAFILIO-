@@ -18,180 +18,7 @@ import { supabase } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 
-// Portfolio facts to show during loading
-const PORTFOLIO_FACTS = [
-  "Your portfolio speaks louder than your résumé.",
-  "Small side-projects can change your career.",
-  "Your portfolio shapes people's perception instantly.",
-  "Portfolios beat degrees in creative fields.",
-  "Digital portfolios are global branding power.",
-  "One great project can open a thousand doors.",
-  "Your work tells your story better than words.",
-  "Recruiters spend 7 seconds on a résumé, 2 minutes on a portfolio.",
-  "The best portfolios show process, not just results.",
-  "A portfolio is your 24/7 sales pitch."
-];
-
-const LoadingScreen = () => {
-  const [currentStep, setCurrentStep] = React.useState(0);
-  const [factIndex, setFactIndex] = React.useState(0);
-
-  // Premium Processing Steps
-  const STEPS = [
-    { label: "Initializing Neural Engine", duration: 2500 },
-    { label: "Scanning Professional DNA", duration: 3000 },
-    { label: "Extracting Semantic Insights", duration: 4000 },
-    { label: "Optimizing Layout Matrix", duration: 3500 },
-    { label: "Synthesizing Design System", duration: 3000 },
-    { label: "Finalizing Your UltraFolio", duration: 2000 },
-  ];
-
-  // Rotate through facts
-  React.useEffect(() => {
-    const factInterval = setInterval(() => {
-      setFactIndex((prev) => (prev + 1) % PORTFOLIO_FACTS.length);
-    }, 4000);
-    return () => clearInterval(factInterval);
-  }, []);
-
-  React.useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const runSteps = (index: number) => {
-      if (index >= STEPS.length) return;
-      setCurrentStep(index);
-      timeout = setTimeout(() => {
-        runSteps(index + 1);
-      }, STEPS[index].duration);
-    };
-    runSteps(0);
-    return () => clearTimeout(timeout);
-  }, []);
-
-  const progress = (currentStep / (STEPS.length - 1)) * 100;
-
-  return (
-    <div className="fixed inset-0 z-[100] bg-black flex items-center justify-center overflow-hidden">
-      {/* --- Premium Background Effects --- */}
-      <div className="absolute inset-0 bg-[#020205]" />
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 blur-[120px] rounded-full animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-violet-600/10 blur-[150px] rounded-full" />
-
-      {/* Grain / Noise Overlay */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-
-      <div className="relative z-10 flex flex-col items-center max-w-lg w-full px-6">
-
-        {/* --- Holographic Core --- */}
-        <div className="relative w-48 h-48 mb-16 flex items-center justify-center">
-          {/* Outer Ring */}
-          <div className="absolute inset-0 rounded-full border border-white/5 shadow-inner" />
-
-          {/* Spinning Progress Ring */}
-          <svg className="absolute inset-[-10px] w-[calc(100%+20px)] h-[calc(100%+20px)] -rotate-90">
-            <circle
-              cx="50%"
-              cy="50%"
-              r="48%"
-              fill="none"
-              stroke="white"
-              strokeWidth="1"
-              strokeDasharray="1000"
-              strokeDashoffset={1000 - (progress * 10)}
-              className="transition-all duration-1000 ease-out opacity-20"
-            />
-          </svg>
-
-          {/* Core Sphere */}
-          <motion.div
-            className="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-500/20 via-transparent to-violet-500/20 backdrop-blur-xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-[0_0_50px_rgba(99,102,241,0.1)]"
-            animate={{
-              scale: [1, 1.05, 1],
-              rotate: [0, 5, -5, 0]
-            }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent" />
-            <Sparkles className="w-12 h-12 text-white animate-pulse" />
-
-            {/* Inner Glowing Particles */}
-            <motion.div
-              className="absolute w-2 h-2 bg-indigo-400 rounded-full blur-[2px]"
-              animate={{
-                x: [0, 20, -20, 0],
-                y: [0, -20, 20, 0],
-                opacity: [0.3, 1, 0.3]
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-            />
-          </motion.div>
-
-          {/* Orbital Rings */}
-          <motion.div
-            className="absolute inset-[-20px] rounded-full border border-indigo-500/10"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            className="absolute inset-[-40px] rounded-full border border-violet-500/5"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          />
-        </div>
-
-        {/* --- Text Content --- */}
-        <div className="text-center space-y-6 w-full">
-          <div className="space-y-2">
-            <AnimatePresence mode="wait">
-              <motion.h2
-                key={currentStep}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="text-2xl md:text-3xl font-black tracking-tight text-white font-headline"
-              >
-                {STEPS[currentStep].label}
-              </motion.h2>
-            </AnimatePresence>
-            <p className="text-white/40 text-xs font-bold uppercase tracking-[0.3em]">
-              Neural Processing in Progress
-            </p>
-          </div>
-
-          {/* Custom Progress Bar */}
-          <div className="w-full max-w-[240px] mx-auto">
-            <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.8)]"
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 1 }}
-              />
-            </div>
-          </div>
-
-          {/* Rotating Facts Section */}
-          <div className="pt-8 border-t border-white/5 mt-8 min-h-[80px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={factIndex}
-                initial={{ opacity: 0, filter: "blur(10px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(10px)" }}
-                transition={{ duration: 0.8 }}
-                className="space-y-2"
-              >
-                <p className="text-sm font-medium text-white/60 leading-relaxed italic">
-                  "{PORTFOLIO_FACTS[factIndex]}"
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  );
-};
+import ProcessingScreen from '@/components/create/ProcessingScreen';
 
 const AuthPrompt = ({ dict }: { dict: Dictionary['createPage']['authPrompt'] }) => (
   <section className="min-h-screen bg-background text-foreground px-6 py-20 flex items-center justify-center">
@@ -340,7 +167,7 @@ export default function CreatePortfolioPage() {
         description: 'Now choose a template for your portfolio.',
       });
 
-      router.push(`/choose-template?portfolioId=${portfolio.id}`);
+      router.push(`/edit/${portfolio.id}?onboarding=true`);
 
     } catch (error: any) {
       console.error('Error creating portfolio:', error);
@@ -585,7 +412,7 @@ export default function CreatePortfolioPage() {
           description: 'Now choose a template for your portfolio.',
         });
 
-        router.push(`/choose-template?portfolioId=${portfolioId}`);
+        router.push(`/edit/${portfolioId}?onboarding=true`);
       } else {
         await supabase.from('users').upsert({
           id: user.id,
@@ -624,7 +451,7 @@ export default function CreatePortfolioPage() {
           description: 'Now choose a template for your portfolio.',
         });
 
-        router.push(`/choose-template?portfolioId=${portfolio.id}`);
+        router.push(`/edit/${portfolio.id}?onboarding=true`);
       }
 
     } catch (error: any) {
@@ -652,7 +479,7 @@ export default function CreatePortfolioPage() {
   }
 
   if (isProcessing) {
-    return <LoadingScreen />;
+    return <ProcessingScreen />;
   }
 
   if (showManualForm) {

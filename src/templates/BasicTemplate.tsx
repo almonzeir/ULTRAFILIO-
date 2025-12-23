@@ -4,11 +4,11 @@ import type { PortfolioData } from './types';
 import { Mail, Phone, MapPin, Globe, Linkedin, Github } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function BasicTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects, education = [] } = data;
+export default function BasicTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+  const { personalInfo, about, experience, projects, education = [], certifications = [], languages = [] } = data;
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] py-20 px-4 sm:px-8 print:p-0 print:bg-white text-[#1a1a1a] font-serif leading-relaxed selection:bg-[#1a1a1a] selection:text-white">
+    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-[#FDFDFD] dark:bg-[#050505] py-20 px-4 sm:px-8 print:p-0 print:bg-white text-[#1a1a1a] dark:text-slate-200 font-serif leading-relaxed selection:bg-[#1a1a1a] selection:text-white transition-colors duration-500`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
         
@@ -152,6 +152,61 @@ export default function BasicTemplate({ data }: { data: PortfolioData }) {
             </section>
           </div>
 
+          {/* --- ACADEMIC & CERTIFICATIONS --- */}
+          {((education && education.length > 0) || (certifications && certifications.length > 0) || (languages && languages.length > 0)) && (
+            <div className="mt-24 pt-16 border-t-2 border-slate-100 grid md:grid-cols-2 gap-16">
+              {education && education.length > 0 && (
+                <section>
+                  <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
+                    Academic History
+                  </h2>
+                  <div className="space-y-6">
+                    {education.map((edu, i) => (
+                      <div key={i}>
+                        <div className="text-[10px] font-black uppercase text-slate-400 mb-1">{edu.startDate} - {edu.endDate}</div>
+                        <h4 className="font-bold text-lg leading-tight uppercase sans">{edu.degree}</h4>
+                        <div className="text-sm text-slate-500 italic">{edu.institution}</div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              <div className="space-y-16">
+                {certifications && certifications.length > 0 && (
+                  <section>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
+                      Certifications
+                    </h2>
+                    <ul className="grid gap-3">
+                      {certifications.map((cert, i) => (
+                        <li key={i} className="text-sm font-medium inter uppercase tracking-wider flex items-center gap-3">
+                          <span className="w-1.5 h-1.5 bg-black rounded-full" />
+                          {cert}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                {languages && languages.length > 0 && (
+                  <section>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
+                      Linguistics
+                    </h2>
+                    <div className="flex flex-wrap gap-x-8 gap-y-4">
+                      {languages.map((lang, i) => (
+                        <div key={i}>
+                          <div className="text-[10px] font-black uppercase text-slate-400 mb-1">{lang.level || 'Expert'}</div>
+                          <div className="text-lg font-bold uppercase sans">{lang.name}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
+            </div>
+          )}
         </main>
 
         <footer className="mt-24 pt-10 border-t-2 border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] inter font-bold uppercase tracking-[0.3em] text-slate-400">

@@ -614,7 +614,7 @@ function FloatingStat({ value, label, icon: Icon, delay = 0, themeColor, isDark 
 
 // ==================== MAIN TEMPLATE ====================
 export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
-    const { personalInfo, about, experience, projects, education } = data;
+    const { personalInfo, about, experience, projects, education, certifications, languages } = data;
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
@@ -1106,7 +1106,7 @@ export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioDa
 
             {/* ===== EDUCATION SECTION ===== */}
             {education && education.length > 0 && (
-                <section className="relative z-10 px-6 py-24">
+                <section id="education" className="relative z-10 px-6 py-24">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center mb-16">
                             <RevealText className={`text-4xl md:text-5xl font-bold bg-clip-text text-transparent`} style={{ backgroundImage: `linear-gradient(to right, ${isDark ? 'white, rgba(255,255,255,0.6)' : 'black, rgba(0,0,0,0.6)'})` }}>
@@ -1130,6 +1130,57 @@ export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioDa
                                 </BentoCard>
                             ))}
                         </div>
+                    </div>
+                </section>
+            )}
+
+            {/* ===== CERTIFICATIONS & LANGUAGES ===== */}
+            {((certifications && certifications.length > 0) || (languages && languages.length > 0)) && (
+                <section className="relative z-10 px-6 py-24 bg-white/5 dark:bg-black/20 backdrop-blur-sm">
+                    <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-16">
+                        {certifications && certifications.length > 0 && (
+                            <div className="space-y-10">
+                                <RevealText className={`text-3xl font-bold ${textPrimary}`}>Accreditations</RevealText>
+                                <div className="grid gap-4">
+                                    {certifications.map((cert, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className={`flex items-center gap-4 p-4 rounded-2xl border ${cardBg} ${cardBorder}`}
+                                        >
+                                            <div className="p-2 rounded-lg" style={{ background: `${themeConfig.primary}20` }}>
+                                                <Award className="w-5 h-5" style={{ color: themeConfig.primary }} />
+                                            </div>
+                                            <span className={`text-sm font-bold uppercase tracking-wider ${textSecondary}`}>{cert}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {languages && languages.length > 0 && (
+                            <div className="space-y-10">
+                                <RevealText className={`text-3xl font-bold ${textPrimary}`}>Linguistics</RevealText>
+                                <div className="flex flex-wrap gap-4">
+                                    {languages.map((lang, i) => (
+                                        <motion.div
+                                            key={i}
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.1 }}
+                                            className={`px-6 py-3 rounded-2xl border ${cardBg} ${cardBorder} flex flex-col items-center gap-1`}
+                                        >
+                                            <span className={`text-lg font-black ${textPrimary}`}>{lang.name}</span>
+                                            <span className={`text-[10px] font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r`} style={{ backgroundImage: `linear-gradient(to right, ${themeConfig.primary}, ${themeConfig.secondary})` }}>{lang.level || 'Expert'}</span>
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </section>
             )}

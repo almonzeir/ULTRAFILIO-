@@ -2,168 +2,111 @@
 import React from 'react';
 import type { PortfolioData } from './types';
 
-export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects } = data;
+export default function FuturisticTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+  const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#e0e0e0] font-mono selection:bg-[hsl(var(--brand))] selection:text-black overflow-x-hidden">
+    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-[#050505] dark:bg-[#050505] text-[#e0e0e0] dark:text-[#e0e0e0] font-mono selection:bg-[hsl(var(--brand))] selection:text-black overflow-x-hidden transition-colors duration-500`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
         
         :root {
-           --neon-glow: 0 0 10px hsl(var(--brand)), 0 0 20px hsl(var(--brand));
-           --panel-bg: rgba(20, 20, 20, 0.8);
-           --border-color: rgba(255, 255, 255, 0.1);
+          --font-cyber: 'Orbitron', sans-serif;
+          --font-mono: 'Rajdhani', monospace;
         }
 
-        body { font-family: 'Rajdhani', sans-serif; }
-        .font-cyber { font-family: 'Orbitron', sans-serif; }
+        .font-cyber { font-family: var(--font-cyber); }
+        .font-mono { font-family: var(--font-mono); }
 
-        .scanline {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 50%);
-          background-size: 100% 4px;
-          pointer-events: none;
-          z-index: 50;
-          opacity: 0.15;
-        }
-        
         .neon-text {
-            text-shadow: 0 0 5px hsl(var(--brand)), 0 0 10px hsl(var(--brand));
+          text-shadow: 0 0 10px hsl(var(--brand)), 0 0 20px hsl(var(--brand));
         }
 
         .cyber-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid hsl(var(--brand) / 0.3);
-            position: relative;
-            backdrop-filter: blur(4px);
+          background: rgba(10, 10, 10, 0.8);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          backdrop-blur: 10px;
+          position: relative;
         }
+
         .cyber-card::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px;
-            width: 10px; height: 10px;
-            border-top: 2px solid hsl(var(--brand));
-            border-left: 2px solid hsl(var(--brand));
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 2px;
+          height: 20px;
+          background: hsl(var(--brand));
         }
-        .cyber-card::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; right: -1px;
-            width: 10px; height: 10px;
-            border-bottom: 2px solid hsl(var(--brand));
-            border-right: 2px solid hsl(var(--brand));
+
+        @keyframes scan {
+          from { transform: translateY(-100%); }
+          to { transform: translateY(1000%); }
         }
-        
-        .glitch-hover:hover {
-            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-            color: hsl(var(--brand));
-        }
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
+
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(12px);
         }
       `}</style>
 
-      <div className="scanline"></div>
+      {/* --- HERO SECTION --- */}
+      <section className="relative min-h-screen flex items-center justify-center pt-20 pb-32 px-6">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[hsl(var(--brand)/0.15)] rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[hsl(var(--brand-2)/0.1)] rounded-full blur-[150px] animate-pulse delay-700"></div>
 
-      {/* --- HUD HEADER --- */}
-      <header className="fixed top-0 w-full z-40 bg-[#050505]/90 backdrop-blur border-b border-[hsl(var(--brand)/0.3)] h-16 flex items-center justify-between px-6">
-        <div className="flex items-center gap-4">
-          <div className="w-3 h-3 bg-[hsl(var(--brand))] rounded-full animate-pulse shadow-[0_0_10px_hsl(var(--brand))]"></div>
-          <div className="font-cyber text-xl tracking-widest text-white">
-            SYSTEM.<span className="text-[hsl(var(--brand))]">OS</span>
+          <div className="absolute top-0 left-0 w-full h-full opacity-20">
+            <div className="h-full w-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
           </div>
         </div>
-        <div className="text-xs font-mono text-[hsl(var(--brand))] opacity-70 hidden sm:block">
-              // CONNECTED: {personalInfo.portfolioNameAbbr}
-        </div>
-        <nav className="flex gap-6 text-sm font-bold tracking-wider">
-          {['DATA', 'SKILLS', 'PROJECTS', 'SIGNAL'].map(item => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-[hsl(var(--brand))] hover:shadow-[0_0_10px_hsl(var(--brand))] transition-all">
-              [{item}]
-            </a>
-          ))}
-        </nav>
-      </header>
 
-      {/* --- HERO --- */}
-      <section id="data" className="pt-32 pb-20 px-6 min-h-screen flex flex-col justify-center relative overflow-hidden">
-        {/* Background Grid */}
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: `linear-gradient(hsl(var(--brand)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--brand)) 1px, transparent 1px)`, backgroundSize: '50px 50px', transform: 'perspective(500px) rotateX(60deg) translateY(-100px) scale(2)' }}>
-        </div>
-
-        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 relative z-10 items-center">
-          <div>
-            <div className="font-mono text-[hsl(var(--brand))] mb-4 flex items-center gap-2">
-              <span className="inline-block w-20 h-[1px] bg-[hsl(var(--brand))]"></span>
-              INITIALIZING PROFILE SEQUENCE...
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-20 items-center relative z-10">
+          <div className="text-center lg:text-left">
+            <div className="inline-block px-4 py-1 border border-[hsl(var(--brand))] text-[hsl(var(--brand))] text-xs tracking-[0.4em] uppercase mb-8 font-mono">
+              SYSTEM_INIT // VERSION_4.0
             </div>
-            <h1 className="font-cyber text-6xl md:text-8xl font-bold leading-none mb-6 transparent-text" style={{ WebkitTextStroke: '1px white' }}>
-              {(personalInfo.fullName || 'YOUR NAME').toUpperCase()}
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-cyber font-black leading-none tracking-tighter mb-8 neon-text">
+              {personalInfo.fullName.split(' ')[0]} <br />
+              <span className="text-transparent border-text text-outline-[hsl(var(--brand))]">
+                {personalInfo.fullName.split(' ').slice(1).join(' ')}
+              </span>
             </h1>
-            <h2 className="text-3xl font-bold text-[hsl(var(--brand))] mb-8 glitch-hover inline-block cursor-default">
-              {personalInfo.title}
-            </h2>
-            <p className="text-xl text-gray-400 max-w-xl leading-relaxed border-l-2 border-[hsl(var(--brand))] pl-6 mb-12">
-              {personalInfo.tagline}
+            <p className="text-xl md:text-2xl font-mono text-gray-400 max-w-2xl mx-auto lg:mx-0 mb-12 uppercase tracking-widest italic">
+              &gt; {personalInfo.title}
             </p>
-
-            <div className="flex gap-6">
-              <a href="#projects" className="px-8 py-4 bg-[hsl(var(--brand)/0.2)] border border-[hsl(var(--brand))] text-[hsl(var(--brand))] font-cyber font-bold tracking-widest hover:bg-[hsl(var(--brand))] hover:text-black hover:shadow-[0_0_20px_hsl(var(--brand))] transition-all">
-                ACCESS_WORK
+            <div className="flex flex-wrap justify-center lg:justify-start gap-6">
+              <a href="#projects" className="px-10 py-4 bg-[hsl(var(--brand))] text-black font-cyber font-bold tracking-widest hover:scale-105 transition-all">
+                ACCESS_FILES
               </a>
-              <a href="#signal" className="px-8 py-4 border border-gray-700 hover:border-white transition-colors font-cyber tracking-widest text-sm flex items-center">
-                CONTACT_USER
+              <a href="#signal" className="px-10 py-4 border border-[hsl(var(--brand))] text-[hsl(var(--brand))] font-cyber font-bold tracking-widest hover:bg-[hsl(var(--brand))] hover:text-black transition-all">
+                SEND_SIGNAL
               </a>
             </div>
           </div>
 
-          {/* Holographic Image Container */}
-          <div className="relative flex justify-center">
-            <div className="w-80 h-80 md:w-96 md:h-96 relative">
-              <div className="absolute inset-0 border-2 border-[hsl(var(--brand))] rounded-full animate-[spin_10s_linear_infinite] border-t-transparent border-l-transparent opacity-50"></div>
-              <div className="absolute inset-4 border border-[hsl(var(--brand))] rounded-full animate-[spin_15s_linear_infinite_reverse] border-b-transparent border-r-transparent opacity-30"></div>
+          <div className="relative group mx-auto lg:ml-auto">
+            <div className="absolute -inset-4 border border-[hsl(var(--brand)/0.3)] animate-pulse"></div>
+            <div className="absolute -inset-8 border border-[hsl(var(--brand)/0.1)] animate-pulse delay-500"></div>
 
-              <div className="absolute inset-8 rounded-full overflow-hidden border-4 border-gray-800 bg-gray-900">
-                {personalInfo.profilePhotoURL ? (
-                  <img src={personalInfo.profilePhotoURL} alt="Profile" className="w-full h-full object-cover filter sepia brightness-75 hue-rotate-180" style={{ mixBlendMode: 'luminosity' }} />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl text-[hsl(var(--brand))] font-cyber">NO_SIGNAL</div>
-                )}
-                {/* Scanline overlay on image */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(var(--brand)/0.2)] to-transparent h-2 w-full animate-[scan_2s_linear_infinite]"></div>
-              </div>
+            <div className="relative w-64 h-64 md:w-96 md:h-96 bg-black border-2 border-[hsl(var(--brand))] overflow-hidden">
+              {personalInfo.profilePhotoURL ? (
+                <img src={personalInfo.profilePhotoURL} alt="CORE_IDENTITY" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-4xl text-[hsl(var(--brand))] font-cyber">NO_SIGNAL</div>
+              )}
+              {/* Scanline overlay on image */}
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[hsl(var(--brand)/0.2)] to-transparent h-2 w-full animate-[scan_2s_linear_infinite]"></div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* --- STATS & SKILLS (Cyber Cards) --- */}
-      <section id="skills" className="py-20 px-6 relative z-10">
+      {/* --- BIO & SKILLS --- */}
+      <section id="skills" className="py-20 px-6 relative z-10 border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6 mb-20">
-            {about.stats?.map((stat, i) => (
-              <div key={i} className="cyber-card p-6 text-center group hover:bg-[hsl(var(--brand)/0.1)] transition-colors">
-                <div className="text-4xl font-cyber font-bold text-white mb-2 group-hover:text-[hsl(var(--brand))] group-hover:neon-text transition-all">
-                  {stat.value}
-                </div>
-                <div className="text-xs font-mono text-[hsl(var(--brand))] tracking-widest uppercase">
-                              // {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
           <div className="grid md:grid-cols-2 gap-12">
             <div className="cyber-card p-8 md:p-12">
               <h3 className="text-2xl font-cyber mb-8 text-[hsl(var(--brand))] flex items-center gap-2">
@@ -194,6 +137,40 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
         </div>
       </section>
 
+      {/* --- EXPERIENCE --- */}
+      {experience && experience.length > 0 && (
+        <section id="experience" className="py-20 px-6 relative z-10 border-t border-gray-800">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="font-cyber text-2xl sm:text-4xl mb-12 flex items-center gap-4">
+              <span className="text-sm font-mono text-[hsl(var(--brand))]">02</span>
+              <span className="truncate">CAREER_TIMELINE</span>
+            </h2>
+            <div className="space-y-6">
+              {experience.map((job, i) => (
+                <div key={i} className="cyber-card p-8 group hover:border-[hsl(var(--brand))] transition-all">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                      <h3 className="text-lg sm:text-2xl font-cyber text-white uppercase group-hover:text-[hsl(var(--brand))] transition-colors break-words">{job.jobTitle}</h3>
+                      <div className="text-[hsl(var(--brand))] font-mono text-sm tracking-[0.2em]">@ {job.company}</div>
+                    </div>
+                    <div className="px-4 py-1 border border-gray-700 font-mono text-xs text-gray-500 uppercase tracking-widest">
+                      {job.dates}
+                    </div>
+                  </div>
+                  <ul className="space-y-3">
+                    {job.responsibilities.map((res, ridx) => (
+                      <li key={ridx} className="text-gray-400 text-sm font-light flex gap-3">
+                        <span className="text-[hsl(var(--brand))] opacity-50">/</span> {res}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* --- PROJECTS GRID --- */}
       <section id="projects" className="py-20 px-6 bg-[#080808] border-t border-gray-800">
         <div className="max-w-7xl mx-auto">
@@ -207,7 +184,6 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, i) => (
               <div key={i} className="group relative bg-[#0a0a0a] border border-gray-800 hover:border-[hsl(var(--brand))] transition-colors overflow-hidden">
-                {/* Image */}
                 <div className="aspect-video relative overflow-hidden bg-gray-900 border-b border-gray-800">
                   {project.imageURL ? (
                     <img src={project.imageURL} alt={project.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 grayscale group-hover:grayscale-0" />
@@ -217,7 +193,6 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
                   <div className="absolute inset-0 bg-[hsl(var(--brand))] mix-blend-overlay opacity-0 group-hover:opacity-40 transition-opacity"></div>
                 </div>
 
-                {/* Content */}
                 <div className="p-6">
                   <div className="text-xs font-mono text-[hsl(var(--brand))] mb-2">
                     DIR: {project.category}
@@ -225,7 +200,7 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
                   <h3 className="text-xl font-bold font-cyber text-white mb-4 group-hover:text-[hsl(var(--brand))] transition-colors">
                     {project.name}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-6 border-l border-gray-700 pl-3">
+                  <p className="text-sm text-gray-500 mb-6 border-l border-gray-700 pl-3 leading-relaxed">
                     {project.description}
                   </p>
 
@@ -245,6 +220,68 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
         </div>
       </section>
 
+      {/* --- ACADEMIC & ACCREDITATIONS --- */}
+      {((education && education.length > 0) || (certifications && certifications.length > 0) || (languages && languages.length > 0)) && (
+        <section id="accreditations" className="py-20 px-6 bg-black border-t border-gray-800">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12">
+            {education && education.length > 0 && (
+              <div className="cyber-card p-8 md:p-12">
+                <h2 className="font-cyber text-xl sm:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
+                  <span className="w-4 h-[1px] bg-[hsl(var(--brand))] flex-shrink-0"></span>
+                  <span className="truncate">EDU_DB_LOG</span>
+                </h2>
+                <div className="space-y-10">
+                  {education.map((edu, i) => (
+                    <div key={i} className="border-l-2 border-gray-800 pl-6 group">
+                      <div className="text-[10px] font-mono text-gray-600 mb-2 uppercase tracking-[0.3em]">{edu.startDate} - {edu.endDate}</div>
+                      <h4 className="text-xl font-bold text-white mb-2 group-hover:text-[hsl(var(--brand))] transition-colors">{edu.degree}</h4>
+                      <div className="text-sm font-mono text-gray-500">{edu.institution}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-12">
+              {certifications && certifications.length > 0 && (
+                <div className="cyber-card p-8 md:p-12">
+                  <h2 className="font-cyber text-xl sm:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
+                    <span className="w-4 h-[1px] bg-[hsl(var(--brand))] flex-shrink-0"></span>
+                    <span className="truncate">SECURITY_CLEARENCE</span>
+                  </h2>
+                  <div className="grid gap-4">
+                    {certifications.map((cert, i) => (
+                      <div key={i} className="flex items-center gap-4 py-3 border-b border-gray-900 group">
+                        <span className="text-[hsl(var(--brand))] font-mono opacity-30 group-hover:opacity-100 transition-opacity">#</span>
+                        <span className="text-xs sm:text-sm font-mono tracking-widest uppercase break-words">{cert}</span>
+                        <span className="ml-auto text-[10px] text-gray-700 font-mono">VERIFIED</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {languages && languages.length > 0 && (
+                <div className="cyber-card p-8 md:p-12">
+                  <h2 className="font-cyber text-xl sm:text-3xl mb-10 text-[hsl(var(--brand))] uppercase flex items-center gap-3">
+                    <span className="w-4 h-[1px] bg-[hsl(var(--brand))] flex-shrink-0"></span>
+                    <span className="truncate">LEXICON_UPLINK</span>
+                  </h2>
+                  <div className="flex flex-wrap gap-8">
+                    {languages.map((lang, i) => (
+                      <div key={i} className="flex flex-col items-center gap-2">
+                        <div className="text-xs font-mono text-gray-600 uppercase tracking-widest">{lang.level || 'Mastery'}</div>
+                        <div className="text-2xl font-cyber text-white group-hover:neon-text transition-all">{lang.name}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* --- FOOTER --- */}
       <footer id="signal" className="py-20 px-6 border-t border-[hsl(var(--brand)/0.3)] bg-gradient-to-b from-[#050505] to-[hsl(var(--brand)/0.05)] text-center">
         <div className="w-16 h-16 mx-auto mb-8 rounded-full border border-[hsl(var(--brand))] flex items-center justify-center animate-pulse">
@@ -254,7 +291,7 @@ export default function FuturisticTemplate({ data }: { data: PortfolioData }) {
         </div>
 
         <h2 className="text-3xl font-cyber font-bold mb-8">ESTABLISH_UPLINK</h2>
-        <a href={`mailto:${personalInfo.email}`} className="text-xl md:text-3xl font-mono hover:text-[hsl(var(--brand))] hover:neon-text transition-all">
+        <a href={`mailto:${personalInfo.email}`} className="text-xl md:text-3xl font-mono hover:text-[hsl(var(--brand))] hover:neon-text transition-all tracking-tighter">
           {personalInfo.email}
         </a>
 

@@ -7,59 +7,90 @@ import { supabase } from '@/lib/supabase/client';
 import { useTheme } from 'next-themes';
 import { Loader2 } from 'lucide-react';
 
-// Dynamic Template Imports
+// Dynamic Template Imports - SSR disabled to prevent hydration mismatches
 const ModernTemplate = dynamic(() => import('@/templates/ModernTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
 });
 const ExecutiveTemplate = dynamic(() => import('@/templates/ExecutiveTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-amber-500" /></div>
 });
 const CreativeTemplate = dynamic(() => import('@/templates/CreativeTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-rose-500" /></div>
 });
 const MinimalPlusTemplate = dynamic(() => import('@/templates/MinimalPlusTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-green-500" /></div>
 });
 const BasicTemplate = dynamic(() => import('@/templates/BasicTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
 });
 const MinimalistTemplate = dynamic(() => import('@/templates/MinimalistTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-white"><Loader2 className="h-8 w-8 animate-spin text-gray-500" /></div>
 });
 const Cyber3DTemplate = dynamic(() => import('@/templates/Cyber3DTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-cyan-500" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-cyan-500" /></div>
 });
 const AuroraTemplate = dynamic(() => import('@/templates/AuroraTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-purple-500" /></div>
+});
+const LiquidSilkTemplate = dynamic(() => import('@/templates/LiquidSilkTemplate'), {
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-indigo-400" /></div>
 });
 
 const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModernTemplate'), {
-    loading: () => <div className="h-screen flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+    ssr: false,
+    loading: () => <div className="h-screen flex items-center justify-center bg-neutral-900"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
 });
 
 import type { PortfolioData } from '@/templates/types';
+import { useColorTheme } from '@/context/color-theme-context';
+import type { ColorTheme } from '@/lib/color-themes';
 
 export default function RenderPage({ params }: { params: { id: string } }) {
     const portfolioId = params.id;
     const searchParams = useSearchParams();
-    const mode = searchParams.get('mode');
-    const { setTheme } = useTheme();
+    const themeParam = searchParams.get('theme') || searchParams.get('mode');
+    const colorParam = searchParams.get('color') as ColorTheme | null;
+    const { setTheme: setDarkMode } = useTheme();
+    const { setTheme: setColorTheme } = useColorTheme();
 
-    // Apply theme from URL if present (for iframe control)
+    // Apply dark/light theme from URL if present (for iframe control)
     useEffect(() => {
-        if (mode) {
-            setTheme(mode);
+        if (themeParam) {
+            setDarkMode(themeParam);
         } else {
-            setTheme('dark'); // Default to dark if not validating
+            setDarkMode('dark'); // Default to dark if not validating
         }
-    }, [mode, setTheme]);
+    }, [themeParam, setDarkMode]);
+
+    // Apply color theme from URL if present
+    useEffect(() => {
+        if (colorParam) {
+            setColorTheme(colorParam);
+        }
+    }, [colorParam, setColorTheme]);
 
     const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
-    const [selectedTemplate, setSelectedTemplate] = useState('modern');
     const [loading, setLoading] = useState(true);
+
+    // Get template from URL or fallback to state
+    const urlTemplate = searchParams.get('template');
+    const [dbTemplate, setDbTemplate] = useState<string | null>(null);
+
+    // Priority: URL Param > Database Value > Default 'modern'
+    const selectedTemplate = urlTemplate || dbTemplate || 'modern';
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log("RenderPage: Fetching data for ID:", portfolioId);
             try {
                 const { data, error } = await supabase
                     .from('portfolios')
@@ -67,8 +98,17 @@ export default function RenderPage({ params }: { params: { id: string } }) {
                     .eq('id', portfolioId)
                     .single();
 
-                if (error) throw error;
-                if (!data) return;
+                if (error) {
+                    console.error("RenderPage: Supabase error:", error);
+                    throw error;
+                }
+
+                if (!data) {
+                    console.error("RenderPage: No data found");
+                    return;
+                }
+
+                console.log("RenderPage: Data fetched successfully", data);
 
                 const mappedData: PortfolioData = {
                     personalInfo: {
@@ -96,30 +136,28 @@ export default function RenderPage({ params }: { params: { id: string } }) {
                     languages: data.languages || [],
                 };
 
+                console.log("RenderPage: Mapped data:", mappedData);
                 setPortfolioData(mappedData);
-                // Allow overriding template via URL param too, for live switching
-                const templateParam = searchParams.get('template');
-                if (templateParam) {
-                    setSelectedTemplate(templateParam);
-                } else if (data.template_id) {
-                    setSelectedTemplate(data.template_id);
+
+                // Set DB template
+                if (data.template_id) {
+                    setDbTemplate(data.template_id);
                 }
             } catch (err) {
-                console.error('Render error:', err);
+                console.error('RenderPage: Catch error:', err);
             } finally {
                 setLoading(false);
             }
         };
-
         if (portfolioId) {
             fetchData();
         }
-    }, [portfolioId, searchParams]);
+    }, [portfolioId]);
 
     if (loading) return <div className="min-h-screen bg-neutral-900" />; // Silent loading
     if (!portfolioData) return <div className="text-white text-center p-10">Portfolio Not Found</div>;
 
-    const CurrentTemplate = {
+    const templateMap: Record<string, React.ComponentType<any>> = {
         'aurora': AuroraTemplate,
         'modern': ModernTemplate,
         'executive': ExecutiveTemplate,
@@ -129,11 +167,27 @@ export default function RenderPage({ params }: { params: { id: string } }) {
         'minimalist': MinimalistTemplate,
         'generated': GeneratedModernTemplate,
         'cyber': Cyber3DTemplate,
-    }[selectedTemplate] || ModernTemplate;
+        'liquid-silk': LiquidSilkTemplate,
+    };
+
+    const CurrentTemplate = templateMap[selectedTemplate] || ModernTemplate;
+
+    // Debug: Log which template is being rendered
+    console.log("RenderPage: Rendering template:", selectedTemplate, "Component:", CurrentTemplate?.name || 'Unknown');
 
     return (
-        <div className="absolute inset-0">
-            <CurrentTemplate data={portfolioData} isDarkMode={mode === 'dark' || !mode} />
+        <CurrentTemplate data={portfolioData} isDarkMode={themeParam === 'dark' || !themeParam} />
+    );
+}
+
+// Global Error Handler for this page to catch template crashes
+export function ErrorBoundary({ error }: { error: Error }) {
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-4">
+            <h2 className="text-xl font-bold text-red-400 mb-2">Preview Error</h2>
+            <p className="text-sm text-gray-400 font-mono bg-white/5 p-4 rounded-lg max-w-lg overflow-auto">
+                {error.message}
+            </p>
         </div>
     );
 }

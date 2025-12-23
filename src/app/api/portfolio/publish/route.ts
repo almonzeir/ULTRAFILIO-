@@ -6,148 +6,151 @@ const NETLIFY_API_TOKEN = process.env.NETLIFY_API_TOKEN;
 const NETLIFY_SITE_ID = process.env.NETLIFY_SITE_ID; // Optional: for a single site
 
 export async function POST(req: NextRequest) {
-    try {
-        // Check authentication
-        const authHeader = req.headers.get('authorization');
-        const token = authHeader?.replace('Bearer ', '');
+  try {
+    // Check authentication
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
 
-        if (!token) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-        if (authError || !user) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const { portfolioId, templateId, portfolioData } = await req.json();
-
-        if (!portfolioId || !templateId || !portfolioData) {
-            return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
-        }
-
-        // Verify portfolio belongs to user
-        const { data: portfolio, error: portfolioError } = await supabaseAdmin
-            .from('portfolios')
-            .select('*')
-            .eq('id', portfolioId)
-            .eq('user_id', user.id)
-            .single();
-
-        if (portfolioError || !portfolio) {
-            return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
-        }
-
-        // Generate static HTML for the portfolio
-        const html = generatePortfolioHTML(portfolioData, templateId);
-
-        // For now, we'll generate a preview URL
-        // In production, you would deploy to Netlify using their API
-
-        if (NETLIFY_API_TOKEN) {
-            // Deploy to Netlify
-            const deployResult = await deployToNetlify(html, portfolioData.personalInfo.fullName);
-
-            // Update portfolio with published URL
-            await supabaseAdmin
-                .from('portfolios')
-                .update({
-                    status: 'published',
-                    published_url: deployResult.url,
-                    published_at: new Date().toISOString()
-                })
-                .eq('id', portfolioId);
-
-            return NextResponse.json({
-                success: true,
-                url: deployResult.url,
-                message: 'Portfolio published successfully!'
-            });
-        } else {
-            // No Netlify token - return preview URL instead
-            const previewUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/portfolio/${portfolioId}?template=${templateId}`;
-
-            // Update portfolio status
-            await supabaseAdmin
-                .from('portfolios')
-                .update({
-                    status: 'published',
-                    template_id: templateId,
-                    published_url: previewUrl,
-                    published_at: new Date().toISOString()
-                })
-                .eq('id', portfolioId);
-
-            return NextResponse.json({
-                success: true,
-                url: previewUrl,
-                message: 'Portfolio published! (Preview mode - configure Netlify for production deployment)'
-            });
-        }
-
-    } catch (error: any) {
-        console.error('Error publishing portfolio:', error);
-        return NextResponse.json({ error: error.message || 'Failed to publish' }, { status: 500 });
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { portfolioId, templateId, portfolioData } = await req.json();
+
+    if (!portfolioId || !templateId || !portfolioData) {
+      return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
+    }
+
+    // Verify portfolio belongs to user
+    const { data: portfolio, error: portfolioError } = await supabaseAdmin
+      .from('portfolios')
+      .select('*')
+      .eq('id', portfolioId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (portfolioError || !portfolio) {
+      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
+    }
+
+    // Generate static HTML for the portfolio
+    const html = generatePortfolioHTML(portfolioData, templateId);
+
+    // For now, we'll generate a preview URL
+    // In production, you would deploy to Netlify using their API
+
+    if (NETLIFY_API_TOKEN) {
+      // Deploy to Netlify
+      const deployResult = await deployToNetlify(html, portfolioData.personalInfo.fullName);
+
+      // Update portfolio with published URL
+      await supabaseAdmin
+        .from('portfolios')
+        .update({
+          status: 'published',
+          published_url: deployResult.url,
+          published_at: new Date().toISOString()
+        })
+        .eq('id', portfolioId);
+
+      return NextResponse.json({
+        success: true,
+        url: deployResult.url,
+        message: 'Portfolio published successfully!'
+      });
+    } else {
+      // No Netlify token - return preview URL instead
+      // No Netlify token - return preview URL instead
+      const baseUrl = process.env.NEXT_PUBLIC_APP_URL
+        || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9003');
+      const previewUrl = `${baseUrl}/portfolio/${portfolioId}?template=${templateId}`;
+
+      // Update portfolio status
+      await supabaseAdmin
+        .from('portfolios')
+        .update({
+          status: 'published',
+          template_id: templateId,
+          published_url: previewUrl,
+          published_at: new Date().toISOString()
+        })
+        .eq('id', portfolioId);
+
+      return NextResponse.json({
+        success: true,
+        url: previewUrl,
+        message: 'Portfolio published! (Preview mode - configure Netlify for production deployment)'
+      });
+    }
+
+  } catch (error: any) {
+    console.error('Error publishing portfolio:', error);
+    return NextResponse.json({ error: error.message || 'Failed to publish' }, { status: 500 });
+  }
 }
 
 // Deploy to Netlify
 async function deployToNetlify(html: string, name: string): Promise<{ url: string }> {
-    const siteName = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
+  const siteName = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').slice(0, 30);
 
-    // Create a zip file with the HTML
-    // For simplicity, we'll use the Netlify deploy API directly
+  // Create a zip file with the HTML
+  // For simplicity, we'll use the Netlify deploy API directly
 
-    const response = await fetch('https://api.netlify.com/api/v1/sites', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${NETLIFY_API_TOKEN}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            name: `portfolio-${siteName}-${Date.now()}`,
-            custom_domain: null,
-        }),
-    });
+  const response = await fetch('https://api.netlify.com/api/v1/sites', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${NETLIFY_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: `portfolio-${siteName}-${Date.now()}`,
+      custom_domain: null,
+    }),
+  });
 
-    if (!response.ok) {
-        throw new Error('Failed to create Netlify site');
-    }
+  if (!response.ok) {
+    throw new Error('Failed to create Netlify site');
+  }
 
-    const site = await response.json();
+  const site = await response.json();
 
-    // Deploy the HTML
-    const deployResponse = await fetch(`https://api.netlify.com/api/v1/sites/${site.id}/deploys`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${NETLIFY_API_TOKEN}`,
-            'Content-Type': 'application/zip',
-        },
-        body: createDeployZip(html),
-    });
+  // Deploy the HTML
+  const deployResponse = await fetch(`https://api.netlify.com/api/v1/sites/${site.id}/deploys`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${NETLIFY_API_TOKEN}`,
+      'Content-Type': 'application/zip',
+    },
+    body: createDeployZip(html),
+  });
 
-    if (!deployResponse.ok) {
-        throw new Error('Failed to deploy to Netlify');
-    }
+  if (!deployResponse.ok) {
+    throw new Error('Failed to deploy to Netlify');
+  }
 
-    return { url: site.ssl_url || site.url };
+  return { url: site.ssl_url || site.url };
 }
 
 // Create a simple deploy package
 function createDeployZip(html: string): Buffer {
-    // For a real implementation, you would create a proper zip file
-    // For now, we'll use Netlify's file digest approach
-    return Buffer.from(html);
+  // For a real implementation, you would create a proper zip file
+  // For now, we'll use Netlify's file digest approach
+  return Buffer.from(html);
 }
 
 // Generate static HTML for the portfolio
 function generatePortfolioHTML(data: any, templateId: string): string {
-    const { personalInfo, about, experience = [], projects = [], education = [], certifications = [], languages = [] } = data;
+  const { personalInfo, about, experience = [], projects = [], education = [], certifications = [], languages = [] } = data;
 
-    // Generate inline CSS based on template
-    const styles = getTemplateStyles(templateId);
+  // Generate inline CSS based on template
+  const styles = getTemplateStyles(templateId);
 
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -245,7 +248,7 @@ function generatePortfolioHTML(data: any, templateId: string): string {
 }
 
 function getTemplateStyles(templateId: string): string {
-    const baseStyles = `
+  const baseStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Inter', sans-serif; line-height: 1.6; }
     .container { max-width: 800px; margin: 0 auto; padding: 2rem; }
@@ -277,8 +280,8 @@ function getTemplateStyles(templateId: string): string {
     footer a { color: inherit; }
   `;
 
-    const themeStyles: { [key: string]: string } = {
-        'executive': `
+  const themeStyles: { [key: string]: string } = {
+    'executive': `
       body { background: #0a0a0a; color: #ededed; }
       .social-links a { background: rgba(255,255,255,0.1); color: #ededed; }
       .social-links a:hover { background: rgba(255,255,255,0.2); }
@@ -286,7 +289,7 @@ function getTemplateStyles(templateId: string): string {
       .project-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
       .project-link { color: #8b5cf6; }
     `,
-        'creative': `
+    'creative': `
       body { background: #fafafa; color: #171717; }
       h1 { background: linear-gradient(to right, #ec4899, #8b5cf6, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
       .social-links a { background: #f3f4f6; color: #374151; }
@@ -295,7 +298,7 @@ function getTemplateStyles(templateId: string): string {
       .project-card { background: linear-gradient(135deg, #fafafa, #ffffff); border: 1px solid #e5e7eb; }
       .project-link { color: #8b5cf6; }
     `,
-        'minimal-plus': `
+    'minimal-plus': `
       body { background: #fafafa; color: #171717; }
       .social-links a { background: transparent; border: 1px solid #e5e7eb; color: #6b7280; }
       .social-links a:hover { border-color: #171717; color: #171717; }
@@ -303,7 +306,7 @@ function getTemplateStyles(templateId: string): string {
       .project-card { background: transparent; border: none; padding: 1rem 0; border-bottom: 1px solid #e5e7eb; border-radius: 0; }
       .project-link { color: #2563eb; }
     `,
-    };
+  };
 
-    return baseStyles + (themeStyles[templateId] || themeStyles['executive']);
+  return baseStyles + (themeStyles[templateId] || themeStyles['executive']);
 }

@@ -1,8 +1,8 @@
 /* ModernTemplate.tsx - Stunning 'Glass & Glow' Framer Motion Redesign */
 import React from "react";
 import type { PortfolioData } from "./types";
-import { MapPin, Mail, Building2, Zap, User, ArrowUpRight, Github, Linkedin, ExternalLink, ChevronDown, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Mail, User, ArrowUpRight, Github, Linkedin, Sparkles, GraduationCap, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -18,8 +18,8 @@ const staggerContainer = {
   }
 };
 
-export default function ModernTemplate({ data }: { data: PortfolioData }) {
-  const { personalInfo, about, experience, projects } = data;
+export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+  const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
   const consolidatedSkills = React.useMemo(() => {
     if (!about.skills) return [];
@@ -35,7 +35,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
   }, [about.skills]);
 
   return (
-    <div className="font-sans antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-[#020205] min-h-screen selection:bg-brand selection:text-white">
+    <div className={`font-sans antialiased ${isDarkMode ? 'dark' : ''} text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-[#020205] min-h-screen selection:bg-brand selection:text-white transition-colors duration-500`}>
       <style>{`
         :root {
           --glass-border: rgba(255, 255, 255, 0.1);
@@ -153,10 +153,10 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
 
             <motion.h1
               variants={fadeInUp}
-              className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-8"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-6 sm:mb-8"
             >
               I&apos;m <span className="text-gradient">{personalInfo.fullName}</span> <br />
-              Designing the Future.
+              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl">Designing the Future.</span>
             </motion.h1>
 
             <motion.p
@@ -168,18 +168,16 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
 
             <motion.div
               variants={fadeInUp}
-              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5 mb-16"
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-12 sm:mb-16 px-4 sm:px-0"
             >
-              <a href="#projects" className="w-full sm:w-auto px-10 py-5 rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl">
+              <a href="#projects" className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl text-center">
                 Explore Projects
               </a>
-              <a href={personalInfo.githubURL || '#'} target="_blank" className="w-full sm:w-auto px-10 py-5 rounded-3xl glass-panel text-slate-900 dark:text-white font-black text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3">
-                <Github className="w-6 h-6" />
+              <a href={personalInfo.githubURL || '#'} target="_blank" className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl glass-panel text-slate-900 dark:text-white font-black text-base sm:text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3">
+                <Github className="w-5 h-5 sm:w-6 sm:h-6" />
                 GitHub
               </a>
             </motion.div>
-
-
           </motion.div>
 
           {/* Hero Image with 3D Tilt */}
@@ -192,7 +190,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
           >
             <div className="absolute inset-0 bg-gradient-brand rounded-[3rem] rotate-6 opacity-30 blur-3xl animate-pulse" />
             <motion.div
-              className="relative w-80 h-80 sm:w-96 sm:h-96 group"
+              className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 group"
               whileHover={{ rotateY: 15, rotateX: -10 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
@@ -226,44 +224,52 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
       <section id="about" className="relative z-10 py-32 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
           <SectionHeader title="About" subtitle="Crafting digital experiences with precision" />
-          <div className="grid lg:grid-cols-2 gap-16 mt-16 items-start">
+
+          <div className="mt-16 space-y-16">
+            {/* Bio Card - Large & Premium */}
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-panel p-10 rounded-[2.5rem] relative overflow-hidden group"
+              className="glass-panel p-10 md:p-16 rounded-[3rem] relative overflow-hidden group border-2 border-white/5 hover:border-white/10 transition-all"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-brand opacity-5 blur-3xl group-hover:opacity-20 transition-opacity" />
-              <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 font-medium italic">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-brand opacity-[0.05] blur-[100px] pointer-events-none" />
+              <p className="text-2xl md:text-4xl leading-tight text-slate-600 dark:text-slate-200 font-medium italic mb-12">
                 "{about.extendedBio}"
               </p>
-              <div className="mt-10 flex flex-wrap gap-4">
-                <span className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-sm font-bold uppercase tracking-widest text-slate-500">
-                  <MapPin className="w-4 h-4 text-[hsl(var(--brand))]" /> {personalInfo.location || 'Global'}
-                </span>
-                <span className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-sm font-bold uppercase tracking-widest text-slate-500">
-                  <Mail className="w-4 h-4 text-[hsl(var(--brand))]" /> {personalInfo.email}
-                </span>
+              <div className="flex flex-wrap gap-6 text-sm font-black uppercase tracking-[0.2em]">
+                <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/5">
+                  <MapPin className="w-4 h-4 text-[hsl(var(--brand))]" />
+                  <span className="text-slate-500">{personalInfo.location || 'Global'}</span>
+                </div>
+                <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/5 border border-white/5">
+                  <Mail className="w-4 h-4 text-[hsl(var(--brand))]" />
+                  <span className="text-slate-500">{personalInfo.email}</span>
+                </div>
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Skills Bento Grid - Wider & Balanced */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {consolidatedSkills.map((group, i) => (
                 <motion.div
                   key={group.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
                   viewport={{ once: true }}
-                  className="glass-panel p-8 rounded-3xl hover:border-[hsl(var(--brand)/0.5)] transition-all group"
+                  className={`glass-panel p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] hover:border-[hsl(var(--brand)/0.5)] transition-all group ${i === 0 ? 'sm:col-span-2' : ''
+                    }`}
                 >
-                  <h3 className="text-lg font-black uppercase tracking-widest mb-5 flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-[hsl(var(--brand))] rounded-full" />
-                    {group.category}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-1.5 h-5 bg-gradient-brand rounded-full" />
+                    <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-foreground transition-colors">
+                      {group.category}
+                    </h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2.5">
                     {group.tags.map(tag => (
-                      <span key={tag} className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-slate-400 group-hover:text-foreground transition-colors">
+                      <span key={tag} className="px-4 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:text-foreground group-hover:bg-white/10 transition-all">
                         {tag}
                       </span>
                     ))}
@@ -283,7 +289,7 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
           <div className="mt-20 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {projects.map((project, i) => (
               <motion.a
-                key={project.name}
+                key={i}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1, duration: 0.8 }}
@@ -322,6 +328,83 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
         </div>
       </section>
 
+      {/* --- EDUCATION & CERTIFICATIONS --- */}
+      {((education && education.length > 0) || (certifications && certifications.length > 0)) && (
+        <section id="academic" className="relative z-10 py-32 bg-slate-100/50 dark:bg-black/40">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8">
+            <div className="grid lg:grid-cols-2 gap-16">
+              {/* Education */}
+              {education && education.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                >
+                  <SectionHeader title="Education" subtitle="Academic background and foundational training" />
+                  <div className="mt-12 space-y-6">
+                    {education.map((edu, idx) => (
+                      <div key={idx} className="glass-panel p-8 rounded-3xl group hover:border-[hsl(var(--brand)/0.5)] transition-all">
+                        <div className="flex items-center gap-4 mb-4">
+                          <div className="p-3 bg-gradient-brand rounded-2xl text-white shadow-lg">
+                            <GraduationCap className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-black">{edu.degree}</h3>
+                            <p className="text-[hsl(var(--brand))] font-bold text-sm tracking-widest uppercase">{edu.institution}</p>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-slate-500">
+                          <span>{edu.startDate} — {edu.endDate}</span>
+                          <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full">APPROVED</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Certifications */}
+              {certifications && certifications.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                >
+                  <SectionHeader title="Certifications" subtitle="Professional validations of technical expertise" />
+                  <div className="mt-12 grid sm:grid-cols-2 gap-6">
+                    {certifications.map((cert, idx) => (
+                      <div key={idx} className="glass-panel p-6 rounded-3xl flex flex-col justify-between group">
+                        <div>
+                          <Zap className="w-8 h-8 text-[hsl(var(--brand))] mb-4 opacity-50 group-hover:opacity-100 transition-opacity" />
+                          <h3 className="text-lg font-black mb-1">{cert}</h3>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Digital Credential</p>
+                        </div>
+                        <div className="mt-6 text-[10px] font-black text-slate-400 tracking-[0.2em]">VERIFIED</div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* --- LANGUAGES --- */}
+      {languages && languages.length > 0 && (
+        <section className="relative z-10 py-20 border-y border-white/5">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-wrap justify-center gap-12">
+            {languages.map((lang, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-[0.3em] text-slate-500">{lang.level || 'Native'}</span>
+                <span className="text-2xl font-black italic">{lang.name}</span>
+                <div className="w-12 h-1 bg-gradient-brand rounded-full opacity-30" />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* --- EXPERIENCE --- */}
       <section id="experience" className="relative z-10 py-32 border-t border-white/5">
         <div className="max-w-4xl mx-auto px-6 sm:px-8">
@@ -352,14 +435,16 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
                   </div>
                   <span className="text-xs font-black uppercase tracking-widest text-slate-500 bg-white/5 border border-white/5 px-4 py-1.5 rounded-full">{job.dates}</span>
                 </div>
-                <ul className="space-y-4">
-                  {job.responsibilities.map((resp, rIdx) => (
-                    <li key={rIdx} className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex items-start gap-4">
-                      <div className="w-1 h-1 rounded-full bg-[hsl(var(--brand))] mt-2 shrink-0" />
-                      {resp}
-                    </li>
-                  ))}
-                </ul>
+                {job.responsibilities && job.responsibilities.length > 0 && (
+                  <ul className="space-y-4">
+                    {job.responsibilities.map((resp, rIdx) => (
+                      <li key={rIdx} className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex items-start gap-4">
+                        <div className="w-1 h-1 rounded-full bg-[hsl(var(--brand))] mt-2 shrink-0" />
+                        {resp}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </motion.div>
             ))}
           </div>
@@ -367,16 +452,16 @@ export default function ModernTemplate({ data }: { data: PortfolioData }) {
       </section>
 
       {/* --- CONTACT --- */}
-      <footer id="contact" className="relative z-10 py-40 px-6 sm:px-8 border-t border-white/5">
+      <footer id="contact" className="relative z-10 py-20 sm:py-40 px-4 sm:px-8 border-t border-white/5">
         <div className="max-w-5xl mx-auto text-center relative">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="glass-panel p-16 sm:p-24 rounded-[4rem] relative overflow-hidden"
+            className="glass-panel p-8 sm:p-16 md:p-24 rounded-[2rem] sm:rounded-[4rem] relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-brand opacity-[0.03] -z-10" />
-            <h2 className="text-4xl sm:text-7xl font-black tracking-tight mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-7xl font-black tracking-tight mb-8">
               Let&apos;s create something <br />
               <span className="text-gradient">extraordinary.</span>
             </h2>

@@ -147,16 +147,7 @@ export default function Pricing() {
       return;
     }
 
-    // TODO: Remove this once Paddle is verified
-    toast({
-      title: '🚀 Coming Soon!',
-      description: 'Pro subscriptions will be available very soon. Sign up for free to get notified!',
-    });
-    return;
-
-    // Open Paddle checkout (will work after verification)
-    // Note: Code below is unreachable until Paddle verification is complete
-    /*
+    // Open Paddle checkout
     try {
       const priceId = planId === 'pro_monthly'
         ? PADDLE_PRICES.pro_monthly
@@ -175,7 +166,6 @@ export default function Pricing() {
         variant: 'destructive',
       });
     }
-    */
   };
 
   const plans = [

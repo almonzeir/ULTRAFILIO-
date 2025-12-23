@@ -28,7 +28,10 @@ export const metadata: Metadata = {
   authors: [{ name: "UltraFolio Team" }],
   creator: "UltraFolio",
   publisher: "UltraFolio",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9003'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9003')
+  ),
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -82,8 +85,8 @@ export default function RootLayout({
           <LanguageProvider>
             <ThemeProvider
               attribute="class"
-              forcedTheme="dark"
-              enableSystem={false}
+              defaultTheme="dark"
+              enableSystem={true}
               disableTransitionOnChange
             >
               <ColorThemeProvider>
