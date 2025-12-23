@@ -850,11 +850,11 @@ export default function EditPortfolioPage() {
                     {activeTab === 'preview' && (
                         <div className="w-full h-full flex flex-col bg-[#050510]">
                             {/* Preview Controls Bar */}
-                            <div className="flex items-center justify-between p-3 bg-black/40 border-b border-white/5">
+                            <div className="flex items-center justify-between p-2 sm:p-3 bg-black/40 border-b border-white/5">
                                 <div className="hidden sm:block text-xs text-white/40">
                                     Previewing: <span className="text-white font-medium">{AVAILABLE_TEMPLATES.find(t => t.id === templateId)?.name}</span>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
                                     {/* Template Quick Switcher */}
                                     <select
                                         value={templateId}
@@ -864,7 +864,7 @@ export default function EditPortfolioPage() {
                                             // SAVE DIRECTLY - NO TIMEOUT
                                             handleSave(true, newId);
                                         }}
-                                        className="bg-white/10 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-white/20"
+                                        className="bg-white/10 border border-white/10 rounded-md sm:rounded-lg text-[10px] sm:text-xs text-white px-1.5 sm:px-2 py-1 sm:py-1.5 focus:outline-none focus:ring-1 focus:ring-white/20"
                                     >
                                         {AVAILABLE_TEMPLATES.map(t => (
                                             <option key={t.id} value={t.id} className="bg-neutral-900">{t.name}</option>
@@ -873,7 +873,7 @@ export default function EditPortfolioPage() {
 
                                     {/* Color Theme Swatches */}
                                     <div className={cn(
-                                        "flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10 relative transition-all",
+                                        "flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-md sm:rounded-lg border border-white/10 relative transition-all",
                                         templateId === 'cyber' && "opacity-40 grayscale pointer-events-none"
                                     )}>
                                         {[
@@ -893,8 +893,8 @@ export default function EditPortfolioPage() {
                                                     handleSave(true, undefined, theme.id);
                                                 }}
                                                 className={cn(
-                                                    "w-5 h-5 rounded-full border-2 hover:scale-110 transition-all",
-                                                    colorTheme === theme.id ? "border-white ring-2 ring-white/30 scale-110" : "border-white/20 hover:border-white/40"
+                                                    "w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full border sm:border-2 hover:scale-110 transition-all",
+                                                    colorTheme === theme.id ? "border-white ring-1 sm:ring-2 ring-white/30 scale-110" : "border-white/20 hover:border-white/40"
                                                 )}
                                                 style={{ backgroundColor: theme.color }}
                                                 title={theme.id.charAt(0).toUpperCase() + theme.id.slice(1)}
@@ -903,32 +903,32 @@ export default function EditPortfolioPage() {
                                     </div>
 
                                     {/* Dark/Light Mode Toggle - ONLY affects template preview */}
-                                    <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10">
+                                    <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-md sm:rounded-lg border border-white/10">
                                         <button
                                             onClick={() => setIsDarkMode(true)}
                                             className={cn(
-                                                "px-2 py-1 rounded text-xs font-medium transition-all flex items-center gap-1.5",
+                                                "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium transition-all flex items-center gap-1",
                                                 isDarkMode
                                                     ? "bg-white/10 text-white"
                                                     : "text-white/40 hover:text-white/60"
                                             )}
                                             title="Dark Mode"
                                         >
-                                            <Moon className="w-3.5 h-3.5" />
-                                            <span>Dark</span>
+                                            <Moon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                            <span className="hidden xs:inline sm:inline">Dark</span>
                                         </button>
                                         <button
                                             onClick={() => setIsDarkMode(false)}
                                             className={cn(
-                                                "px-2 py-1 rounded text-xs font-medium transition-all flex items-center gap-1.5",
+                                                "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium transition-all flex items-center gap-1",
                                                 !isDarkMode
                                                     ? "bg-white/10 text-white"
                                                     : "text-white/40 hover:text-white/60"
                                             )}
                                             title="Light Mode"
                                         >
-                                            <Sun className="w-3.5 h-3.5" />
-                                            <span>Light</span>
+                                            <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                            <span className="hidden xs:inline sm:inline">Light</span>
                                         </button>
                                     </div>
 
