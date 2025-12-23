@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { useTheme } from 'next-themes';
 import { Loader2 } from 'lucide-react';
 
 // Dynamic Template Imports - SSR disabled to prevent hydration mismatches
@@ -59,17 +58,10 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
     const searchParams = useSearchParams();
     const themeParam = searchParams.get('theme') || searchParams.get('mode');
     const colorParam = searchParams.get('color') as ColorTheme | null;
-    const { setTheme: setDarkMode } = useTheme();
     const { setTheme: setColorTheme } = useColorTheme();
 
-    // Apply dark/light theme from URL if present (for iframe control)
-    useEffect(() => {
-        if (themeParam) {
-            setDarkMode(themeParam);
-        } else {
-            setDarkMode('dark'); // Default to dark if not validating
-        }
-    }, [themeParam, setDarkMode]);
+    // Determine if dark mode based on URL param (DO NOT use next-themes to avoid global theme change)
+    const isDarkMode = themeParam !== 'light';  // Default to dark if not 'light'
 
     // Apply color theme from URL if present
     useEffect(() => {
@@ -176,7 +168,7 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
     console.log("RenderPage: Rendering template:", selectedTemplate, "Component:", CurrentTemplate?.name || 'Unknown');
 
     return (
-        <CurrentTemplate data={portfolioData} isDarkMode={themeParam === 'dark' || !themeParam} />
+        <CurrentTemplate data={portfolioData} isDarkMode={isDarkMode} />
     );
 }
 

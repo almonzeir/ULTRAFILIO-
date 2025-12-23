@@ -109,42 +109,20 @@ export function SidebarNav({ activeTab, setActiveTab, onPublish, isPublishing, p
                 <Button
                     onClick={onPublish}
                     disabled={isPublishing}
-                    className="w-full h-16 rounded-2xl text-base font-black relative overflow-hidden group transition-all duration-500 transform hover:scale-[1.02] active:scale-[0.98] border-0 bg-transparent p-0"
+                    className="w-full h-16 rounded-2xl text-base font-black relative overflow-hidden group transition-all duration-500 transform hover:scale-[1.02] active:scale-[0.98] border-0 bg-white text-black hover:bg-white/90 shadow-lg"
                 >
-                    {/* Animated Aurora Background */}
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-600 via-fuchsia-500 to-cyan-400 opacity-90 group-hover:opacity-100 transition-opacity" />
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400 via-violet-600 to-fuchsia-500 opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-1000" />
-
-                    {/* Shimmer Effect */}
-                    <div className="absolute inset-0 rounded-2xl overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
-                    </div>
-
-                    {/* Glass Overlay */}
-                    <div className="absolute inset-[2px] rounded-xl bg-gradient-to-b from-white/20 to-transparent backdrop-blur-sm" />
-
-                    {/* Top Highlight */}
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-
-                    {/* Outer Glow */}
-                    <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-violet-500/50 via-fuchsia-500/50 to-cyan-400/50 blur-lg opacity-50 group-hover:opacity-80 transition-opacity" />
-
                     {/* Content */}
-                    <div className="flex items-center justify-center gap-3 relative z-10 h-full">
+                    <div className="flex items-center justify-center gap-3 h-full">
                         {isPublishing ? (
                             <>
-                                <div className="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin" />
-                                <span className="text-white font-bold tracking-wide drop-shadow-lg">Launching...</span>
+                                <div className="w-6 h-6 border-3 border-black/30 border-t-black rounded-full animate-spin" />
+                                <span className="font-bold tracking-wide">Launching...</span>
                             </>
                         ) : (
                             <>
-                                <div className="p-2.5 rounded-xl bg-gradient-to-br from-white via-slate-200 to-slate-400 border border-white/50 shadow-[inset_0_1px_3px_rgba(255,255,255,0.8),0_2px_8px_rgba(0,0,0,0.3)] group-hover:from-white group-hover:via-slate-100 group-hover:to-slate-300 group-hover:scale-110 transition-all duration-300 relative overflow-hidden">
-                                    {/* Shining glare effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/60 to-transparent opacity-60 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                                    <Rocket className="w-5 h-5 text-slate-700 drop-shadow-sm group-hover:rotate-12 transition-transform relative z-10" />
-                                </div>
-                                <span className="text-white font-bold tracking-wide text-lg drop-shadow-lg">Publish to Web</span>
-                                <ChevronRight className="w-5 h-5 text-white/80 -ml-1 group-hover:translate-x-1 transition-transform" />
+                                <Rocket className="w-5 h-5" />
+                                <span className="font-bold tracking-wide text-lg">Publish to Web</span>
+                                <ChevronRight className="w-5 h-5 text-black/60 -ml-1 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
                     </div>

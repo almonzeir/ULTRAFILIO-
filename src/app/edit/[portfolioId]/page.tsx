@@ -301,15 +301,6 @@ export default function EditPortfolioPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsDarkMode(!isDarkMode)}
-                        className="rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
-                    >
-                        {isDarkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-                    </Button>
-
                     {/* Indicator that saving is automatic */}
                     {saving && (
                         <div className="flex items-center gap-2 text-[10px] text-white/30 uppercase tracking-widest animate-pulse">
@@ -331,9 +322,9 @@ export default function EditPortfolioPage() {
                         onClick={handlePublish}
                         disabled={publishing}
                         size="sm"
-                        className="h-9 px-4 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-bold shadow-lg shadow-indigo-500/20"
+                        className="h-9 px-4 rounded-full bg-white text-black text-xs font-bold shadow-lg hover:bg-white/90"
                     >
-                        <Rocket className={cn("w-3.5 h-3.5 mr-1.5", !publishing && "animate-bounce-slight")} />
+                        <Rocket className="w-3.5 h-3.5 mr-1.5" />
                         {publishing ? '...' : 'Publish'}
                     </Button>
                 </div>
@@ -366,8 +357,8 @@ export default function EditPortfolioPage() {
                             {/* Personal Info Card */}
                             <div className="glass-card p-6 md:p-8 rounded-3xl space-y-8">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                                        <Sparkles className="w-5 h-5" />
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/70">
+                                        <Pen className="w-5 h-5" />
                                     </div>
                                     <h3 className="text-xl font-bold">Personal Information</h3>
                                 </div>
@@ -397,7 +388,7 @@ export default function EditPortfolioPage() {
                                         }}
                                         disabled={saving}
                                         size="sm"
-                                        className="mt-4 h-9 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all"
+                                        className="mt-4 h-9 px-4 rounded-xl bg-white text-black text-xs font-bold shadow-lg hover:bg-white/90 transition-all"
                                     >
                                         <RefreshCw className={cn("w-3.5 h-3.5 mr-2", saving && "animate-spin")} />
                                         {saving ? 'Applying...' : 'Apply Changes'}
@@ -437,7 +428,7 @@ export default function EditPortfolioPage() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <Label className="text-xs uppercase font-bold text-white/50">Skills & Expertise</Label>
-                                            <div className="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">New</div>
+                                            <div className="px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-white/60 uppercase tracking-tighter">New</div>
                                         </div>
                                         <Button
                                             variant="ghost"
@@ -478,7 +469,7 @@ export default function EditPortfolioPage() {
                                                             newSkills[categoryIdx].category = e.target.value;
                                                             updateAbout('skills', newSkills);
                                                         }}
-                                                        className="bg-transparent border-none p-0 text-sm font-bold text-indigo-400 focus:ring-0 w-full placeholder:text-white/10"
+                                                        className="bg-transparent border-none p-0 text-sm font-bold text-white/80 focus:ring-0 w-full placeholder:text-white/10"
                                                         placeholder="Category Name (e.g. Design)"
                                                     />
                                                 </div>
@@ -587,7 +578,7 @@ export default function EditPortfolioPage() {
                             <div className="glass-card p-6 md:p-8 rounded-3xl space-y-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
+                                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/70">
                                             <MonitorSmartphone className="w-5 h-5" />
                                         </div>
                                         <h3 className="text-xl font-bold">Projects</h3>
@@ -719,14 +710,13 @@ export default function EditPortfolioPage() {
                                 <Button
                                     onClick={handlePublish}
                                     disabled={publishing || saving}
-                                    className="w-full h-14 rounded-xl text-lg font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_auto] animate-gradient-x text-white shadow-[0_4px_20px_rgba(99,102,241,0.4)] border border-white/20 relative overflow-hidden group"
+                                    className="w-full h-14 rounded-xl text-lg font-black bg-white text-black shadow-lg hover:bg-white/90 transition-all"
                                 >
-                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    <div className="flex items-center justify-center gap-3 relative z-10">
+                                    <div className="flex items-center justify-center gap-3">
                                         {publishing ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
                                         ) : (
-                                            <Rocket className="w-6 h-6 animate-bounce-slight" />
+                                            <Rocket className="w-6 h-6" />
                                         )}
                                         <span>{publishing ? 'Publishing...' : 'Publish to Web'}</span>
                                     </div>
@@ -842,16 +832,6 @@ export default function EditPortfolioPage() {
                                 ))}
                             </div>
 
-                            {/* Info Box */}
-                            <div className="mt-12 p-6 glass-card rounded-[2rem] border-white/5 bg-white/[0.02] flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                                    <Sparkles className="w-6 h-6" />
-                                </div>
-                                <div>
-                                    <h4 className="text-white font-bold">Auto-Sync Selection</h4>
-                                    <p className="text-white/40 text-sm">Changing a template will automatically update your site layout.</p>
-                                </div>
-                            </div>
                         </div>
                     )}
 
@@ -920,6 +900,36 @@ export default function EditPortfolioPage() {
                                                 title={theme.id.charAt(0).toUpperCase() + theme.id.slice(1)}
                                             />
                                         ))}
+                                    </div>
+
+                                    {/* Dark/Light Mode Toggle - ONLY affects template preview */}
+                                    <div className="flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10">
+                                        <button
+                                            onClick={() => setIsDarkMode(true)}
+                                            className={cn(
+                                                "px-2 py-1 rounded text-xs font-medium transition-all flex items-center gap-1.5",
+                                                isDarkMode
+                                                    ? "bg-white/10 text-white"
+                                                    : "text-white/40 hover:text-white/60"
+                                            )}
+                                            title="Dark Mode"
+                                        >
+                                            <Moon className="w-3.5 h-3.5" />
+                                            <span className="hidden sm:inline">Dark</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setIsDarkMode(false)}
+                                            className={cn(
+                                                "px-2 py-1 rounded text-xs font-medium transition-all flex items-center gap-1.5",
+                                                !isDarkMode
+                                                    ? "bg-white/10 text-white"
+                                                    : "text-white/40 hover:text-white/60"
+                                            )}
+                                            title="Light Mode"
+                                        >
+                                            <Sun className="w-3.5 h-3.5" />
+                                            <span className="hidden sm:inline">Light</span>
+                                        </button>
                                     </div>
 
                                     {/* Unique Style Notice for Cyber */}
