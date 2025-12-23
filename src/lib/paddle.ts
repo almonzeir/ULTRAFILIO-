@@ -6,7 +6,7 @@ export const PADDLE_API_URL = 'https://api.paddle.com';
 // Price IDs - exported for server-side or configuration use
 export const PADDLE_PRICES = {
     pro_monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
-    pro_lifetime: process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID || '',
+    pro_annual: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
 };
 
 // Server-side only functions below

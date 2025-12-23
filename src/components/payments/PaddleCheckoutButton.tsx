@@ -9,7 +9,7 @@ import { usePaddle } from '@/hooks/use-paddle';
 
 interface PaddleCheckoutButtonProps {
     priceId?: string;
-    planType?: 'pro_monthly' | 'pro_yearly' | 'pro_lifetime';
+    planType?: 'pro_monthly' | 'pro_annual';
     buttonText?: string;
     className?: string;
     variant?: 'default' | 'outline' | 'ghost';
@@ -38,8 +38,8 @@ export function PaddleCheckoutButton({
         setLoading(true);
 
         try {
-            const finalPriceId = priceId || (planType === 'pro_lifetime'
-                ? process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID
+            const finalPriceId = priceId || (planType === 'pro_annual'
+                ? process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID
                 : process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID);
 
             if (!finalPriceId) {

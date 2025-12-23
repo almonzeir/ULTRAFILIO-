@@ -69,8 +69,8 @@ async function handleSubscriptionCreated(supabase: any, data: any) {
 
     // Determine plan type
     let planType = 'monthly';
-    if (priceId === process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID) {
-        planType = 'lifetime';
+    if (priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID) {
+        planType = 'annual';
     } else if (priceId === process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID) {
         planType = 'monthly';
     }
@@ -172,8 +172,8 @@ async function handleTransactionCompleted(supabase: any, data: any) {
     if (userId) {
         // Determine plan type
         let planType = 'monthly';
-        if (priceId === process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID) {
-            planType = 'lifetime';
+        if (priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID) {
+            planType = 'annual';
         } else if (priceId === process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID) {
             planType = 'monthly';
         }

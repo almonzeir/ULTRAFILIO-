@@ -25,6 +25,14 @@ export function useUser() {
         }
     };
 
+    const refreshUser = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+            setUser(session.user);
+            await fetchUserProfile(session.user.id);
+        }
+    };
+
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,5 +61,5 @@ export function useUser() {
         return () => subscription.unsubscribe();
     }, []);
 
-    return { user, isPro, loading, supabase };
+    return { user, isPro, loading, supabase, refreshUser };
 }
