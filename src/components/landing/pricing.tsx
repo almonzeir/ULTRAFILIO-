@@ -175,6 +175,7 @@ export default function Pricing() {
         variant: 'destructive',
       });
     }
+    */
   };
 
   const plans = [
@@ -232,7 +233,7 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="relative py-24 sm:py-32 lg:py-48 overflow-hidden">*/
+    <section id="pricing" className="relative py-24 sm:py-32 lg:py-48 overflow-hidden">
       {/* Living Background */}
       <MeshGradientBackground />
 
@@ -271,6 +272,6 @@ export default function Pricing() {
           ))}
         </div>
       </div>
-    </section>
+    </section >
   );
-}
+};
