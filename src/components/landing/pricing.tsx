@@ -106,7 +106,7 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
 }
 
 export default function Pricing() {
-  const { user, supabase, refreshUser } = useUser();
+  const { user } = useUser(); // Simplified - only need user for redirect logic
   const { language } = useLanguage();
   const router = useRouter();
   const { toast } = useToast();
@@ -126,68 +126,17 @@ export default function Pricing() {
     fetchDict();
   }, [language]);
 
+  // PRO CONSTRAINTS DISABLED - Everything is free for first 1000 users
+  // Simply redirect users to signup or dashboard
   const handleSubscribe = async (planId: string) => {
-    if (planId === 'free') {
-      router.push('/signup');
-      return;
-    }
-
-    // Require login for paid plans
-    if (!user) {
-      router.push('/login?redirect=/pricing');
-      return;
-    }
-
-    // TEMPORARY: Early Bird Claim Logic (Paddle Bypass)
-    try {
-      const { error } = await supabase
-        .from('users')
-        .update({
-          is_pro: true,
-          subscription_plan: planId === 'pro_annual' ? 'annual' : 'monthly',
-          subscription_status: 'active'
-        })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      await refreshUser?.();
+    // If user is logged in, go to dashboard
+    if (user) {
       router.push('/dashboard');
       return;
-    } catch (error) {
-      console.error("Early access error:", error);
-      return;
     }
 
-    // Original Paddle Logic (Keep for later reference)
-    /*
-    try {
-      const priceId = planId === 'pro_monthly'
-        ? process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID
-        : process.env.NEXT_PUBLIC_PADDLE_LIFETIME_PRICE_ID;
-
-      if (!priceId) {
-        toast({ title: "Config Error", description: "Price ID not found.", variant: 'destructive' });
-        return;
-      }
-
-      openCheckout({
-        priceId,
-        customerEmail: user?.email || '',
-        customData: { userId: user?.id },
-        onSuccess: () => {
-          toast({ title: "Success!", description: "Welcome to Pro!" });
-          router.push('/dashboard');
-        }
-      });
-    } catch (error) {
-      toast({
-        title: 'Checkout Error',
-        description: 'Unable to open checkout. Please try again later.',
-        variant: 'destructive',
-      });
-    }
-    */
+    // Otherwise, go to signup
+    router.push('/signup');
   };
 
   const plans = [

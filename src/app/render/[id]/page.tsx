@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
@@ -53,8 +53,8 @@ import type { PortfolioData } from '@/templates/types';
 import { useColorTheme } from '@/context/color-theme-context';
 import type { ColorTheme } from '@/lib/color-themes';
 
-export default function RealPreviewPage({ params }: { params: { id: string } }) {
-    const { id: portfolioId } = params;
+export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: portfolioId } = use(params);
     const searchParams = useSearchParams();
     const themeParam = searchParams.get('theme') || searchParams.get('mode');
     const colorParam = searchParams.get('color') as ColorTheme | null;

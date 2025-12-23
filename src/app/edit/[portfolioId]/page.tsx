@@ -55,7 +55,8 @@ export default function EditPortfolioPage() {
     const params = useParams();
     const portfolioId = params.portfolioId as string;
     const router = useRouter();
-    const { user, isPro, loading: userLoading } = useUser();
+    const { user, loading: userLoading } = useUser();
+    const isPro = true; // PRO CONSTRAINTS DISABLED - Free for first 1000 users
     const { toast } = useToast();
     const { dictionary, language } = useDictionary();
 
@@ -216,10 +217,11 @@ export default function EditPortfolioPage() {
     const handlePublish = async () => {
         if (!portfolioId) return;
 
-        if (!isPro) {
-            setIsPaywallOpen(true);
-            return;
-        }
+        // PRO CONSTRAINT REMOVED - All users can publish
+        // if (!isPro) {
+        //     setIsPaywallOpen(true);
+        //     return;
+        // }
 
         setPublishing(true);
         try {
@@ -846,12 +848,12 @@ export default function EditPortfolioPage() {
                     )}
 
                     {activeTab === 'layout' && (
-                        <div className="max-w-2xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="mb-8">
-                                <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Drag & Drop Layout</h1>
-                                <p className="text-white/50">Reorder the sections to tell your story your way.</p>
+                        <div className="w-full max-w-2xl mx-auto px-3 py-4 sm:p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="mb-6 sm:mb-8">
+                                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1 sm:mb-2">Drag & Drop Layout</h1>
+                                <p className="text-sm sm:text-base text-white/50">Reorder the sections to tell your story your way.</p>
                             </div>
-                            <div className="glass-card p-2 rounded-3xl">
+                            <div className="glass-card p-2 sm:p-3 rounded-2xl sm:rounded-3xl overflow-hidden">
                                 <LayoutEditor sectionOrder={portfolioData.sectionOrder || DEFAULT_SECTION_ORDER} onOrderChange={(newOrder) => setPortfolioData(prev => ({ ...prev, sectionOrder: newOrder }))} />
                             </div>
                         </div>

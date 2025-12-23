@@ -112,11 +112,12 @@ export function SidebarNav({ activeTab, setActiveTab, onPublish, isPublishing, p
                     disabled={isPublishing}
                     className="w-full h-16 rounded-2xl text-base font-black relative overflow-hidden group transition-all duration-500 transform hover:scale-[1.02] active:scale-[0.98] border-0 bg-white text-black hover:bg-white/90 shadow-lg"
                 >
-                    {!isPro && (
+                    {/* PRO CONSTRAINT REMOVED - Crown icon hidden for free version */}
+                    {/* {!isPro && (
                         <div className="absolute top-0 right-0 p-1.5">
                             <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                         </div>
-                    )}
+                    )} */}
                     {/* Content */}
                     <div className="flex items-center justify-center gap-3 h-full">
                         {isPublishing ? (

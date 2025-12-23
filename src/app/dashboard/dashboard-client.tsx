@@ -45,20 +45,23 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
     const router = useRouter();
     const [portfolios, setPortfolios] = React.useState<Portfolio[]>(initialPortfolios);
     const { toast } = useToast();
-    const { isPro } = useUser();
+    // PRO CONSTRAINTS DISABLED - Free for first 1000 users
+    // const { isPro } = useUser();
     const [deleteId, setDeleteId] = React.useState<string | null>(null);
 
-    const isAtLimit = portfolios.length >= 3 && !isPro;
+    // PRO CONSTRAINT REMOVED - No limit on portfolios for now
+    const isAtLimit = false; // portfolios.length >= 3 && !isPro;
 
     const handleCreateNew = (e: React.MouseEvent) => {
-        if (isAtLimit) {
-            e.preventDefault();
-            router.push('/checkout');
-            toast({
-                title: "Portfolio Limit Reached",
-                description: "Upgrade to Pro to create unlimited portfolios.",
-            });
-        }
+        // PRO CONSTRAINT REMOVED - Allow all users to create
+        // if (isAtLimit) {
+        //     e.preventDefault();
+        //     router.push('/checkout');
+        //     toast({
+        //         title: "Portfolio Limit Reached",
+        //         description: "Upgrade to Pro to create unlimited portfolios.",
+        //     });
+        // }
     };
 
     const handleDelete = async () => {
@@ -124,20 +127,17 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
-                        <Link href={isAtLimit ? "/checkout" : "/create"} onClick={handleCreateNew}>
-                            <button className={cn(
-                                "liquid-silver-button group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide transition-all",
-                                isAtLimit && "opacity-80 hover:opacity-100"
-                            )}>
-                                {isAtLimit ? <Crown className="w-5 h-5" /> : <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />}
-                                {isAtLimit ? "Upgrade to Create More" : "Create New Portfolio"}
+                        <Link href="/create">
+                            <button className="liquid-silver-button group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide transition-all">
+                                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+                                Create New Portfolio
                             </button>
                         </Link>
                     </motion.div>
                 </div>
 
-                {/* Limit Notification Bar */}
-                <AnimatePresence>
+                {/* PRO CONSTRAINT REMOVED - Limit Notification Bar disabled for free version */}
+                {/* <AnimatePresence>
                     {isAtLimit && (
                         <motion.div
                             initial={{ opacity: 0, y: -20 }}
@@ -162,7 +162,7 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                             </Link>
                         </motion.div>
                     )}
-                </AnimatePresence>
+                </AnimatePresence> */}
 
                 {/* Content Grid */}
                 {portfolios.length === 0 ? (
@@ -237,11 +237,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <Edit className="w-4 h-4" /> Edit
                                             </button>
                                         </Link>
-                                        <Link href={`/${portfolio.slug || portfolio.id}`} target="_blank">
-                                            <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white border border-white/20 font-semibold text-sm hover:bg-white/20 hover:scale-105 transition-all duration-300">
-                                                <Eye className="w-4 h-4" /> View
-                                            </button>
-                                        </Link>
                                     </div>
                                 </div>
 
@@ -267,11 +262,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
                                                     <Link href={`/edit/${portfolio.id}`}>
                                                         <Edit className="mr-2 h-4 w-4" /> Edit
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
-                                                    <Link href={`/${portfolio.slug || portfolio.id}`} target="_blank">
-                                                        <ExternalLink className="mr-2 h-4 w-4" /> Preview
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <AlertDialog>

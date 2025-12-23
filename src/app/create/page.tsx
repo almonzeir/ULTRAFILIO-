@@ -49,7 +49,8 @@ export default function CreatePortfolioPage() {
   const [hoveredSide, setHoveredSide] = React.useState<'left' | 'right' | null>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { user, isPro, loading } = useUser();
+  const { user, loading } = useUser();
+  const isPro = true; // PRO CONSTRAINTS DISABLED - Free for first 1000 users
   const { language } = useLanguage();
   const [dict, setDict] = React.useState<Dictionary['createPage'] | null>(null);
   const [portfolioCount, setPortfolioCount] = React.useState<number>(0);
@@ -84,11 +85,12 @@ export default function CreatePortfolioPage() {
       return;
     }
 
-    if (portfolioCount >= 3 && !isPro) {
-      setPaywallReason('generation_limit');
-      setIsPaywallOpen(true);
-      return;
-    }
+    // PRO CONSTRAINT REMOVED - No portfolio limit
+    // if (portfolioCount >= 3 && !isPro) {
+    //   setPaywallReason('generation_limit');
+    //   setIsPaywallOpen(true);
+    //   return;
+    // }
 
     setIsProcessing(true);
 
@@ -220,17 +222,19 @@ export default function CreatePortfolioPage() {
       return;
     }
 
-    if (portfolioCount >= 3 && !isPro) {
-      setPaywallReason('generation_limit');
-      setIsPaywallOpen(true);
-      return;
-    }
+    // PRO CONSTRAINT REMOVED - No portfolio limit
+    // if (portfolioCount >= 3 && !isPro) {
+    //   setPaywallReason('generation_limit');
+    //   setIsPaywallOpen(true);
+    //   return;
+    // }
 
-    if (!isPro) {
-      setPaywallReason('template');
-      setIsPaywallOpen(true);
-      return;
-    }
+    // PRO CONSTRAINT REMOVED - CV upload available to all
+    // if (!isPro) {
+    //   setPaywallReason('template');
+    //   setIsPaywallOpen(true);
+    //   return;
+    // }
 
     setIsProcessing(true);
 
@@ -531,17 +535,6 @@ export default function CreatePortfolioPage() {
       <div className="flex flex-col min-h-screen bg-background">
         <Header />
         <main className="flex-grow">
-          {isFromCVExtraction && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-primary text-primary-foreground py-4 px-6 text-center"
-            >
-              <p className="font-medium">
-                ✅ AI extracted your CV data! Review the info below and fill in anything that's missing.
-              </p>
-            </motion.div>
-          )}
           <ManualForm
             onSubmit={isFromCVExtraction ? handleReviewFormSubmit : handleManualFormSubmit}
             onBack={() => {
@@ -623,15 +616,17 @@ export default function CreatePortfolioPage() {
               <motion.div
                 className={cn(
                   "relative bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between transition-all duration-300 group min-h-[400px]",
-                  portfolioCount < 3 || isPro ? "cursor-pointer" : "cursor-default"
+                  "cursor-pointer" // PRO CONSTRAINT REMOVED - Always clickable
                 )}
                 onClick={() => {
-                  if (portfolioCount >= 3 && !isPro) {
-                    setPaywallReason('generation_limit');
-                    setIsPaywallOpen(true);
-                  } else {
-                    setShowManualForm(true);
-                  }
+                  // PRO CONSTRAINT REMOVED - Always allow manual form
+                  setShowManualForm(true);
+                  // if (portfolioCount >= 3 && !isPro) {
+                  //   setPaywallReason('generation_limit');
+                  //   setIsPaywallOpen(true);
+                  // } else {
+                  //   setShowManualForm(true);
+                  // }
                 }}
                 onMouseEnter={() => setHoveredSide('right')}
                 onMouseLeave={() => setHoveredSide(null)}
@@ -641,7 +636,8 @@ export default function CreatePortfolioPage() {
                 transition={{ duration: 0.3 }}
               >
                 {/* Limit Overlay for Manual Entry */}
-                {portfolioCount >= 3 && !isPro && (
+                {/* PRO CONSTRAINT REMOVED - Limit overlay disabled */}
+                {/* {portfolioCount >= 3 && !isPro && (
                   <div className="absolute inset-0 z-50 bg-[#0a0a0f]/80 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
                     <div className="w-16 h-16 rounded-[1.5rem] bg-white/5 border border-white/10 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-[0_0_40px_-10px_rgba(255,255,255,0.1)]">
                       <Crown className="w-8 h-8 text-white/50" />
@@ -659,7 +655,7 @@ export default function CreatePortfolioPage() {
                       </Button>
                     </Link>
                   </div>
-                )}
+                )} */}
                 {/* Decorative Element */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-5">
                   <motion.div

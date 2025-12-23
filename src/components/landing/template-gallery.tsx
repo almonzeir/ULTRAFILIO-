@@ -97,13 +97,14 @@ export default function TemplateGallery() {
     fetchDict();
   }, [language]);
 
+  // PRO CONSTRAINT REMOVED - All templates are now free
   const templates: Template[] = [
-    { key: 'aurora', name: 'Aurora', description: 'Northern lights inspired design with dynamic gradients', isPro: true },
+    { key: 'aurora', name: 'Aurora', description: 'Northern lights inspired design with dynamic gradients', isPro: false },
     { key: 'modern', name: 'Modern', description: 'Clean and professional with smooth animations', isPro: false },
     { key: 'executive', name: 'Executive', description: 'Sophisticated design for business professionals', isPro: false },
     { key: 'creative', name: 'Creative', description: 'Bold and expressive for artists and designers', isPro: false },
     { key: 'minimalPlus', name: 'Minimal+', description: 'Elegantly simple with subtle refinements', isPro: false },
-    { key: 'cyber', name: 'Cyber', description: 'Futuristic 3D design with matrix aesthetics', isPro: true },
+    { key: 'cyber', name: 'Cyber', description: 'Futuristic 3D design with matrix aesthetics', isPro: false },
   ];
 
   return (

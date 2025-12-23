@@ -28,17 +28,17 @@ export function SortableSection({ id, label }: SortableSectionProps) {
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg select-none ${isDragging ? 'opacity-50 shadow-lg z-50' : ''
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg select-none ${isDragging ? 'opacity-50 shadow-lg z-50' : ''
                 }`}
         >
             <button
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 flex-shrink-0"
             >
-                <GripVertical size={18} />
+                <GripVertical size={16} className="sm:w-[18px] sm:h-[18px]" />
             </button>
-            <span className="font-medium text-slate-700 dark:text-slate-200">{label}</span>
+            <span className="font-medium text-sm sm:text-base text-slate-700 dark:text-slate-200 truncate">{label}</span>
         </div>
     );
 }

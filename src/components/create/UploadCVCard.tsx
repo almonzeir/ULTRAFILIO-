@@ -121,11 +121,12 @@ export default function UploadCVCard({ onContinue, isProcessing, dict, isPro = f
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {!isPro && (
+      {/* PRO CONSTRAINT REMOVED - Pro badge hidden for free version */}
+      {/* {!isPro && (
         <div className="absolute top-10 right-10 z-20">
           <ProBadge className="px-3 py-1.5 text-sm" />
         </div>
-      )}
+      )} */}
 
       {/* Header */}
       <div className="mb-6">
