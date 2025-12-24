@@ -118,7 +118,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="relative py-24 sm:py-32 lg:py-48 overflow-hidden">
+    <section className="relative py-24 sm:py-32 lg:py-48 pb-8 overflow-hidden">
       {/* Living Background */}
       <MeshGradientBackground />
 

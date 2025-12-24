@@ -228,7 +228,7 @@ export default function Pricing() {
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="inline-flex flex-col sm:flex-row items-center gap-6 p-6 sm:p-8 rounded-[2.5rem] border border-white/20 bg-white/5 backdrop-blur-xl shadow-[0_0_80px_-20px_rgba(255,255,255,0.15)] mb-16 relative overflow-hidden group"
+            className="inline-flex flex-col sm:flex-row items-center gap-6 p-6 sm:p-8 rounded-[2.5rem] border border-white/20 bg-white/5 backdrop-blur-xl shadow-[0_0_80px_-20px_rgba(255,255,255,0.15)] mt-14 mb-16 relative overflow-hidden group"
           >
             {/* Glossy Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
@@ -253,7 +253,6 @@ export default function Pricing() {
               <span className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-black text-white/70 uppercase tracking-widest shadow-sm">
                 Limited Time
               </span>
-              <span className="text-[10px] font-bold text-white/30 px-4">Founding Member Status</span>
             </div>
           </motion.div>
         </motion.div>

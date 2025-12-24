@@ -40,7 +40,7 @@ export default function Footer({ hideCTA = false }: FooterProps) {
   }, [language]);
 
   return (
-    <footer className="relative pt-32 pb-16 overflow-hidden">
+    <footer className="relative pt-12 pb-16 overflow-hidden">
       {/* Living Background */}
       <MeshGradientBackground />
 
@@ -60,7 +60,7 @@ export default function Footer({ hideCTA = false }: FooterProps) {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true }}
-            className="mb-24 liquid-glass-card rounded-[2.5rem] sm:rounded-[3rem] p-12 sm:p-16 lg:p-20 text-center"
+            className="mb-40 liquid-glass-card rounded-[2.5rem] sm:rounded-[3rem] p-12 sm:p-16 lg:p-20 text-center"
           >
             <div className="max-w-3xl mx-auto">
               {/* Headline - Metallic Gradient */}
