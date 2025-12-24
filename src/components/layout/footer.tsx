@@ -194,7 +194,7 @@ export default function Footer({ hideCTA = false }: FooterProps) {
               <Linkedin className="w-5 h-5" />
             </Link>
             <Link
-              href="https://instagram.com"
+              href="https://www.instagram.com/ultrafolio/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 bg-white/5 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-all duration-300"
