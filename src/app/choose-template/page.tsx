@@ -16,6 +16,8 @@ import { motion } from 'framer-motion';
 
 const templates = [
   {
+    id: 'aurora',
+    name: 'Aurora',
     description: 'Award-winning design with aurora backgrounds, bento grids, and magnetic effects.',
   },
   {

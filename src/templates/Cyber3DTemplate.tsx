@@ -114,13 +114,16 @@ export default function Cyber3DTemplate({ data, isDarkMode, colorTheme }: { data
 
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
+    // FORCE DARK MODE ONLY - Ignore isDarkMode prop
+    const forcedDarkMode = true;
+
     return (
-        <div ref={containerRef} className={`relative min-h-screen ${isDarkMode ? 'dark' : ''} bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-500`}>
+        <div ref={containerRef} className={`relative min-h-screen ${forcedDarkMode ? 'dark' : ''} bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-500`}>
 
             {/* Background Effects - Sticky so it follows scroll but stays in container */}
             <div className="absolute inset-0 z-0 h-full overflow-hidden">
                 <div className="sticky top-0 h-screen w-full">
-                    <CyberGrid isDarkMode={!!isDarkMode} />
+                    <CyberGrid isDarkMode={forcedDarkMode} />
                     <MatrixRain />
                     <GlowingOrb className="w-[600px] h-[600px] bg-cyan-600/20 -top-40 -right-40" />
                     <GlowingOrb className="w-[400px] h-[400px] bg-fuchsia-600/20 bottom-20 -left-20" />
@@ -129,7 +132,7 @@ export default function Cyber3DTemplate({ data, isDarkMode, colorTheme }: { data
             </div>
 
             {/* Header - Sticky */}
-            <header className={`sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md ${isDarkMode ? 'bg-[#050510]/80' : 'bg-white/80'} border-b border-cyan-900/30 transition-colors duration-300`}>
+            <header className={`sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md ${forcedDarkMode ? 'bg-[#050510]/80' : 'bg-white/80'} border-b border-cyan-900/30 transition-colors duration-300`}>
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />

@@ -37,18 +37,114 @@ import ProPaywallModal from '@/components/shared/pro-paywall-modal';
 
 const DEFAULT_SECTION_ORDER = ['hero', 'about', 'experience', 'projects', 'education', 'certifications', 'skills', 'contact'];
 
-// --- TEMPLATES DATA (Moved from choose-template) ---
+// --- ENHANCED TEMPLATES DATA ---
 const AVAILABLE_TEMPLATES = [
-    { id: 'aurora', name: 'Aurora', description: 'Award-winning design with aurora backgrounds.', isNew: true },
-    { id: 'liquid-silk', name: 'Liquid Silk', description: 'Architectural minimalism with mesh gradients.', isNew: true },
-    { id: 'modern', name: 'Modern', description: 'Premium & Dynamic design with smooth animations.', isPopular: true },
-    { id: 'executive', name: 'Executive', description: 'Professional & Bold design for serious pros.', isPopular: true },
-    { id: 'creative', name: 'Creative', description: 'Artistic & Unique with bold gradients.' },
-    { id: 'minimal-plus', name: 'Minimal Plus', description: 'Clean & Elegant with sophistical interactions.' },
-    { id: 'generated', name: 'Futuristic', description: 'Tech-Forward design with cutting-edge styling.' },
-    { id: 'minimalist', name: 'Minimalist', description: 'Ultra Simple and distraction-free.' },
-    { id: 'cyber', name: 'Cyber 3D', description: 'Experimental 3D Interactive Experience.', isNew: true },
-    { id: 'basic', name: 'Basic', description: 'Classic Resume style.' },
+    {
+        id: 'aurora',
+        name: 'Aurora',
+        description: 'Premium template with mesmerizing aurora backgrounds and fluid animations.',
+        features: ['Aurora Effects', 'Animations', 'Premium'],
+        bestFor: ['Designers', 'Creatives'],
+        colorScheme: { bg: '#0f0720', accent: '#a855f7' },
+        isPremium: true,
+        isNew: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'liquid-silk',
+        name: 'Liquid Silk',
+        description: 'Elegant architectural minimalism with beautiful mesh gradients.',
+        features: ['Mesh Gradients', 'Minimal', 'Elegant'],
+        bestFor: ['Architects', 'UI/UX'],
+        colorScheme: { bg: '#050510', accent: '#6366f1' },
+        isPremium: false,
+        isNew: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'modern',
+        name: 'Modern',
+        description: 'Clean and professional design perfect for tech portfolios.',
+        features: ['Dark Mode', 'Glass Effects', 'Smooth'],
+        bestFor: ['Developers', 'Engineers'],
+        colorScheme: { bg: '#0a0a0f', accent: '#3b82f6' },
+        isPremium: false,
+        isPopular: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'executive',
+        name: 'Executive',
+        description: 'Bold and authoritative design for senior professionals.',
+        features: ['Professional', 'Bold', 'Corporate'],
+        bestFor: ['Executives', 'Managers'],
+        colorScheme: { bg: '#111111', accent: '#f59e0b' },
+        isPremium: false,
+        isPopular: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'creative',
+        name: 'Creative',
+        description: 'Artistic and unique with bold gradients and expressive layouts.',
+        features: ['Gradients', 'Artistic', 'Bold'],
+        bestFor: ['Artists', 'Illustrators'],
+        colorScheme: { bg: '#1a0505', accent: '#ef4444' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'minimal-plus',
+        name: 'Minimal Plus',
+        description: 'Clean and elegant with sophisticated micro-interactions.',
+        features: ['Light Mode', 'Clean', 'Refined'],
+        bestFor: ['Writers', 'Consultants'],
+        colorScheme: { bg: '#fafafa', accent: '#10b981' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'generated',
+        name: 'Futuristic',
+        description: 'Tech-forward design with cutting-edge cyber aesthetics.',
+        features: ['Cyber Style', 'Tech', 'Futuristic'],
+        bestFor: ['Tech Leads', 'Innovators'],
+        colorScheme: { bg: '#000000', accent: '#8b5cf6' },
+        isPremium: false,
+        lightModeOnly: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'minimalist',
+        name: 'Minimalist',
+        description: 'Ultra-simple and distraction-free for maximum focus.',
+        features: ['Light Mode', 'Simple', 'Focus'],
+        bestFor: ['Academics', 'Researchers'],
+        colorScheme: { bg: '#ffffff', accent: '#6b7280' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'cyber',
+        name: 'Cyber 3D',
+        description: 'Experimental 3D experience with matrix effects and glowing elements.',
+        features: ['3D Effects', 'Matrix', 'Neon'],
+        bestFor: ['Gamers', 'Developers'],
+        colorScheme: { bg: '#000000', accent: '#06b6d4' },
+        isPremium: true,
+        isNew: true,
+        darkModeOnly: true
+    },
+    {
+        id: 'basic',
+        name: 'Basic',
+        description: 'Classic resume-style layout that works everywhere.',
+        features: ['Classic', 'ATS-Friendly', 'Simple'],
+        bestFor: ['Job Seekers', 'Graduates'],
+        colorScheme: { bg: '#1a1a1a', accent: '#9ca3af' },
+        isPremium: false,
+        darkModeOnly: false
+    },
 ];
 
 export default function EditPortfolioPage() {
@@ -83,6 +179,10 @@ export default function EditPortfolioPage() {
     const [colorTheme, setColorTheme] = useState('purple');
     const [isMobileView, setIsMobileView] = useState(false);
     const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+
+    // Template search and filter state
+    const [templateSearch, setTemplateSearch] = useState('');
+    const [templateFilter, setTemplateFilter] = useState<'all' | 'premium' | 'standard'>('all');
 
     // Portfolio Data
     const [portfolioData, setPortfolioData] = useState<PortfolioData>({
@@ -778,115 +878,243 @@ export default function EditPortfolioPage() {
                         </div>
                     )}
 
-                    {activeTab === 'templates' && (
-                        <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 p-4 md:p-8">
-                            <div className="mb-10 text-center lg:text-left">
-                                <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Pick your style</h1>
-                                <p className="text-white/40">Switch templates anytime. Your content stays the same.</p>
-                            </div>
+                    {activeTab === 'templates' && (() => {
+                        // Filter templates using top-level state
+                        const filteredTemplates = AVAILABLE_TEMPLATES.filter(tmpl => {
+                            const matchesSearch = tmpl.name.toLowerCase().includes(templateSearch.toLowerCase()) ||
+                                tmpl.description.toLowerCase().includes(templateSearch.toLowerCase()) ||
+                                tmpl.features.some(f => f.toLowerCase().includes(templateSearch.toLowerCase()));
+                            const matchesFilter = templateFilter === 'all' ||
+                                (templateFilter === 'premium' && tmpl.isPremium) ||
+                                (templateFilter === 'standard' && !tmpl.isPremium);
+                            return matchesSearch && matchesFilter;
+                        });
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                {AVAILABLE_TEMPLATES.map((tmpl) => (
-                                    <div
-                                        key={tmpl.id}
-                                        onClick={() => {
-                                            setTemplateId(tmpl.id);
-                                            // SAVE DIRECTLY - NO TIMEOUT
-                                            handleSave(true, tmpl.id);
-                                        }}
-                                        className="group cursor-pointer"
-                                    >
-                                        {/* Card Container */}
-                                        <div className={cn(
-                                            "relative aspect-[4/5] rounded-3xl overflow-hidden transition-all duration-500 border-2",
-                                            templateId === tmpl.id
-                                                ? "border-primary shadow-[0_0_30px_-10px_rgba(99,102,241,0.5)] scale-[1.05]"
-                                                : "border-white/5 hover:border-white/20 hover:scale-[1.02]"
-                                        )}>
-                                            {/* Micro-Preview / Wireframe (CSS Based) */}
-                                            <div className={cn(
-                                                "absolute inset-0 p-3 flex flex-col gap-2",
-                                                tmpl.id === 'aurora' && "bg-[#0f0720]",
-                                                tmpl.id === 'liquid-silk' && "bg-[#050510]",
-                                                tmpl.id === 'modern' && "bg-[#0a0a0f]",
-                                                tmpl.id === 'executive' && "bg-[#111111]",
-                                                tmpl.id === 'creative' && "bg-[#1a0505]",
-                                                tmpl.id === 'minimal-plus' && "bg-[#fafafa]",
-                                                tmpl.id === 'minimalist' && "bg-white",
-                                                tmpl.id === 'cyber' && "bg-black",
-                                                tmpl.id === 'basic' && "bg-neutral-900"
-                                            )}>
-                                                {/* Simulated Header */}
-                                                <div className="flex justify-between items-center opacity-40">
-                                                    <div className={cn("w-4 h-1.5 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                    <div className="flex gap-1">
-                                                        <div className={cn("w-2 h-1 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                        <div className={cn("w-2 h-1 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                    </div>
-                                                </div>
-
-                                                {/* Simulated Hero */}
-                                                <div className="mt-4 space-y-2">
-                                                    <div className={cn(
-                                                        "w-10 h-10 rounded-full mx-auto",
-                                                        tmpl.id === 'aurora' && "bg-gradient-to-tr from-purple-500 to-pink-500",
-                                                        tmpl.id === 'modern' && "bg-blue-500",
-                                                        tmpl.id === 'executive' && "bg-amber-500/20 border border-amber-500/50",
-                                                        tmpl.id === 'creative' && "bg-rose-500",
-                                                        tmpl.id === 'minimal-plus' && "bg-neutral-200",
-                                                        (tmpl.id === 'minimalist' || tmpl.id === 'basic') && "bg-neutral-300",
-                                                        tmpl.id === 'cyber' && "bg-cyan-500/20 border border-cyan-400"
-                                                    )} />
-                                                    <div className={cn("h-2 w-3/4 mx-auto rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/10" : "bg-white/10")} />
-                                                    <div className={cn("h-1.5 w-1/2 mx-auto rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                </div>
-
-                                                {/* Simulated Sections */}
-                                                <div className="mt-auto grid grid-cols-2 gap-2 opacity-30">
-                                                    <div className={cn("h-8 rounded-lg", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                    <div className={cn("h-8 rounded-lg", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                </div>
-
-                                                {/* Abstract Accents (Template Specific) */}
-                                                {tmpl.id === 'aurora' && (
-                                                    <div className="absolute inset-x-0 top-0 h-10 bg-purple-600/20 blur-xl rounded-full translate-y--5" />
-                                                )}
-                                                {tmpl.id === 'cyber' && (
-                                                    <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
-                                                )}
-                                            </div>
-
-                                            {/* Selection Overlay */}
-                                            {templateId === tmpl.id && (
-                                                <div className="absolute inset-0 bg-primary/10 backdrop-blur-[2px] flex items-center justify-center">
-                                                    <div className="bg-primary text-white p-2 rounded-full shadow-lg scale-110">
-                                                        <Check className="w-5 h-5" />
-                                                    </div>
-                                                </div>
-                                            )}
+                        return (
+                            <div className="max-w-7xl mx-auto p-4 md:p-8">
+                                {/* Header Section */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mb-10"
+                                >
+                                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                                        <div>
+                                            <h1 className="text-4xl font-black tracking-tight text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60">
+                                                Pick your style
+                                            </h1>
+                                            <p className="text-white/50">Switch templates anytime. Your content stays the same.</p>
                                         </div>
 
-                                        {/* Label Area */}
-                                        <div className="mt-4 px-2">
-                                            <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">{tmpl.name}</h3>
-                                            <div className="flex items-center gap-1.5 mt-1 shrink-0">
-                                                <div className={cn(
-                                                    "w-1.5 h-1.5 rounded-full",
-                                                    tmpl.id === 'cyber' ? "bg-cyan-400" :
-                                                        tmpl.id === 'aurora' ? "bg-purple-400" :
-                                                            tmpl.id === 'creative' ? "bg-rose-400" : "bg-white/20"
-                                                )} />
-                                                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">
-                                                    {tmpl.id === 'cyber' || tmpl.id === 'aurora' ? 'Premium' : 'Standard'}
-                                                </span>
+                                        {/* Search & Filters */}
+                                        <div className="flex flex-col sm:flex-row gap-3">
+                                            {/* Search */}
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search templates..."
+                                                    value={templateSearch}
+                                                    onChange={(e) => setTemplateSearch(e.target.value)}
+                                                    className="w-full sm:w-64 px-4 py-2.5 pl-10 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                                                />
+                                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                            </div>
+
+                                            {/* Filters */}
+                                            <div className="flex gap-2 p-1 rounded-xl bg-white/5 border border-white/10">
+                                                {(['all', 'premium', 'standard'] as const).map((type) => (
+                                                    <button
+                                                        key={type}
+                                                        onClick={() => setTemplateFilter(type)}
+                                                        className={cn(
+                                                            "px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                                            templateFilter === type
+                                                                ? "bg-primary text-white shadow-lg"
+                                                                : "text-white/50 hover:text-white hover:bg-white/5"
+                                                        )}
+                                                    >
+                                                        {type === 'all' ? 'All' : type === 'premium' ? '⭐ Premium' : 'Standard'}
+                                                    </button>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </motion.div>
 
-                        </div>
-                    )}
+                                {/* Template Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {filteredTemplates.map((tmpl, index) => (
+                                        <motion.div
+                                            key={tmpl.id}
+                                            initial={{ opacity: 0, y: 30 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05, duration: 0.4 }}
+                                            whileHover={{ y: -8, scale: 1.02 }}
+                                            onClick={() => {
+                                                setTemplateId(tmpl.id);
+                                                handleSave(true, tmpl.id);
+                                            }}
+                                            className="group cursor-pointer relative"
+                                        >
+                                            {/* Glassmorphism Card */}
+                                            <div className={cn(
+                                                "relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-500",
+                                                "bg-gradient-to-b from-white/[0.08] to-white/[0.02]",
+                                                "backdrop-blur-xl border-2",
+                                                templateId === tmpl.id
+                                                    ? "border-primary shadow-[0_0_40px_-10px_var(--primary),inset_0_0_30px_rgba(139,92,246,0.1)]"
+                                                    : "border-white/10 hover:border-white/25 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]"
+                                            )}>
+                                                {/* Animated Gradient Background */}
+                                                <div
+                                                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                                    style={{
+                                                        background: `radial-gradient(circle at 50% 0%, ${tmpl.colorScheme.accent}20 0%, transparent 70%)`
+                                                    }}
+                                                />
+
+                                                {/* Preview Area */}
+                                                <div
+                                                    className="absolute inset-3 rounded-xl overflow-hidden flex flex-col"
+                                                    style={{ backgroundColor: tmpl.colorScheme.bg }}
+                                                >
+                                                    {/* Simulated Header */}
+                                                    <div className="flex justify-between items-center p-2 opacity-50">
+                                                        <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        <div className="flex gap-1">
+                                                            <div className="w-2 h-1 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                            <div className="w-2 h-1 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Hero Section */}
+                                                    <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4">
+                                                        <div
+                                                            className="w-14 h-14 rounded-full"
+                                                            style={{
+                                                                background: `linear-gradient(135deg, ${tmpl.colorScheme.accent}, ${tmpl.colorScheme.accent}80)`,
+                                                                boxShadow: `0 0 30px ${tmpl.colorScheme.accent}40`
+                                                            }}
+                                                        />
+                                                        <div className="w-3/4 h-2 rounded-full opacity-30" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        <div className="w-1/2 h-1.5 rounded-full opacity-20" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                    </div>
+
+                                                    {/* Bottom Sections */}
+                                                    <div className="grid grid-cols-2 gap-2 p-3 opacity-40">
+                                                        <div className="h-8 rounded-lg" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }} />
+                                                        <div className="h-8 rounded-lg" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }} />
+                                                    </div>
+
+                                                    {/* Template-specific Effects */}
+                                                    {tmpl.id === 'aurora' && (
+                                                        <div className="absolute inset-0 pointer-events-none">
+                                                            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-purple-500/30 to-transparent blur-xl" />
+                                                        </div>
+                                                    )}
+                                                    {tmpl.id === 'cyber' && (
+                                                        <div className="absolute inset-0 pointer-events-none opacity-30">
+                                                            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:12px_12px]" />
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Hover Preview Button */}
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-sm">
+                                                    <button
+                                                        className="px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-sm font-semibold flex items-center gap-2 hover:bg-white/20 transition-all"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setTemplateId(tmpl.id);
+                                                            handleSave(true, tmpl.id);
+                                                        }}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                        Select Template
+                                                    </button>
+                                                </div>
+
+                                                {/* Selection Check */}
+                                                {templateId === tmpl.id && (
+                                                    <div className="absolute top-3 right-3 bg-primary text-white p-2 rounded-full shadow-lg">
+                                                        <Check className="w-4 h-4" />
+                                                    </div>
+                                                )}
+
+                                                {/* Badges */}
+                                                <div className="absolute top-3 left-3 flex gap-2">
+                                                    {tmpl.isPremium && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-amber-500/80 to-orange-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            Premium
+                                                        </span>
+                                                    )}
+                                                    {tmpl.isNew && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-emerald-500/80 to-teal-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            New
+                                                        </span>
+                                                    )}
+                                                    {tmpl.isPopular && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            Popular
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Info Section */}
+                                            <div className="mt-4 px-1">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div>
+                                                        <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors">{tmpl.name}</h3>
+                                                        <p className="text-xs text-white/40 mt-0.5 line-clamp-2">{tmpl.description}</p>
+                                                    </div>
+                                                    <div
+                                                        className="w-4 h-4 rounded-full flex-shrink-0 mt-1 ring-2 ring-white/10"
+                                                        style={{ backgroundColor: tmpl.colorScheme.accent }}
+                                                    />
+                                                </div>
+
+                                                {/* Features */}
+                                                <div className="flex flex-wrap gap-1.5 mt-3">
+                                                    {tmpl.features.slice(0, 3).map(feature => (
+                                                        <span
+                                                            key={feature}
+                                                            className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-white/50 font-medium"
+                                                        >
+                                                            {feature}
+                                                        </span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Best For */}
+                                                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-white/30">
+                                                    <span>Best for:</span>
+                                                    <span className="text-white/50">{tmpl.bestFor.join(', ')}</span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                {/* Empty State */}
+                                {filteredTemplates.length === 0 && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-center py-20"
+                                    >
+                                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
+                                            <Grid className="w-8 h-8 text-white/30" />
+                                        </div>
+                                        <p className="text-white/50 text-lg mb-2">No templates found</p>
+                                        <p className="text-white/30 text-sm">Try adjusting your search or filters</p>
+                                    </motion.div>
+                                )}
+                            </div>
+                        );
+                    })()}
 
                     {activeTab === 'layout' && (
                         <div className="w-full max-w-2xl mx-auto px-3 py-4 sm:p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
