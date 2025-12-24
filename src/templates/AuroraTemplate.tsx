@@ -613,14 +613,16 @@ function FloatingStat({ value, label, icon: Icon, delay = 0, themeColor, isDark 
 }
 
 // ==================== MAIN TEMPLATE ====================
-export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function AuroraTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: ColorTheme }) {
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-    // Theme support
-    const { theme } = useColorTheme();
+    // Theme support - prefer prop over context
+    const { theme: contextTheme } = useColorTheme();
+    const theme = colorTheme || contextTheme || 'purple';
+
     // Internal state synced with global prop
     const [localIsDark, setLocalIsDark] = useState(true);
     const isDark = isDarkMode !== undefined ? isDarkMode : localIsDark;
@@ -1221,27 +1223,10 @@ export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioDa
 
             {/* ===== FOOTER ===== */}
             <footer className={`relative z-10 px-6 py-8 border-t ${cardBorder}`}>
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="max-w-7xl mx-auto flex items-center justify-center">
                     <p className={`text-sm ${textMuted}`}>
-                        © {new Date().getFullYear()} {personalInfo.fullName}. Crafted with passion.
+                        © {new Date().getFullYear()} {personalInfo.fullName}.
                     </p>
-                    <div className="flex gap-6">
-                        {personalInfo.githubURL && (
-                            <a href={personalInfo.githubURL} target="_blank" rel="noopener" className={`${textMuted} hover:text-white transition-colors`}>
-                                <Github className="w-5 h-5" />
-                            </a>
-                        )}
-                        {personalInfo.linkedInURL && (
-                            <a href={personalInfo.linkedInURL} target="_blank" rel="noopener" className={`${textMuted} hover:text-white transition-colors`}>
-                                <Linkedin className="w-5 h-5" />
-                            </a>
-                        )}
-                        {personalInfo.email && (
-                            <a href={`mailto:${personalInfo.email}`} className={`${textMuted} hover:text-white transition-colors`}>
-                                <Mail className="w-5 h-5" />
-                            </a>
-                        )}
-                    </div>
                 </div>
             </footer>
         </div>

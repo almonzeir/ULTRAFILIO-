@@ -14,6 +14,7 @@ interface PaddleCheckoutProps {
     discountId?: string;
     customerEmail?: string;
     customerId?: string;
+    customData?: any;
     onSuccess?: (data: any) => void;
     onClose?: () => void;
 }
@@ -28,19 +29,28 @@ export function usePaddle() {
     }, []);
 
     const initializePaddle = () => {
-        if (window.Paddle) {
-            window.Paddle.Initialize({
-                token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-            });
-            setIsLoaded(true);
+        const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+        if (!window.Paddle || !token) return;
+
+        // Detect sandbox based on token prefix
+        if (token.startsWith('test_')) {
+            window.Paddle.Environment.set('sandbox');
         }
+
+        window.Paddle.Initialize({
+            token,
+            eventCallback: (event: any) => {
+                console.log('Paddle Event:', event.name, event);
+            }
+        });
+        setIsLoaded(true);
     };
 
     const openCheckout = ({
         priceId,
         discountId,
         customerEmail,
-        customerId,
+        customData,
         onSuccess,
         onClose,
     }: PaddleCheckoutProps) => {
@@ -49,29 +59,36 @@ export function usePaddle() {
             return;
         }
 
-        const checkoutSettings: any = {
-            items: [{ priceId, quantity: 1 }],
+        const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+
+        // Re-initialize with environment and callbacks
+        if (token?.startsWith('test_')) {
+            window.Paddle.Environment.set('sandbox');
+        }
+
+        window.Paddle.Initialize({
+            token,
+            eventCallback: (event: any) => {
+                if (event.name === 'checkout.completed') {
+                    onSuccess?.(event.data);
+                } else if (event.name === 'checkout.closed') {
+                    onClose?.();
+                }
+            }
+        });
+
+        window.Paddle.Checkout.open({
             settings: {
                 displayMode: 'overlay',
                 theme: 'dark',
                 locale: 'en',
                 successUrl: `${window.location.origin}/dashboard?success=true`,
             },
-        };
-
-        if (discountId) {
-            checkoutSettings.discountId = discountId;
-        }
-
-        if (customerEmail) {
-            checkoutSettings.customer = { email: customerEmail };
-        }
-
-        if (customerId) {
-            checkoutSettings.customer = { id: customerId };
-        }
-
-        window.Paddle.Checkout.open(checkoutSettings);
+            items: [{ priceId, quantity: 1 }],
+            customer: customerEmail ? { email: customerEmail } : undefined,
+            customData: customData || undefined,
+            discountId: discountId || undefined,
+        });
     };
 
     return {
@@ -86,10 +103,12 @@ export function PaddleScript() {
         <Script
             src="https://cdn.paddle.com/paddle/v2/paddle.js"
             onLoad={() => {
-                if (window.Paddle) {
-                    window.Paddle.Initialize({
-                        token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-                    });
+                const token = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+                if (window.Paddle && token) {
+                    if (token.startsWith('test_')) {
+                        window.Paddle.Environment.set('sandbox');
+                    }
+                    window.Paddle.Initialize({ token });
                 }
             }}
         />

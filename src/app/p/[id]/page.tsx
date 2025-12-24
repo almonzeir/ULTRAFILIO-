@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { useColorTheme } from '@/context/color-theme-context';
 import { Loader2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 // Templates
 import ModernTemplate from '@/templates/ModernTemplate';
@@ -30,9 +31,14 @@ const TEMPLATES: Record<string, React.ComponentType<{ data: PortfolioData }>> = 
     'cyber': Cyber3DTemplate,
 };
 
+// Define Pro Templates
+const PRO_TEMPLATES = ['cyber', 'aurora', 'minimal-plus', 'creative', 'modern'];
+
 export default function PublicPortfolioPage({ params }: { params: { id: string } }) {
     const idOrSlug = params.id;
     const { setTheme } = useColorTheme();
+    const searchParams = useSearchParams();
+    const templateOverride = searchParams.get('template');
 
     const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState('modern');
@@ -43,7 +49,9 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
         const fetchData = async () => {
             try {
                 // Try to find by ID first, then by slug
-                let query = supabase.from('portfolios').select('*');
+                let query = supabase
+                    .from('portfolios')
+                    .select('*, users!inner(is_pro)'); // Join with users to check Pro status
 
                 // Check if it's a UUID format or a slug
                 const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
@@ -51,34 +59,18 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
                 if (isUUID) {
                     query = query.eq('id', idOrSlug);
                 } else {
-                    // Try to find by slug (custom URL)
                     query = query.eq('slug', idOrSlug);
                 }
 
                 const { data, error } = await query.single();
 
                 if (error || !data) {
-                    // If not found by slug, try by ID as fallback
-                    if (!isUUID) {
-                        const { data: fallbackData, error: fallbackError } = await supabase
-                            .from('portfolios')
-                            .select('*')
-                            .eq('id', idOrSlug)
-                            .single();
-
-                        if (fallbackError || !fallbackData) {
-                            setNotFound(true);
-                            return;
-                        }
-                        // Use fallback data
-                        processPortfolioData(fallbackData);
-                        return;
-                    }
                     setNotFound(true);
                     return;
                 }
 
-                processPortfolioData(data);
+                const ownerIsPro = data.users?.is_pro || false;
+                processPortfolioData(data, ownerIsPro);
             } catch (err) {
                 console.error('Public Load error:', err);
                 setNotFound(true);
@@ -87,7 +79,7 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
             }
         };
 
-        const processPortfolioData = (data: any) => {
+        const processPortfolioData = (data: any, ownerIsPro: boolean) => {
             const mappedData: PortfolioData = {
                 personalInfo: {
                     fullName: data.title ? data.title.replace("'s Portfolio", "") : "User Name",
@@ -105,7 +97,6 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
                 about: {
                     extendedBio: data.description,
                     skills: data.skills || [],
-                    stats: []
                 },
                 experience: data.experience || [],
                 education: data.education || [],
@@ -115,14 +106,30 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
             };
 
             setPortfolioData(mappedData);
-            if (data.template_id) setSelectedTemplate(data.template_id);
+
+            // Handle Template Override Security
+            let finalTemplate = data.template_id || 'modern';
+
+            if (templateOverride && TEMPLATES[templateOverride]) {
+                const isRequestedTemplatePro = PRO_TEMPLATES.includes(templateOverride);
+
+                // Only allow override if the template is not Pro, or if the owner IS a Pro member
+                if (!isRequestedTemplatePro || ownerIsPro) {
+                    finalTemplate = templateOverride;
+                    console.log(`Using overridden template: ${finalTemplate}`);
+                } else {
+                    console.warn(`Unauthorized Pro template requested: ${templateOverride}. Reverting to base.`);
+                }
+            }
+
+            setSelectedTemplate(finalTemplate);
             if (data.theme) setTheme(data.theme);
         };
 
         if (idOrSlug) {
             fetchData();
         }
-    }, [idOrSlug, setTheme]);
+    }, [idOrSlug, setTheme, templateOverride]);
 
     if (loading) {
         return (

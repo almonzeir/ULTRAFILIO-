@@ -53,7 +53,7 @@ function GlowingOrb({ className }: { className?: string }) {
     );
 }
 
-function CyberGrid() {
+function CyberGrid({ isDarkMode }: { isDarkMode: boolean }) {
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Horizontal scan line */}
@@ -66,7 +66,7 @@ function CyberGrid() {
             {/* Grid pattern */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
             {/* Perspective grid floor */}
-            <div className="absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t from-[#050510] to-transparent" />
+            <div className={`absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t ${isDarkMode ? 'from-[#050510]' : 'from-slate-50'} to-transparent`} />
         </div>
     );
 }
@@ -106,7 +106,7 @@ function TypewriterText({ text, className, delay = 0 }: { text: string; classNam
 
 // --- Main Template Component ---
 
-export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function Cyber3DTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -114,13 +114,16 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
 
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
+    // FORCE DARK MODE ONLY - Ignore isDarkMode prop
+    const forcedDarkMode = true;
+
     return (
-        <div ref={containerRef} className={`relative min-h-screen ${isDarkMode ? 'dark' : ''} bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-500`}>
+        <div ref={containerRef} className={`relative min-h-screen ${forcedDarkMode ? 'dark' : ''} bg-slate-50 dark:bg-[#050510] text-slate-900 dark:text-gray-100 font-mono selection:bg-cyan-500/30 overflow-x-hidden transition-colors duration-500`}>
 
             {/* Background Effects - Sticky so it follows scroll but stays in container */}
             <div className="absolute inset-0 z-0 h-full overflow-hidden">
                 <div className="sticky top-0 h-screen w-full">
-                    <CyberGrid />
+                    <CyberGrid isDarkMode={forcedDarkMode} />
                     <MatrixRain />
                     <GlowingOrb className="w-[600px] h-[600px] bg-cyan-600/20 -top-40 -right-40" />
                     <GlowingOrb className="w-[400px] h-[400px] bg-fuchsia-600/20 bottom-20 -left-20" />
@@ -129,7 +132,7 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
             </div>
 
             {/* Header - Sticky */}
-            <header className="sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md bg-white/80 dark:bg-[#050510]/80 border-b border-cyan-900/30 transition-colors duration-300">
+            <header className={`sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md ${forcedDarkMode ? 'bg-[#050510]/80' : 'bg-white/80'} border-b border-cyan-900/30 transition-colors duration-300`}>
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
@@ -191,9 +194,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="relative"
+                        className="relative px-2"
                     >
-                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 relative">
+                        <h1 className="text-3xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-6 relative break-words">
                             <span className="relative inline-block">
                                 <span className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-violet-500 blur-2xl opacity-30 animate-pulse" />
                                 <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-200 to-white">
@@ -375,8 +378,8 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         className="flex items-center gap-4 mb-16 justify-end"
                     >
                         <div className="flex-1 h-[1px] bg-gradient-to-l from-fuchsia-500/50 to-transparent" />
-                        <Cpu className="text-fuchsia-500 animate-pulse" />
-                        <h2 className="text-3xl md:text-4xl font-bold text-white">
+                        <Cpu className="text-fuchsia-500 animate-pulse flex-shrink-0" />
+                        <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-white whitespace-nowrap">
                             <span className="text-fuchsia-500">&lt;</span>Projects<span className="text-fuchsia-500"> /&gt;</span>
                         </h2>
                     </motion.div>
@@ -497,9 +500,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                                 {/* Education */}
                                 {education && education.length > 0 && (
                                     <div>
-                                        <div className="flex items-center gap-3 mb-10">
-                                            <GraduationCap className="text-cyan-400 w-6 h-6" />
-                                            <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Academic_Registry</h2>
+                                        <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                            <GraduationCap className="text-cyan-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                            <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Academic_Registry</h2>
                                         </div>
                                         <div className="space-y-8">
                                             {education.map((edu, i) => (
@@ -517,9 +520,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                                 <div className="space-y-16">
                                     {certifications && certifications.length > 0 && (
                                         <div>
-                                            <div className="flex items-center gap-3 mb-10">
-                                                <Zap className="text-fuchsia-400 w-6 h-6" />
-                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Accredited_Nodes</h2>
+                                            <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                                <Zap className="text-fuchsia-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                                <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Security_Clearance</h2>
                                             </div>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 {certifications.map((cert, i) => (
@@ -534,9 +537,9 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
 
                                     {languages && languages.length > 0 && (
                                         <div>
-                                            <div className="flex items-center gap-3 mb-10">
-                                                <Globe className="text-violet-400 w-6 h-6" />
-                                                <h2 className="text-2xl font-bold text-white uppercase tracking-tight">Linguistic_Uplink</h2>
+                                            <div className="flex items-center gap-3 mb-10 flex-wrap">
+                                                <Globe className="text-violet-400 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                                                <h2 className="text-lg sm:text-2xl font-bold text-white uppercase tracking-tight break-words">Lexicon_Uplink</h2>
                                             </div>
                                             <div className="flex flex-wrap gap-8">
                                                 {languages.map((lang, i) => (
@@ -563,12 +566,12 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8">
+                        <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-8 break-words">
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-fuchsia-400 to-violet-400">
-                                ESTABLISH_CONNECTION
+                                ESTABLISH_UPLINK
                             </span>
                         </h2>
-                        <p className="text-gray-400 text-lg mb-12 max-w-xl mx-auto">
+                        <p className="text-gray-400 text-base sm:text-lg mb-12 max-w-xl mx-auto">
                             Ready to collaborate? Initialize a new connection and let&apos;s build something extraordinary together.
                         </p>
 

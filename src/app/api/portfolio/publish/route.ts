@@ -65,10 +65,14 @@ export async function POST(req: NextRequest) {
       });
     } else {
       // No Netlify token - return preview URL instead
-      // No Netlify token - return preview URL instead
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL
         || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9003');
-      const previewUrl = `${baseUrl}/portfolio/${portfolioId}?template=${templateId}`;
+
+      // Use clean URL if slug exists, otherwise fall back to ID-based URL
+      // We do NOT append ?template=... because the template choice is saved to the DB below
+      const previewUrl = portfolio.slug
+        ? `${baseUrl}/${portfolio.slug}`
+        : `${baseUrl}/portfolio/${portfolioId}`;
 
       // Update portfolio status
       await supabaseAdmin

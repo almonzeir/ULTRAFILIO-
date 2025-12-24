@@ -31,25 +31,25 @@ export function OnboardingTour() {
 
     const STEPS = [
         {
-            title: "Your Portfolio is Live! 🚀",
+            title: "Your Portfolio is Live!",
             description: "We've created a stunning draft based on your CV. Now, let's make it yours.",
             icon: Sparkles,
-            color: "text-indigo-400",
-            bg: "bg-indigo-500/10"
+            color: "text-white-400",
+            bg: "bg-white-500/10"
         },
         {
-            title: "Change the Vibe 🎨",
+            title: "Change the Vibe",
             description: "Go to the 'Templates' tab to switch designs instantly. Try 'Cyber 3D' or 'Aurora' for a premium look.",
             icon: Grid,
-            color: "text-violet-400",
-            bg: "bg-violet-500/10"
+            color: "text-white-400",
+            bg: "bg-white-500/10"
         },
         {
-            title: "Drag & Drop Layout 📐",
+            title: "Drag & Drop Layout",
             description: "Use the 'Layout' tab to reorder sections. Put your best projects at the top!",
             icon: Layout,
-            color: "text-emerald-400",
-            bg: "bg-emerald-500/10"
+            color: "text-white-400",
+            bg: "bg-white-500/10"
         }
     ];
 
@@ -140,7 +140,7 @@ export function OnboardingTour() {
                                         onClick={handleClose}
                                         className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold h-12 rounded-xl"
                                     >
-                                        Let's Go! 🚀
+                                        Let's Go! 
                                     </Button>
                                 )}
                             </div>

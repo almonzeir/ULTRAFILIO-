@@ -33,21 +33,118 @@ import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
 import { useDictionary } from '@/hooks/use-dictionary';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import ProPaywallModal from '@/components/shared/pro-paywall-modal';
 
 const DEFAULT_SECTION_ORDER = ['hero', 'about', 'experience', 'projects', 'education', 'certifications', 'skills', 'contact'];
 
-// --- TEMPLATES DATA (Moved from choose-template) ---
+// --- ENHANCED TEMPLATES DATA ---
 const AVAILABLE_TEMPLATES = [
-    { id: 'aurora', name: 'Aurora', description: 'Award-winning design with aurora backgrounds.', isNew: true },
-    { id: 'liquid-silk', name: 'Liquid Silk', description: 'Architectural minimalism with mesh gradients.', isNew: true },
-    { id: 'modern', name: 'Modern', description: 'Premium & Dynamic design with smooth animations.', isPopular: true },
-    { id: 'executive', name: 'Executive', description: 'Professional & Bold design for serious pros.', isPopular: true },
-    { id: 'creative', name: 'Creative', description: 'Artistic & Unique with bold gradients.' },
-    { id: 'minimal-plus', name: 'Minimal Plus', description: 'Clean & Elegant with sophistical interactions.' },
-    { id: 'generated', name: 'Futuristic', description: 'Tech-Forward design with cutting-edge styling.' },
-    { id: 'minimalist', name: 'Minimalist', description: 'Ultra Simple and distraction-free.' },
-    { id: 'cyber', name: 'Cyber 3D', description: 'Experimental 3D Interactive Experience.', isNew: true },
-    { id: 'basic', name: 'Basic', description: 'Classic Resume style.' },
+    {
+        id: 'aurora',
+        name: 'Aurora',
+        description: 'Premium template with mesmerizing aurora backgrounds and fluid animations.',
+        features: ['Aurora Effects', 'Animations', 'Premium'],
+        bestFor: ['Designers', 'Creatives'],
+        colorScheme: { bg: '#0f0720', accent: '#a855f7' },
+        isPremium: true,
+        isNew: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'liquid-silk',
+        name: 'Liquid Silk',
+        description: 'Elegant architectural minimalism with beautiful mesh gradients.',
+        features: ['Mesh Gradients', 'Minimal', 'Elegant'],
+        bestFor: ['Architects', 'UI/UX'],
+        colorScheme: { bg: '#050510', accent: '#6366f1' },
+        isPremium: false,
+        isNew: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'modern',
+        name: 'Modern',
+        description: 'Clean and professional design perfect for tech portfolios.',
+        features: ['Dark Mode', 'Glass Effects', 'Smooth'],
+        bestFor: ['Developers', 'Engineers'],
+        colorScheme: { bg: '#0a0a0f', accent: '#3b82f6' },
+        isPremium: false,
+        isPopular: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'executive',
+        name: 'Executive',
+        description: 'Bold and authoritative design for senior professionals.',
+        features: ['Professional', 'Bold', 'Corporate'],
+        bestFor: ['Executives', 'Managers'],
+        colorScheme: { bg: '#111111', accent: '#f59e0b' },
+        isPremium: false,
+        isPopular: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'creative',
+        name: 'Creative',
+        description: 'Artistic and unique with bold gradients and expressive layouts.',
+        features: ['Gradients', 'Artistic', 'Bold'],
+        bestFor: ['Artists', 'Illustrators'],
+        colorScheme: { bg: '#1a0505', accent: '#ef4444' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'minimal-plus',
+        name: 'Minimal Plus',
+        description: 'Clean and elegant with sophisticated micro-interactions.',
+        features: ['Light Mode', 'Clean', 'Refined'],
+        bestFor: ['Writers', 'Consultants'],
+        colorScheme: { bg: '#fafafa', accent: '#10b981' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'generated',
+        name: 'Futuristic',
+        description: 'Tech-forward design with cutting-edge cyber aesthetics.',
+        features: ['Cyber Style', 'Tech', 'Futuristic'],
+        bestFor: ['Tech Leads', 'Innovators'],
+        colorScheme: { bg: '#000000', accent: '#8b5cf6' },
+        isPremium: false,
+        lightModeOnly: true,
+        darkModeOnly: false
+    },
+    {
+        id: 'minimalist',
+        name: 'Minimalist',
+        description: 'Ultra-simple and distraction-free for maximum focus.',
+        features: ['Light Mode', 'Simple', 'Focus'],
+        bestFor: ['Academics', 'Researchers'],
+        colorScheme: { bg: '#ffffff', accent: '#6b7280' },
+        isPremium: false,
+        darkModeOnly: false
+    },
+    {
+        id: 'cyber',
+        name: 'Cyber 3D',
+        description: 'Experimental 3D experience with matrix effects and glowing elements.',
+        features: ['3D Effects', 'Matrix', 'Neon'],
+        bestFor: ['Gamers', 'Developers'],
+        colorScheme: { bg: '#000000', accent: '#06b6d4' },
+        isPremium: true,
+        isNew: true,
+        darkModeOnly: true
+    },
+    {
+        id: 'basic',
+        name: 'Basic',
+        description: 'Classic resume-style layout that works everywhere.',
+        features: ['Classic', 'ATS-Friendly', 'Simple'],
+        bestFor: ['Job Seekers', 'Graduates'],
+        colorScheme: { bg: '#1a1a1a', accent: '#9ca3af' },
+        isPremium: false,
+        darkModeOnly: false
+    },
 ];
 
 export default function EditPortfolioPage() {
@@ -55,6 +152,7 @@ export default function EditPortfolioPage() {
     const portfolioId = params.portfolioId as string;
     const router = useRouter();
     const { user, loading: userLoading } = useUser();
+    const isPro = true; // PRO CONSTRAINTS DISABLED - Free for first 1000 users
     const { toast } = useToast();
     const { dictionary, language } = useDictionary();
 
@@ -62,11 +160,29 @@ export default function EditPortfolioPage() {
     const [saving, setSaving] = useState(false);
     const [publishing, setPublishing] = useState(false);
     const [activeTab, setActiveTab] = useState('edit');
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+
+    // Load theme preference from localStorage on mount
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('editor-theme');
+        if (savedTheme) {
+            setIsDarkMode(savedTheme === 'dark');
+        }
+    }, []);
+
+    // Save theme preference when it changes
+    useEffect(() => {
+        localStorage.setItem('editor-theme', isDarkMode ? 'dark' : 'light');
+        console.log("Editor: isDarkMode changed to:", isDarkMode);
+    }, [isDarkMode]);
     const [templateId, setTemplateId] = useState('modern');
     const [colorTheme, setColorTheme] = useState('purple');
     const [isMobileView, setIsMobileView] = useState(false);
     const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+
+    // Template search and filter state
+    const [templateSearch, setTemplateSearch] = useState('');
+    const [templateFilter, setTemplateFilter] = useState<'all' | 'premium' | 'standard'>('all');
 
     // Portfolio Data
     const [portfolioData, setPortfolioData] = useState<PortfolioData>({
@@ -149,7 +265,28 @@ export default function EditPortfolioPage() {
                     },
                     about: {
                         extendedBio: data.description || "",
-                        skills: data.skills || [],
+                        // Merge skills with duplicate category names
+                        skills: (() => {
+                            const skills = data.skills || [];
+                            if (!Array.isArray(skills) || skills.length === 0) return [];
+
+                            const categoryMap = new Map<string, string[]>();
+                            for (const skill of skills) {
+                                const categoryKey = (skill.category || 'General').toLowerCase().trim();
+                                const existingTags = categoryMap.get(categoryKey) || [];
+                                if (Array.isArray(skill.tags)) {
+                                    existingTags.push(...skill.tags);
+                                } else if (typeof skill.tags === 'string') {
+                                    existingTags.push(skill.tags);
+                                }
+                                categoryMap.set(categoryKey, existingTags);
+                            }
+
+                            return Array.from(categoryMap.entries()).map(([key, tags]) => ({
+                                category: key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                                tags: [...new Set(tags.filter(t => t && t.trim()))]
+                            })).filter(s => s.tags.length > 0);
+                        })(),
                     },
                     projects: data.projects || [],
                     experience: data.experience || [],
@@ -194,9 +331,10 @@ export default function EditPortfolioPage() {
                 certifications: portfolioData.certifications,
                 languages: portfolioData.languages,
                 template_id: overrideTemplateId || templateId,
-                color_theme: overrideColorTheme || colorTheme,
-                updated_at: new Date().toISOString(),
-                section_order: portfolioData.sectionOrder
+                // DISABLED: Missing in DB
+                // color_theme: overrideColorTheme || colorTheme,
+                // section_order: portfolioData.sectionOrder, 
+                updated_at: new Date().toISOString()
             };
 
             const { error } = await supabase.from('portfolios').update(updates).eq('id', portfolioId);
@@ -204,14 +342,28 @@ export default function EditPortfolioPage() {
             if (!silent) toast({ title: "Saved", description: "Changes saved successfully." });
             setPreviewKey(Date.now()); // Refresh preview iframe
         } catch (e: any) {
-            if (!silent) toast({ variant: 'destructive', title: "Error", description: e.message });
+            console.error("Save Error Details:", e);
+            if (!silent) toast({
+                variant: 'destructive',
+                title: "Error Saving",
+                description: e.message || "Check console for details. A database column might be missing."
+            });
         } finally {
             setSaving(false);
         }
     };
 
+    const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+
     const handlePublish = async () => {
         if (!portfolioId) return;
+
+        // PRO CONSTRAINT REMOVED - All users can publish
+        // if (!isPro) {
+        //     setIsPaywallOpen(true);
+        //     return;
+        // }
+
         setPublishing(true);
         try {
             await handleSave(true);
@@ -301,15 +453,6 @@ export default function EditPortfolioPage() {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsDarkMode(!isDarkMode)}
-                        className="rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors"
-                    >
-                        {isDarkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-                    </Button>
-
                     {/* Indicator that saving is automatic */}
                     {saving && (
                         <div className="flex items-center gap-2 text-[10px] text-white/30 uppercase tracking-widest animate-pulse">
@@ -331,9 +474,9 @@ export default function EditPortfolioPage() {
                         onClick={handlePublish}
                         disabled={publishing}
                         size="sm"
-                        className="h-9 px-4 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-bold shadow-lg shadow-indigo-500/20"
+                        className="h-9 px-4 rounded-full bg-white text-black text-xs font-bold shadow-lg hover:bg-white/90"
                     >
-                        <Rocket className={cn("w-3.5 h-3.5 mr-1.5", !publishing && "animate-bounce-slight")} />
+                        <Rocket className="w-3.5 h-3.5 mr-1.5" />
                         {publishing ? '...' : 'Publish'}
                     </Button>
                 </div>
@@ -348,6 +491,7 @@ export default function EditPortfolioPage() {
                     isPublishing={publishing}
                     previewDevice={previewDevice}
                     setPreviewDevice={setPreviewDevice}
+                    isPro={isPro}
                 />
 
                 {/* --- MAIN CONTENT AREA --- */}
@@ -366,8 +510,8 @@ export default function EditPortfolioPage() {
                             {/* Personal Info Card */}
                             <div className="glass-card p-6 md:p-8 rounded-3xl space-y-8">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400">
-                                        <Sparkles className="w-5 h-5" />
+                                    <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/70">
+                                        <Pen className="w-5 h-5" />
                                     </div>
                                     <h3 className="text-xl font-bold">Personal Information</h3>
                                 </div>
@@ -397,7 +541,7 @@ export default function EditPortfolioPage() {
                                         }}
                                         disabled={saving}
                                         size="sm"
-                                        className="mt-4 h-9 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 hover:from-emerald-500 hover:to-teal-500 transition-all"
+                                        className="mt-4 h-9 px-4 rounded-xl bg-white text-black text-xs font-bold shadow-lg hover:bg-white/90 transition-all"
                                     >
                                         <RefreshCw className={cn("w-3.5 h-3.5 mr-2", saving && "animate-spin")} />
                                         {saving ? 'Applying...' : 'Apply Changes'}
@@ -437,7 +581,7 @@ export default function EditPortfolioPage() {
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <Label className="text-xs uppercase font-bold text-white/50">Skills & Expertise</Label>
-                                            <div className="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-[10px] font-bold text-indigo-400 uppercase tracking-tighter">New</div>
+                                            <div className="px-2 py-0.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold text-white/60 uppercase tracking-tighter">New</div>
                                         </div>
                                         <Button
                                             variant="ghost"
@@ -478,7 +622,7 @@ export default function EditPortfolioPage() {
                                                             newSkills[categoryIdx].category = e.target.value;
                                                             updateAbout('skills', newSkills);
                                                         }}
-                                                        className="bg-transparent border-none p-0 text-sm font-bold text-indigo-400 focus:ring-0 w-full placeholder:text-white/10"
+                                                        className="bg-transparent border-none p-0 text-sm font-bold text-white/80 focus:ring-0 w-full placeholder:text-white/10"
                                                         placeholder="Category Name (e.g. Design)"
                                                     />
                                                 </div>
@@ -587,7 +731,7 @@ export default function EditPortfolioPage() {
                             <div className="glass-card p-6 md:p-8 rounded-3xl space-y-6">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
+                                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/70">
                                             <MonitorSmartphone className="w-5 h-5" />
                                         </div>
                                         <h3 className="text-xl font-bold">Projects</h3>
@@ -719,14 +863,13 @@ export default function EditPortfolioPage() {
                                 <Button
                                     onClick={handlePublish}
                                     disabled={publishing || saving}
-                                    className="w-full h-14 rounded-xl text-lg font-black bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 bg-[length:200%_auto] animate-gradient-x text-white shadow-[0_4px_20px_rgba(99,102,241,0.4)] border border-white/20 relative overflow-hidden group"
+                                    className="w-full h-14 rounded-xl text-lg font-black bg-white text-black shadow-lg hover:bg-white/90 transition-all"
                                 >
-                                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    <div className="flex items-center justify-center gap-3 relative z-10">
+                                    <div className="flex items-center justify-center gap-3">
                                         {publishing ? (
                                             <Loader2 className="w-5 h-5 animate-spin" />
                                         ) : (
-                                            <Rocket className="w-6 h-6 animate-bounce-slight" />
+                                            <Rocket className="w-6 h-6" />
                                         )}
                                         <span>{publishing ? 'Publishing...' : 'Publish to Web'}</span>
                                     </div>
@@ -735,133 +878,251 @@ export default function EditPortfolioPage() {
                         </div>
                     )}
 
-                    {activeTab === 'templates' && (
-                        <div className="max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 p-4 md:p-8">
-                            <div className="mb-10 text-center lg:text-left">
-                                <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Pick your style</h1>
-                                <p className="text-white/40">Switch templates anytime. Your content stays the same.</p>
-                            </div>
+                    {activeTab === 'templates' && (() => {
+                        // Filter templates using top-level state
+                        const filteredTemplates = AVAILABLE_TEMPLATES.filter(tmpl => {
+                            const matchesSearch = tmpl.name.toLowerCase().includes(templateSearch.toLowerCase()) ||
+                                tmpl.description.toLowerCase().includes(templateSearch.toLowerCase()) ||
+                                tmpl.features.some(f => f.toLowerCase().includes(templateSearch.toLowerCase()));
+                            const matchesFilter = templateFilter === 'all' ||
+                                (templateFilter === 'premium' && tmpl.isPremium) ||
+                                (templateFilter === 'standard' && !tmpl.isPremium);
+                            return matchesSearch && matchesFilter;
+                        });
 
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                                {AVAILABLE_TEMPLATES.map((tmpl) => (
-                                    <div
-                                        key={tmpl.id}
-                                        onClick={() => {
-                                            setTemplateId(tmpl.id);
-                                            // SAVE DIRECTLY - NO TIMEOUT
-                                            handleSave(true, tmpl.id);
-                                        }}
-                                        className="group cursor-pointer"
-                                    >
-                                        {/* Card Container */}
-                                        <div className={cn(
-                                            "relative aspect-[4/5] rounded-3xl overflow-hidden transition-all duration-500 border-2",
-                                            templateId === tmpl.id
-                                                ? "border-primary shadow-[0_0_30px_-10px_rgba(99,102,241,0.5)] scale-[1.05]"
-                                                : "border-white/5 hover:border-white/20 hover:scale-[1.02]"
-                                        )}>
-                                            {/* Micro-Preview / Wireframe (CSS Based) */}
-                                            <div className={cn(
-                                                "absolute inset-0 p-3 flex flex-col gap-2",
-                                                tmpl.id === 'aurora' && "bg-[#0f0720]",
-                                                tmpl.id === 'liquid-silk' && "bg-[#050510]",
-                                                tmpl.id === 'modern' && "bg-[#0a0a0f]",
-                                                tmpl.id === 'executive' && "bg-[#111111]",
-                                                tmpl.id === 'creative' && "bg-[#1a0505]",
-                                                tmpl.id === 'minimal-plus' && "bg-[#fafafa]",
-                                                tmpl.id === 'minimalist' && "bg-white",
-                                                tmpl.id === 'cyber' && "bg-black",
-                                                tmpl.id === 'basic' && "bg-neutral-900"
-                                            )}>
-                                                {/* Simulated Header */}
-                                                <div className="flex justify-between items-center opacity-40">
-                                                    <div className={cn("w-4 h-1.5 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                    <div className="flex gap-1">
-                                                        <div className={cn("w-2 h-1 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                        <div className={cn("w-2 h-1 rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black" : "bg-white")} />
-                                                    </div>
-                                                </div>
-
-                                                {/* Simulated Hero */}
-                                                <div className="mt-4 space-y-2">
-                                                    <div className={cn(
-                                                        "w-10 h-10 rounded-full mx-auto",
-                                                        tmpl.id === 'aurora' && "bg-gradient-to-tr from-purple-500 to-pink-500",
-                                                        tmpl.id === 'modern' && "bg-blue-500",
-                                                        tmpl.id === 'executive' && "bg-amber-500/20 border border-amber-500/50",
-                                                        tmpl.id === 'creative' && "bg-rose-500",
-                                                        tmpl.id === 'minimal-plus' && "bg-neutral-200",
-                                                        (tmpl.id === 'minimalist' || tmpl.id === 'basic') && "bg-neutral-300",
-                                                        tmpl.id === 'cyber' && "bg-cyan-500/20 border border-cyan-400"
-                                                    )} />
-                                                    <div className={cn("h-2 w-3/4 mx-auto rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/10" : "bg-white/10")} />
-                                                    <div className={cn("h-1.5 w-1/2 mx-auto rounded-full", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                </div>
-
-                                                {/* Simulated Sections */}
-                                                <div className="mt-auto grid grid-cols-2 gap-2 opacity-30">
-                                                    <div className={cn("h-8 rounded-lg", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                    <div className={cn("h-8 rounded-lg", tmpl.id === 'minimalist' || tmpl.id === 'minimal-plus' ? "bg-black/5" : "bg-white/5")} />
-                                                </div>
-
-                                                {/* Abstract Accents (Template Specific) */}
-                                                {tmpl.id === 'aurora' && (
-                                                    <div className="absolute inset-x-0 top-0 h-10 bg-purple-600/20 blur-xl rounded-full translate-y--5" />
-                                                )}
-                                                {tmpl.id === 'cyber' && (
-                                                    <div className="absolute inset-0 opacity-20 bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:10px_10px]" />
-                                                )}
-                                            </div>
-
-                                            {/* Selection Overlay */}
-                                            {templateId === tmpl.id && (
-                                                <div className="absolute inset-0 bg-primary/10 backdrop-blur-[2px] flex items-center justify-center">
-                                                    <div className="bg-primary text-white p-2 rounded-full shadow-lg scale-110">
-                                                        <Check className="w-5 h-5" />
-                                                    </div>
-                                                </div>
-                                            )}
+                        return (
+                            <div className="max-w-7xl mx-auto p-4 md:p-8">
+                                {/* Header Section */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="mb-10"
+                                >
+                                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                                        <div>
+                                            <h1 className="text-4xl font-black tracking-tight text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/60">
+                                                Pick your style
+                                            </h1>
+                                            <p className="text-white/50">Switch templates anytime. Your content stays the same.</p>
                                         </div>
 
-                                        {/* Label Area */}
-                                        <div className="mt-4 px-2">
-                                            <h3 className="text-sm font-bold text-white group-hover:text-primary transition-colors">{tmpl.name}</h3>
-                                            <div className="flex items-center gap-1.5 mt-1 shrink-0">
-                                                <div className={cn(
-                                                    "w-1.5 h-1.5 rounded-full",
-                                                    tmpl.id === 'cyber' ? "bg-cyan-400" :
-                                                        tmpl.id === 'aurora' ? "bg-purple-400" :
-                                                            tmpl.id === 'creative' ? "bg-rose-400" : "bg-white/20"
-                                                )} />
-                                                <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">
-                                                    {tmpl.id === 'cyber' || tmpl.id === 'aurora' ? 'Premium' : 'Standard'}
-                                                </span>
+                                        {/* Search & Filters */}
+                                        <div className="flex flex-col sm:flex-row gap-3">
+                                            {/* Search */}
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search templates..."
+                                                    value={templateSearch}
+                                                    onChange={(e) => setTemplateSearch(e.target.value)}
+                                                    className="w-full sm:w-64 px-4 py-2.5 pl-10 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
+                                                />
+                                                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                            </div>
+
+                                            {/* Filters */}
+                                            <div className="flex gap-2 p-1 rounded-xl bg-white/5 border border-white/10">
+                                                {(['all', 'premium', 'standard'] as const).map((type) => (
+                                                    <button
+                                                        key={type}
+                                                        onClick={() => setTemplateFilter(type)}
+                                                        className={cn(
+                                                            "px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                                            templateFilter === type
+                                                                ? "bg-primary text-white shadow-lg"
+                                                                : "text-white/50 hover:text-white hover:bg-white/5"
+                                                        )}
+                                                    >
+                                                        {type === 'all' ? 'All' : type === 'premium' ? '⭐ Premium' : 'Standard'}
+                                                    </button>
+                                                ))}
                                             </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
+                                </motion.div>
 
-                            {/* Info Box */}
-                            <div className="mt-12 p-6 glass-card rounded-[2rem] border-white/5 bg-white/[0.02] flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                                    <Sparkles className="w-6 h-6" />
+                                {/* Template Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                    {filteredTemplates.map((tmpl, index) => (
+                                        <motion.div
+                                            key={tmpl.id}
+                                            initial={{ opacity: 0, y: 30 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05, duration: 0.4 }}
+                                            whileHover={{ y: -8, scale: 1.02 }}
+                                            onClick={() => {
+                                                setTemplateId(tmpl.id);
+                                                handleSave(true, tmpl.id);
+                                            }}
+                                            className="group cursor-pointer relative"
+                                        >
+                                            {/* Glassmorphism Card */}
+                                            <div className={cn(
+                                                "relative aspect-[3/4] rounded-2xl overflow-hidden transition-all duration-500",
+                                                "bg-gradient-to-b from-white/[0.08] to-white/[0.02]",
+                                                "backdrop-blur-xl border-2",
+                                                templateId === tmpl.id
+                                                    ? "border-primary shadow-[0_0_40px_-10px_var(--primary),inset_0_0_30px_rgba(139,92,246,0.1)]"
+                                                    : "border-white/10 hover:border-white/25 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)]"
+                                            )}>
+                                                {/* Animated Gradient Background */}
+                                                <div
+                                                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                                    style={{
+                                                        background: `radial-gradient(circle at 50% 0%, ${tmpl.colorScheme.accent}20 0%, transparent 70%)`
+                                                    }}
+                                                />
+
+                                                {/* Preview Area */}
+                                                <div
+                                                    className="absolute inset-3 rounded-xl overflow-hidden flex flex-col"
+                                                    style={{ backgroundColor: tmpl.colorScheme.bg }}
+                                                >
+                                                    {/* Simulated Header */}
+                                                    <div className="flex justify-between items-center p-2 opacity-50">
+                                                        <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        <div className="flex gap-1">
+                                                            <div className="w-2 h-1 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                            <div className="w-2 h-1 rounded-full" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Hero Section */}
+                                                    <div className="flex-1 flex flex-col items-center justify-center gap-2 p-4">
+                                                        <div
+                                                            className="w-14 h-14 rounded-full"
+                                                            style={{
+                                                                background: `linear-gradient(135deg, ${tmpl.colorScheme.accent}, ${tmpl.colorScheme.accent}80)`,
+                                                                boxShadow: `0 0 30px ${tmpl.colorScheme.accent}40`
+                                                            }}
+                                                        />
+                                                        <div className="w-3/4 h-2 rounded-full opacity-30" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                        <div className="w-1/2 h-1.5 rounded-full opacity-20" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? '#000' : '#fff' }} />
+                                                    </div>
+
+                                                    {/* Bottom Sections */}
+                                                    <div className="grid grid-cols-2 gap-2 p-3 opacity-40">
+                                                        <div className="h-8 rounded-lg" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }} />
+                                                        <div className="h-8 rounded-lg" style={{ backgroundColor: tmpl.colorScheme.bg === '#ffffff' || tmpl.colorScheme.bg === '#fafafa' ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)' }} />
+                                                    </div>
+
+                                                    {/* Template-specific Effects */}
+                                                    {tmpl.id === 'aurora' && (
+                                                        <div className="absolute inset-0 pointer-events-none">
+                                                            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-purple-500/30 to-transparent blur-xl" />
+                                                        </div>
+                                                    )}
+                                                    {tmpl.id === 'cyber' && (
+                                                        <div className="absolute inset-0 pointer-events-none opacity-30">
+                                                            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)] bg-[size:12px_12px]" />
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Hover Preview Button */}
+                                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/40 backdrop-blur-sm">
+                                                    <button
+                                                        className="px-5 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white text-sm font-semibold flex items-center gap-2 hover:bg-white/20 transition-all"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setTemplateId(tmpl.id);
+                                                            handleSave(true, tmpl.id);
+                                                        }}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                        Select Template
+                                                    </button>
+                                                </div>
+
+                                                {/* Selection Check */}
+                                                {templateId === tmpl.id && (
+                                                    <div className="absolute top-3 right-3 bg-primary text-white p-2 rounded-full shadow-lg">
+                                                        <Check className="w-4 h-4" />
+                                                    </div>
+                                                )}
+
+                                                {/* Badges */}
+                                                <div className="absolute top-3 left-3 flex gap-2">
+                                                    {tmpl.isPremium && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-amber-500/80 to-orange-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            Premium
+                                                        </span>
+                                                    )}
+                                                    {tmpl.isNew && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-emerald-500/80 to-teal-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            New
+                                                        </span>
+                                                    )}
+                                                    {tmpl.isPopular && (
+                                                        <span className="px-2 py-1 rounded-md bg-gradient-to-r from-blue-500/80 to-indigo-500/80 text-[10px] font-bold text-white uppercase tracking-wider shadow-lg">
+                                                            Popular
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Info Section */}
+                                            <div className="mt-4 px-1">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div>
+                                                        <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors">{tmpl.name}</h3>
+                                                        <p className="text-xs text-white/40 mt-0.5 line-clamp-2">{tmpl.description}</p>
+                                                    </div>
+                                                    <div
+                                                        className="w-4 h-4 rounded-full flex-shrink-0 mt-1 ring-2 ring-white/10"
+                                                        style={{ backgroundColor: tmpl.colorScheme.accent }}
+                                                    />
+                                                </div>
+
+                                                {/* Features */}
+                                                <div className="flex flex-wrap gap-1.5 mt-3">
+                                                    {tmpl.features.slice(0, 3).map(feature => (
+                                                        <span
+                                                            key={feature}
+                                                            className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] text-white/50 font-medium"
+                                                        >
+                                                            {feature}
+                                                        </span>
+                                                    ))}
+                                                </div>
+
+                                                {/* Best For */}
+                                                <div className="flex items-center gap-1.5 mt-2 text-[10px] text-white/30">
+                                                    <span>Best for:</span>
+                                                    <span className="text-white/50">{tmpl.bestFor.join(', ')}</span>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    ))}
                                 </div>
-                                <div>
-                                    <h4 className="text-white font-bold">Auto-Sync Selection</h4>
-                                    <p className="text-white/40 text-sm">Changing a template will automatically update your site layout.</p>
-                                </div>
+
+                                {/* Empty State */}
+                                {filteredTemplates.length === 0 && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-center py-20"
+                                    >
+                                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
+                                            <Grid className="w-8 h-8 text-white/30" />
+                                        </div>
+                                        <p className="text-white/50 text-lg mb-2">No templates found</p>
+                                        <p className="text-white/30 text-sm">Try adjusting your search or filters</p>
+                                    </motion.div>
+                                )}
                             </div>
-                        </div>
-                    )}
+                        );
+                    })()}
 
                     {activeTab === 'layout' && (
-                        <div className="max-w-2xl mx-auto p-4 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="mb-8">
-                                <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Drag & Drop Layout</h1>
-                                <p className="text-white/50">Reorder the sections to tell your story your way.</p>
+                        <div className="w-full max-w-2xl mx-auto px-3 py-4 sm:p-6 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="mb-6 sm:mb-8">
+                                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1 sm:mb-2">Drag & Drop Layout</h1>
+                                <p className="text-sm sm:text-base text-white/50">Reorder the sections to tell your story your way.</p>
                             </div>
-                            <div className="glass-card p-2 rounded-3xl">
+                            <div className="glass-card p-2 sm:p-3 rounded-2xl sm:rounded-3xl overflow-hidden">
                                 <LayoutEditor sectionOrder={portfolioData.sectionOrder || DEFAULT_SECTION_ORDER} onOrderChange={(newOrder) => setPortfolioData(prev => ({ ...prev, sectionOrder: newOrder }))} />
                             </div>
                         </div>
@@ -870,11 +1131,11 @@ export default function EditPortfolioPage() {
                     {activeTab === 'preview' && (
                         <div className="w-full h-full flex flex-col bg-[#050510]">
                             {/* Preview Controls Bar */}
-                            <div className="flex items-center justify-between p-3 bg-black/40 border-b border-white/5">
-                                <div className="text-xs text-white/40">
+                            <div className="flex items-center justify-between p-2 sm:p-3 bg-black/40 border-b border-white/5">
+                                <div className="hidden sm:block text-xs text-white/40">
                                     Previewing: <span className="text-white font-medium">{AVAILABLE_TEMPLATES.find(t => t.id === templateId)?.name}</span>
                                 </div>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
                                     {/* Template Quick Switcher */}
                                     <select
                                         value={templateId}
@@ -884,7 +1145,7 @@ export default function EditPortfolioPage() {
                                             // SAVE DIRECTLY - NO TIMEOUT
                                             handleSave(true, newId);
                                         }}
-                                        className="bg-white/10 border border-white/10 rounded-lg text-xs text-white px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-white/20"
+                                        className="bg-white/10 border border-white/10 rounded-md sm:rounded-lg text-[10px] sm:text-xs text-white px-1.5 sm:px-2 py-1 sm:py-1.5 focus:outline-none focus:ring-1 focus:ring-white/20"
                                     >
                                         {AVAILABLE_TEMPLATES.map(t => (
                                             <option key={t.id} value={t.id} className="bg-neutral-900">{t.name}</option>
@@ -893,7 +1154,7 @@ export default function EditPortfolioPage() {
 
                                     {/* Color Theme Swatches */}
                                     <div className={cn(
-                                        "flex items-center gap-1 p-1 bg-white/5 rounded-lg border border-white/10 relative transition-all",
+                                        "flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-md sm:rounded-lg border border-white/10 relative transition-all",
                                         templateId === 'cyber' && "opacity-40 grayscale pointer-events-none"
                                     )}>
                                         {[
@@ -913,8 +1174,8 @@ export default function EditPortfolioPage() {
                                                     handleSave(true, undefined, theme.id);
                                                 }}
                                                 className={cn(
-                                                    "w-5 h-5 rounded-full border-2 hover:scale-110 transition-all",
-                                                    colorTheme === theme.id ? "border-white ring-2 ring-white/30 scale-110" : "border-white/20 hover:border-white/40"
+                                                    "w-3.5 h-3.5 sm:w-5 sm:h-5 rounded-full border sm:border-2 hover:scale-110 transition-all",
+                                                    colorTheme === theme.id ? "border-white ring-1 sm:ring-2 ring-white/30 scale-110" : "border-white/20 hover:border-white/40"
                                                 )}
                                                 style={{ backgroundColor: theme.color }}
                                                 title={theme.id.charAt(0).toUpperCase() + theme.id.slice(1)}
@@ -922,20 +1183,37 @@ export default function EditPortfolioPage() {
                                         ))}
                                     </div>
 
-                                    {/* Unique Style Notice for Cyber */}
-                                    <AnimatePresence>
-                                        {templateId === 'cyber' && (
-                                            <motion.div
-                                                initial={{ opacity: 0, x: 20 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: 20 }}
-                                                className="bg-cyan-500/10 border border-cyan-500/20 px-3 py-1.5 rounded-lg flex items-center gap-2"
-                                            >
-                                                <Sparkles className="w-3 h-3 text-cyan-400" />
-                                                <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Unique 3D Experience • Fixed Aesthetic</span>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
+                                    {/* Dark/Light Mode Toggle - ONLY affects template preview */}
+                                    <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-white/5 rounded-md sm:rounded-lg border border-white/10">
+                                        <button
+                                            onClick={() => setIsDarkMode(true)}
+                                            className={cn(
+                                                "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium transition-all flex items-center gap-1",
+                                                isDarkMode
+                                                    ? "bg-white/10 text-white"
+                                                    : "text-white/40 hover:text-white/60"
+                                            )}
+                                            title="Dark Mode"
+                                        >
+                                            <Moon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                            <span className="hidden xs:inline sm:inline">Dark</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setIsDarkMode(false)}
+                                            className={cn(
+                                                "px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium transition-all flex items-center gap-1",
+                                                !isDarkMode
+                                                    ? "bg-white/10 text-white"
+                                                    : "text-white/40 hover:text-white/60"
+                                            )}
+                                            title="Light Mode"
+                                        >
+                                            <Sun className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                            <span className="hidden xs:inline sm:inline">Light</span>
+                                        </button>
+                                    </div>
+
+
                                 </div>
                             </div>
 
@@ -946,11 +1224,11 @@ export default function EditPortfolioPage() {
                                         className={cn(
                                             "border-0 select-none bg-neutral-900 transition-all duration-500 shadow-2xl",
                                             previewDevice === 'desktop' && "w-full h-full",
-                                            previewDevice === 'tablet' && "w-[768px] h-[1024px] mx-auto mt-8 rounded-[2rem] border-8 border-neutral-800",
-                                            previewDevice === 'mobile' && "w-[375px] h-[667px] mx-auto mt-8 rounded-[3rem] border-8 border-neutral-800"
+                                            previewDevice === 'tablet' && "w-[768px] h-[1024px] mx-auto mt-4 rounded-[2rem] border-8 border-neutral-800",
+                                            previewDevice === 'mobile' && "w-[375px] h-[667px] mx-auto mt-4 rounded-[2.5rem] border-[6px] border-neutral-800"
                                         )}
                                         style={previewDevice !== 'desktop' ? {
-                                            transform: `scale(${isMobileView ? 0.5 : 0.8})`,
+                                            transform: `scale(${previewDevice === 'tablet' ? 0.35 : 0.45})`,
                                             transformOrigin: 'top center'
                                         } : {}}
                                         title="Portfolio Preview"
@@ -962,10 +1240,7 @@ export default function EditPortfolioPage() {
                                 )}
                             </div>
 
-                            {/* Desktop: Open in new tab hint */}
-                            <div className="hidden lg:flex justify-center p-2 bg-black/20 text-[10px] text-white/30 uppercase tracking-widest">
-                                Live Preview Mode • <a href={`/render/${portfolioId}?template=${templateId}`} target="_blank" className="hover:text-white ml-1 underline">Open Fullscreen</a>
-                            </div>
+                            {/* Desktop: Removed Open in new tab hint as requested */}
                         </div>
                     )}
                 </main>
@@ -1012,6 +1287,12 @@ export default function EditPortfolioPage() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <ProPaywallModal
+                isOpen={isPaywallOpen}
+                onClose={() => setIsPaywallOpen(false)}
+                templateName={AVAILABLE_TEMPLATES.find(t => t.id === templateId)?.name}
+            />
         </div>
     );
 }

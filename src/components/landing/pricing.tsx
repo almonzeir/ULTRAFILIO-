@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Rocket, ArrowRight } from 'lucide-react';
+import { Check, Rocket, ArrowRight, Gift, Sparkles, Trophy } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { getDictionary } from '@/lib/dictionaries';
 import en from '@/locales/en.json';
@@ -10,16 +10,16 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useShine } from '@/hooks/use-shine';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
-import { initializePaddle, openPaddleCheckout, PADDLE_PRICES } from '@/lib/paddle';
 import { useUser } from '@/hooks/useUser';
 import { useToast } from '@/hooks/use-toast';
+import { usePaddle } from '@/hooks/use-paddle';
 
 function PricingCard({ plan, index }: { plan: any; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   useShine(cardRef);
 
   const isPro = plan.id === 'pro';
-  const isAnnual = plan.id === 'annual';
+  const isAnnual = plan.id === 'pro_annual';
   const isHighlighted = isPro || isAnnual;
 
   return (
@@ -30,14 +30,14 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
       transition={{ duration: 0.8, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
       viewport={{ once: true }}
       whileHover={{ y: -8, transition: { duration: 0.4 } }}
-      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 ${isHighlighted
-        ? 'ring-1 ring-white/20 shadow-[0_0_60px_-15px_rgba(139,92,246,0.3)]'
+      className={`relative liquid-glass-card rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 flex flex-col transition-all duration-500 overflow-visible ${isHighlighted
+        ? 'ring-1 ring-white/20 shadow-[0_0_60px_-15px_rgba(255,255,255,0.15)]'
         : ''
         }`}
     >
       {/* Badge */}
       {plan.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <div className="absolute -top-4 left-0 right-0 flex justify-center z-20">
           <span className="px-4 py-1.5 rounded-full text-[10px] font-semibold tracking-widest uppercase shadow-lg bg-gradient-to-r from-white/90 to-white/70 text-black/80 backdrop-blur-sm border border-white/20">
             {plan.badge}
           </span>
@@ -53,7 +53,7 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
         {/* Savings Badge */}
         {plan.savings && (
           <div className="mb-4">
-            <span className="px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-white/70 border border-white/20">
               {plan.savings}
             </span>
           </div>
@@ -79,7 +79,7 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
           {plan.features.map((feature: any, i: number) => (
             <li key={i} className="flex gap-3 items-start">
               <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Check className="w-3 h-3 text-emerald-400" />
+                <Check className="w-3 h-3 text-white" />
               </div>
               <span className="text-sm text-white/70 font-medium leading-relaxed">
                 {feature}
@@ -91,8 +91,9 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
 
       {/* CTA Button */}
       <button
+        type="button"
         onClick={plan.onClick}
-        className={`group w-full h-14 sm:h-16 rounded-full font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-500 ${isHighlighted
+        className={`group w-full h-14 sm:h-16 rounded-full font-semibold text-sm sm:text-base flex items-center justify-center gap-2 transition-all duration-500 relative z-20 ${isHighlighted
           ? 'liquid-button-primary'
           : 'liquid-button-ghost text-white/80 hover:text-white'
           }`}
@@ -105,23 +106,13 @@ function PricingCard({ plan, index }: { plan: any; index: number }) {
 }
 
 export default function Pricing() {
+  const { user } = useUser(); // Simplified - only need user for redirect logic
   const { language } = useLanguage();
   const router = useRouter();
-  const { user } = useUser();
   const { toast } = useToast();
+  const { openCheckout } = usePaddle();
   const [dict, setDict] = useState<Dictionary['pricing']>(en.pricing);
-  const [paddleReady, setPaddleReady] = useState(false);
 
-  // Initialize Paddle
-  useEffect(() => {
-    initializePaddle()
-      .then(() => setPaddleReady(true))
-      .catch((err) => {
-        console.warn('Paddle init warning:', err);
-        // Still allow checkout attempts - Paddle may load later
-        setPaddleReady(true);
-      });
-  }, []);
 
   useEffect(() => {
     const fetchDict = async () => {
@@ -135,37 +126,17 @@ export default function Pricing() {
     fetchDict();
   }, [language]);
 
+  // PRO CONSTRAINTS DISABLED - Everything is free for first 1000 users
+  // Simply redirect users to signup or dashboard
   const handleSubscribe = async (planId: string) => {
-    if (planId === 'free') {
-      router.push('/signup');
+    // If user is logged in, go to dashboard
+    if (user) {
+      router.push('/dashboard');
       return;
     }
 
-    // Require login for paid plans
-    if (!user) {
-      router.push('/login?redirect=/pricing');
-      return;
-    }
-
-    // Open Paddle checkout
-    try {
-      const priceId = planId === 'pro_monthly'
-        ? PADDLE_PRICES.pro_monthly
-        : PADDLE_PRICES.pro_lifetime;
-
-      await openPaddleCheckout({
-        priceId,
-        userId: user?.id || '',
-        userEmail: user?.email || '',
-        userName: user?.user_metadata?.display_name,
-      });
-    } catch (error) {
-      toast({
-        title: 'Checkout Error',
-        description: 'Unable to open checkout. Please try again later.',
-        variant: 'destructive',
-      });
-    }
+    // Otherwise, go to signup
+    router.push('/signup');
   };
 
   const plans = [
@@ -187,10 +158,10 @@ export default function Pricing() {
     {
       id: 'pro',
       name: 'Pro Monthly',
-      price: '$2',
+      price: '$0',
       originalPrice: '$5',
-      period: 'first month, then $5/mo',
-      badge: '60% OFF First Month',
+      period: 'Early Bird Special',
+      badge: 'Popular',
       features: [
         'Unlimited Portfolios',
         'All Premium Templates',
@@ -199,26 +170,25 @@ export default function Pricing() {
         'Priority Support',
         'No Watermark',
       ],
-      buttonText: 'Start for $2',
+      buttonText: 'Claim Free Access',
       onClick: () => handleSubscribe('pro_monthly'),
     },
     {
-      id: 'annual',
-      name: 'Pro Annual',
-      price: '$15',
-      period: '/year',
-      badge: '30 Days Free Trial',
-      savings: 'Save 75% vs Monthly',
+      id: 'pro_annual',
+      name: 'Annual Pro',
+      price: '$0',
+      originalPrice: '$45',
+      period: 'Early Bird Special',
+      badge: 'Best Value',
       features: [
         'Everything in Pro Monthly',
-        '30-Day Free Trial',
-        'Billed Annually',
-        'Best Value',
+        'Annual Commitment',
+        'All Future Templates',
         'Priority Support',
         'Early Access to Features',
       ],
-      buttonText: 'Try Free for 30 Days',
-      onClick: () => handleSubscribe('pro_lifetime'),
+      buttonText: 'Claim Free Year',
+      onClick: () => handleSubscribe('pro_annual'),
     },
   ];
 
@@ -247,12 +217,44 @@ export default function Pricing() {
           </span>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             <span className="bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
-              Simple, transparent pricing
+              {dict.title || 'Simple, transparent pricing'}
             </span>
           </h2>
-          <p className="text-lg text-white/50 max-w-2xl mx-auto">
-            Start for free, upgrade when you need more power.
+          <p className="text-lg text-white/50 max-w-2xl mx-auto mb-10">
+            {dict.subtitle || 'Start for free, upgrade when you need more power.'}
           </p>
+
+          {/* Silver Liquid Glass Banner - Grand Opening */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="inline-flex flex-col sm:flex-row items-center gap-6 p-6 sm:p-8 rounded-[2.5rem] border border-white/20 bg-white/5 backdrop-blur-xl shadow-[0_0_80px_-20px_rgba(255,255,255,0.15)] mt-14 mb-16 relative overflow-hidden group"
+          >
+            {/* Glossy Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 border border-white/20 shadow-inner group-hover:bg-white/15 transition-colors">
+              <Trophy className="w-8 h-8 text-white/80" />
+            </div>
+
+            <div className="text-center sm:text-left">
+              <div className="text-2xl font-black text-white flex items-center gap-2 justify-center sm:justify-start tracking-tighter">
+                GRAND OPENING SPECIAL
+                <span className="flex h-2.5 w-2.5 rounded-full bg-white animate-pulse" />
+              </div>
+              <p className="text-white/60 font-medium text-lg max-w-lg">
+                For the <span className="text-white font-black underline decoration-white/30">first 1000 users</span>, all Pro features are now open for $0.
+              </p>
+            </div>
+
+            <div className="hidden sm:block h-12 w-px bg-white/10 mx-2" />
+
+            <div className="flex flex-col items-center sm:items-start gap-1">
+              <span className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] font-black text-white/70 uppercase tracking-widest shadow-sm">
+                Limited Time
+              </span>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Pricing Cards */}
@@ -262,6 +264,6 @@ export default function Pricing() {
           ))}
         </div>
       </div>
-    </section>
+    </section >
   );
-}
+};

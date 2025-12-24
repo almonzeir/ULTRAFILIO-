@@ -24,8 +24,11 @@ import {
     AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { useUser } from '@/hooks/useUser';
 import MeshGradientBackground from '@/components/effects/mesh-gradient-bg';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Crown, AlertCircle, ArrowRight } from 'lucide-react';
 
 interface Portfolio {
     id: string;
@@ -42,7 +45,24 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
     const router = useRouter();
     const [portfolios, setPortfolios] = React.useState<Portfolio[]>(initialPortfolios);
     const { toast } = useToast();
+    // PRO CONSTRAINTS DISABLED - Free for first 1000 users
+    // const { isPro } = useUser();
     const [deleteId, setDeleteId] = React.useState<string | null>(null);
+
+    // PRO CONSTRAINT REMOVED - No limit on portfolios for now
+    const isAtLimit = false; // portfolios.length >= 3 && !isPro;
+
+    const handleCreateNew = (e: React.MouseEvent) => {
+        // PRO CONSTRAINT REMOVED - Allow all users to create
+        // if (isAtLimit) {
+        //     e.preventDefault();
+        //     router.push('/checkout');
+        //     toast({
+        //         title: "Portfolio Limit Reached",
+        //         description: "Upgrade to Pro to create unlimited portfolios.",
+        //     });
+        // }
+    };
 
     const handleDelete = async () => {
         if (!deleteId) return;
@@ -83,7 +103,7 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                 </div>
             </div>
 
-            <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12">
+            <div className="relative z-10 container mx-auto px-4 pt-36 sm:pt-40 md:pt-44 pb-15 sm:pb-18">
 
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -93,9 +113,8 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                         transition={{ duration: 0.6 }}
                     >
                         <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-                            <span className="silver-text relative inline-block">
+                            <span className="silver-text">
                                 My Portfolios
-                                <Sparkles className="absolute -top-6 -right-8 w-6 h-6 text-white/40 animate-pulse" />
                             </span>
                         </h1>
                         <p className="text-lg text-white/50 font-medium max-w-lg">
@@ -109,13 +128,41 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
                         <Link href="/create">
-                            <button className="liquid-silver-button group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide">
+                            <button className="liquid-silver-button group flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wide transition-all">
                                 <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                                 Create New Portfolio
                             </button>
                         </Link>
                     </motion.div>
                 </div>
+
+                {/* PRO CONSTRAINT REMOVED - Limit Notification Bar disabled for free version */}
+                {/* <AnimatePresence>
+                    {isAtLimit && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-md overflow-hidden relative group"
+                        >
+                            <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#e2e2e2] via-[#ffffff] to-[#999999]" />
+                            <div className="flex items-center gap-3 text-center sm:text-left">
+                                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center">
+                                    <Crown className="w-5 h-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-white">You've reached your free limit</p>
+                                    <p className="text-sm text-white/50">Upgrade to Pro to create unlimited portfolios and unlock premium features.</p>
+                                </div>
+                            </div>
+                            <Link href="/checkout">
+                                <Button className="bg-white text-black hover:bg-white/90 font-bold rounded-xl h-11 px-6 group/btn">
+                                    Go Pro <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                                </Button>
+                            </Link>
+                        </motion.div>
+                    )}
+                </AnimatePresence> */}
 
                 {/* Content Grid */}
                 {portfolios.length === 0 ? (
@@ -190,11 +237,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <Edit className="w-4 h-4" /> Edit
                                             </button>
                                         </Link>
-                                        <Link href={`/portfolio/${portfolio.id}`} target="_blank">
-                                            <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 text-white border border-white/20 font-semibold text-sm hover:bg-white/20 hover:scale-105 transition-all duration-300">
-                                                <Eye className="w-4 h-4" /> View
-                                            </button>
-                                        </Link>
                                     </div>
                                 </div>
 
@@ -220,11 +262,6 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                                 <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
                                                     <Link href={`/edit/${portfolio.id}`}>
                                                         <Edit className="mr-2 h-4 w-4" /> Edit
-                                                    </Link>
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white cursor-pointer">
-                                                    <Link href={`/portfolio/${portfolio.id}`} target="_blank">
-                                                        <ExternalLink className="mr-2 h-4 w-4" /> Preview
                                                     </Link>
                                                 </DropdownMenuItem>
                                                 <AlertDialog>
@@ -259,7 +296,7 @@ export default function DashboardClient({ initialPortfolios }: { initialPortfoli
                                         </div>
                                         {portfolio.is_public && (
                                             <a
-                                                href={`/portfolio/${portfolio.id}`}
+                                                href={`/${portfolio.slug || portfolio.id}`}
                                                 target="_blank"
                                                 className="text-xs text-white/40 hover:text-white transition-colors flex items-center gap-1 group/link"
                                             >

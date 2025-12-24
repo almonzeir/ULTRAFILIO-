@@ -51,7 +51,7 @@ export default function PortfolioPage() {
       try {
         const { data, error: dbError } = await supabase
           .from('portfolios')
-          .select('*')
+          .select('*, users!inner(is_pro)') // Join with users to check Pro status
           .eq('id', portfolioId as string)
           .single();
 
@@ -83,6 +83,27 @@ export default function PortfolioPage() {
             languages: data.languages || [],
           };
           setPortfolioData(mappedData);
+
+          const ownerIsPro = data.users?.is_pro || false;
+
+          // Handle Template Override Security
+          let finalTemplate = data.template_id || 'modern';
+          const PRO_TEMPLATES = ['cyber', 'aurora', 'minimal-plus', 'creative', 'modern'];
+
+          if (templateFromUrl && templateMap[templateFromUrl]) {
+            const isRequestedTemplatePro = PRO_TEMPLATES.includes(templateFromUrl);
+
+            // Only allow override if the template is not Pro, or if the owner IS a Pro member
+            if (!isRequestedTemplatePro || ownerIsPro) {
+              finalTemplate = templateFromUrl;
+              console.log(`Using overridden template: ${finalTemplate}`);
+            } else {
+              console.warn(`Unauthorized Pro template requested: ${templateFromUrl}. Reverting to base.`);
+            }
+          }
+
+          setTemplateComponent(() => templateMap[finalTemplate] || ModernTemplate);
+
         } else {
           setError('No such portfolio found!');
         }
@@ -100,21 +121,7 @@ export default function PortfolioPage() {
 
     fetchPortfolioData();
 
-  }, [portfolioId, toast]);
-
-  React.useEffect(() => {
-    if (templateFromUrl) {
-      if (templateFromUrl.startsWith('AIGenerated_')) {
-        // FIXME: Re-enable this when we have actual generated templates and the directory is not empty
-        // const Component = dynamic(() => import(`@/templates/generated/${templateFromUrl.replace('.tsx', '')}`), { ssr: false }) as React.ComponentType<{ data: PortfolioData }>;
-        // setTemplateComponent(() => Component);
-        console.warn('AI Generated templates are currently disabled in build.');
-        setTemplateComponent(null);
-      } else {
-        setTemplateComponent(() => templateMap[templateFromUrl]);
-      }
-    }
-  }, [templateFromUrl]);
+  }, [portfolioId, toast, templateFromUrl]);
 
   if (loading) {
     return (

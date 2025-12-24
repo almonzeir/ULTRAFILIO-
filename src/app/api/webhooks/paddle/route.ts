@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
         console.log(`Paddle webhook received: ${eventType}`);
 
-        const supabase = createServerSupabaseClient();
+        const supabase = await createServerSupabaseClient();
 
         switch (eventType) {
             case 'subscription.created':
@@ -65,34 +65,55 @@ async function handleSubscriptionCreated(supabase: any, data: any) {
     const subscriptionId = data.id;
     const status = data.status;
     const priceId = data.items?.[0]?.price?.id;
+    const userId = data.custom_data?.userId;
 
     // Determine plan type
-    const planType = priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID ? 'annual' : 'monthly';
+    let planType = 'monthly';
+    if (priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID) {
+        planType = 'annual';
+    } else if (priceId === process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID) {
+        planType = 'monthly';
+    }
 
-    // Find user by Paddle customer ID or email
-    const customerEmail = data.customer?.email;
+    if (userId) {
+        await supabase
+            .from('users')
+            .update({
+                paddle_customer_id: customerId,
+                paddle_subscription_id: subscriptionId,
+                subscription_status: status,
+                subscription_plan: planType,
+                is_pro: true,
+                updated_at: new Date().toISOString(),
+            })
+            .eq('id', userId);
 
-    if (customerEmail) {
-        const { data: user } = await supabase
-            .from('profiles')
-            .select('id')
-            .eq('email', customerEmail)
-            .single();
+        console.log(`Subscription created for user ${userId} via customData`);
+    } else {
+        // Fallback to email lookup
+        const customerEmail = data.customer?.email;
+        if (customerEmail) {
+            const { data: user } = await supabase
+                .from('users')
+                .select('id')
+                .eq('email', customerEmail)
+                .single();
 
-        if (user) {
-            await supabase
-                .from('profiles')
-                .update({
-                    paddle_customer_id: customerId,
-                    paddle_subscription_id: subscriptionId,
-                    subscription_status: status,
-                    subscription_plan: planType,
-                    is_pro: true,
-                    updated_at: new Date().toISOString(),
-                })
-                .eq('id', user.id);
+            if (user) {
+                await supabase
+                    .from('users')
+                    .update({
+                        paddle_customer_id: customerId,
+                        paddle_subscription_id: subscriptionId,
+                        subscription_status: status,
+                        subscription_plan: planType,
+                        is_pro: true,
+                        updated_at: new Date().toISOString(),
+                    })
+                    .eq('id', user.id);
 
-            console.log(`Subscription created for user ${user.id}`);
+                console.log(`Subscription created for user ${user.id} via email lookup`);
+            }
         }
     }
 }
@@ -102,7 +123,7 @@ async function handleSubscriptionUpdated(supabase: any, data: any) {
     const status = data.status;
 
     await supabase
-        .from('profiles')
+        .from('users')
         .update({
             subscription_status: status,
             updated_at: new Date().toISOString(),
@@ -116,7 +137,7 @@ async function handleSubscriptionCanceled(supabase: any, data: any) {
     const subscriptionId = data.id;
 
     await supabase
-        .from('profiles')
+        .from('users')
         .update({
             subscription_status: 'canceled',
             is_pro: false,
@@ -131,7 +152,7 @@ async function handleSubscriptionPastDue(supabase: any, data: any) {
     const subscriptionId = data.id;
 
     await supabase
-        .from('profiles')
+        .from('users')
         .update({
             subscription_status: 'past_due',
             updated_at: new Date().toISOString(),
@@ -143,9 +164,32 @@ async function handleSubscriptionPastDue(supabase: any, data: any) {
 
 async function handleTransactionCompleted(supabase: any, data: any) {
     const customerId = data.customer_id;
+    const userId = data.custom_data?.userId;
+    const priceId = data.items?.[0]?.price?.id;
 
-    // Log successful transaction
     console.log(`Transaction completed for customer ${customerId}`);
+
+    if (userId) {
+        // Determine plan type
+        let planType = 'monthly';
+        if (priceId === process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID) {
+            planType = 'annual';
+        } else if (priceId === process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID) {
+            planType = 'monthly';
+        }
+
+        await supabase
+            .from('users')
+            .update({
+                paddle_customer_id: customerId,
+                is_pro: true,
+                subscription_plan: planType,
+                updated_at: new Date().toISOString(),
+            })
+            .eq('id', userId);
+
+        console.log(`User ${userId} upgraded via transaction.completed`);
+    }
 }
 
 async function handlePaymentFailed(supabase: any, data: any) {

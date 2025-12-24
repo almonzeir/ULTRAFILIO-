@@ -53,10 +53,10 @@ export function LayoutEditor({ sectionOrder, onOrderChange }: LayoutEditorProps)
     };
 
     return (
-        <div className="space-y-4">
-            <div className="mb-6">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Section Order</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
+        <div className="space-y-3 sm:space-y-4">
+            <div className="mb-4 sm:mb-6 px-1">
+                <h3 className="text-base sm:text-lg font-bold text-slate-800 dark:text-white mb-1 sm:mb-2">Section Order</h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                     Drag sections to reorder how they appear on your portfolio.
                 </p>
             </div>

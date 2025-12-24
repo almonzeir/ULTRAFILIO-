@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Skip middleware for static files and API routes that don't need auth
@@ -69,6 +69,25 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/create', request.url));
     }
 
+    // List of reserved paths that should NOT be treated as slugs
+    const reservedPaths = [
+        'dashboard', 'create', 'edit', 'settings', 'login', 'signup',
+        'checkout', 'pricing', 'about', 'contact', 'blog', 'api',
+        'p', 'portfolio', 'render', 'admin', 'privacy', 'terms',
+        'forgot-password', 'reset-password', 'refund-policy', 'auth',
+        'choose-profile-type', 'choose-template', 'template-preview',
+        'builder', 'ai-building', 'demo'
+    ];
+
+    const firstSegment = pathname.split('/')[1];
+
+    if (firstSegment && !reservedPaths.includes(firstSegment) && !pathname.includes('.')) {
+        console.log(`Rewriting ${pathname} to /p${pathname}`);
+        const url = request.nextUrl.clone();
+        url.pathname = `/p${pathname}`;
+        return NextResponse.rewrite(url);
+    }
+
     // Add security headers
     response.headers.set('X-DNS-Prefetch-Control', 'on');
     response.headers.set('X-Frame-Options', 'SAMEORIGIN');
@@ -84,3 +103,5 @@ export const config = {
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4)$).*)',
     ],
 };
+
+export default proxy;

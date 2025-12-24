@@ -5,9 +5,10 @@ export async function GET(request: Request) {
     const requestUrl = new URL(request.url);
     const code = requestUrl.searchParams.get('code');
     const redirectTo = requestUrl.searchParams.get('redirectTo') || '/create';
+    const type = requestUrl.searchParams.get('type');
 
     if (code) {
-        const supabase = createServerSupabaseClient();
+        const supabase = await createServerSupabaseClient();
         const { error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (error) {
@@ -16,6 +17,11 @@ export async function GET(request: Request) {
             return NextResponse.redirect(
                 `${requestUrl.origin}/login?message=${encodeURIComponent('Authentication failed. Please try again.')}`
             );
+        }
+
+        // If this is a password recovery, redirect to reset password page
+        if (type === 'recovery') {
+            return NextResponse.redirect(`${requestUrl.origin}/reset-password`);
         }
     }
 

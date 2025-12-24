@@ -1,219 +1,237 @@
-/* BasicTemplate.tsx - Modern Editorial / Premium Print / Resume Style */
+/* BasicTemplate.tsx - ATS-Ready Professional Resume Template */
 import React from 'react';
 import type { PortfolioData } from './types';
-import { Mail, Phone, MapPin, Globe, Linkedin, Github } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Mail, Phone, MapPin, Linkedin, Github, Globe } from 'lucide-react';
 
-export default function BasicTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function BasicTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
   const { personalInfo, about, experience, projects, education = [], certifications = [], languages = [] } = data;
 
-  return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-[#FDFDFD] dark:bg-[#050505] py-20 px-4 sm:px-8 print:p-0 print:bg-white text-[#1a1a1a] dark:text-slate-200 font-serif leading-relaxed selection:bg-[#1a1a1a] selection:text-white transition-colors duration-500`}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-        
-        :root {
-          --font-header: 'Playfair Display', serif;
-          --font-body: 'Libre Baskerville', serif;
-          --font-sans: 'Inter', sans-serif;
-        }
+  // Flatten all skills into a simple array for ATS
+  const allSkills = about.skills?.flatMap(cat => cat.tags || []) || [];
 
-        body { font-family: var(--font-body); }
-        h1, h2, h3, h4, .sans { font-family: var(--font-header); }
-        .inter { font-family: var(--font-sans); }
+  return (
+    <div className={`min-h-screen ${isDarkMode ? 'bg-[#1a1a1a] text-gray-100' : 'bg-white text-gray-900'} print:bg-white print:text-black`}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        .ats-resume {
+          font-family: 'Inter', Arial, Helvetica, sans-serif;
+          line-height: 1.5;
+        }
         
         @media print {
-            body { -webkit-print-color-adjust: exact; background: white !important; }
-            .no-print { display: none !important; }
-            .print-no-shadow { box-shadow: none !important; }
-            .print-no-border { border: none !important; }
-            .page-break { page-break-before: always; }
+          body { -webkit-print-color-adjust: exact; background: white !important; }
+          .ats-resume { color: black !important; background: white !important; }
+          .no-print { display: none !important; }
+          .print-break { page-break-before: always; }
         }
 
-        .resume-shadow {
-            box-shadow: 0 10px 50px -12px rgba(0, 0, 0, 0.1);
+        /* ATS-friendly: ensure all text is selectable */
+        .ats-resume * {
+          -webkit-user-select: text;
+          user-select: text;
         }
       `}</style>
 
-      <div className="max-w-[21cm] mx-auto bg-white resume-shadow print-no-shadow print-no-border min-h-[29.7cm] p-12 md:p-20 relative border border-slate-100 dark:border-none">
+      <div className="ats-resume max-w-[8.5in] mx-auto p-6 sm:p-8 md:p-12 print:p-8">
 
-        {/* --- TOP HEADER --- */}
-        <header className="mb-16">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-10 border-b-4 border-black pb-12">
-            <div className="flex-1">
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-5xl md:text-6xl font-black tracking-tighter leading-none mb-4 uppercase"
-              >
-                {personalInfo.fullName}
-              </motion.h1>
-              <div className="text-2xl italic font-serif text-slate-500 mb-8">{personalInfo.title}</div>
+        {/* ===== HEADER / CONTACT INFO ===== */}
+        <header className="mb-8 pb-6 border-b-2 border-current">
+          {/* Name - H1 for ATS */}
+          <h1 className="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">
+            {personalInfo.fullName}
+          </h1>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-8 text-[13px] inter font-semibold uppercase tracking-widest text-slate-500">
-                {personalInfo.email && <div className="flex items-center gap-2 underline decoration-slate-200 underline-offset-4"><Mail size={12} className="shrink-0" />{personalInfo.email}</div>}
-                {personalInfo.location && <div className="flex items-center gap-2"><MapPin size={12} className="shrink-0" />{personalInfo.location}</div>}
-                {personalInfo.linkedInURL && <div className="flex items-center gap-2"><Linkedin size={12} className="shrink-0" />LinkedIn</div>}
-                {personalInfo.githubURL && <div className="flex items-center gap-2"><Github size={12} className="shrink-0" />GitHub</div>}
-              </div>
-            </div>
+          {/* Title */}
+          <p className="text-lg sm:text-xl font-medium text-gray-600 dark:text-gray-400 mb-4">
+            {personalInfo.title}
+          </p>
 
-            {personalInfo.profilePhotoURL && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-32 h-32 md:w-44 md:h-44 grayscale contrast-[1.1] border border-black p-1 shrink-0"
-              >
-                <img src={personalInfo.profilePhotoURL} alt={personalInfo.fullName} className="w-full h-full object-cover" />
-              </motion.div>
+          {/* Contact Info - Single line for ATS readability */}
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            {personalInfo.email && (
+              <a href={`mailto:${personalInfo.email}`} className="flex items-center gap-2 hover:underline">
+                <Mail size={14} className="shrink-0" />
+                <span>{personalInfo.email}</span>
+              </a>
+            )}
+            {personalInfo.phone && (
+              <a href={`tel:${personalInfo.phone}`} className="flex items-center gap-2 hover:underline">
+                <Phone size={14} className="shrink-0" />
+                <span>{personalInfo.phone}</span>
+              </a>
+            )}
+            {personalInfo.location && (
+              <span className="flex items-center gap-2">
+                <MapPin size={14} className="shrink-0" />
+                <span>{personalInfo.location}</span>
+              </span>
+            )}
+            {personalInfo.linkedInURL && (
+              <a href={personalInfo.linkedInURL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                <Linkedin size={14} className="shrink-0" />
+                <span>LinkedIn</span>
+              </a>
+            )}
+            {personalInfo.githubURL && (
+              <a href={personalInfo.githubURL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                <Github size={14} className="shrink-0" />
+                <span>GitHub</span>
+              </a>
+            )}
+            {personalInfo.website && (
+              <a href={personalInfo.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:underline">
+                <Globe size={14} className="shrink-0" />
+                <span>Portfolio</span>
+              </a>
             )}
           </div>
         </header>
 
-        <main className="space-y-16">
+        <main className="space-y-8">
 
-          {/* --- SUMMARY --- */}
-          <section>
-            <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-              Professional Narrative
-            </h2>
-            <div className="text-lg leading-relaxed text-justify text-slate-800">
-              {about.extendedBio}
-            </div>
-          </section>
-
-          {/* --- EXPERIENCE --- */}
-          <section>
-            <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-10 sans">
-              Strategic Experience
-            </h2>
-            <div className="space-y-12">
-              {experience.map((exp, i) => (
-                <motion.article
-                  key={i}
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  viewport={{ once: true }}
-                  className="relative pl-8 border-l border-slate-100"
-                >
-                  <div className="absolute left-[-5px] top-2 w-2 h-2 rounded-full bg-black"></div>
-                  <div className="flex flex-col md:flex-row justify-between items-baseline gap-2 mb-4">
-                    <h3 className="text-2xl font-bold text-black sans">{exp.jobTitle}</h3>
-                    <span className="text-xs font-black inter uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1 rounded">{exp.dates}</span>
-                  </div>
-                  <div className="text-lg italic text-slate-600 mb-6 font-serif">/ {exp.company}, {exp.location}</div>
-                  <ul className="space-y-3">
-                    {exp.responsibilities.map((r, idx) => (
-                      <li key={idx} className="text-[15px] leading-relaxed text-slate-700 flex gap-4">
-                        <span className="text-black font-bold">—</span>
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.article>
-              ))}
-            </div>
-          </section>
-
-          {/* --- SKILLS & EDUCATION --- */}
-          <div className="grid md:grid-cols-[1fr_1.5fr] gap-16">
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-                Core Expertise
+          {/* ===== SUMMARY ===== */}
+          {about.extendedBio && (
+            <section aria-labelledby="summary-heading">
+              <h2 id="summary-heading" className="text-lg font-bold uppercase tracking-wide mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Summary
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {about.skills?.map((cat, i) => (
-                  cat.tags?.map((tag, j) => (
-                    <span key={`${i}-${j}`} className="text-[12px] font-bold inter uppercase tracking-wider text-black bg-white border border-black/10 px-3 py-1.5 hover:bg-black hover:text-white transition-colors cursor-default">
-                      {tag}
-                    </span>
-                  ))
+              <p className="text-sm sm:text-base leading-relaxed">
+                {about.extendedBio}
+              </p>
+            </section>
+          )}
+
+          {/* ===== EXPERIENCE ===== */}
+          {experience && experience.length > 0 && (
+            <section aria-labelledby="experience-heading">
+              <h2 id="experience-heading" className="text-lg font-bold uppercase tracking-wide mb-4 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Professional Experience
+              </h2>
+              <div className="space-y-6">
+                {experience.map((exp, i) => (
+                  <article key={i} className="relative">
+                    {/* Job Title + Company on same line for ATS */}
+                    <div className="flex flex-wrap justify-between items-baseline gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold">
+                        {exp.jobTitle}
+                      </h3>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {exp.dates}
+                      </span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      {exp.company}{exp.location ? `, ${exp.location}` : ''}
+                    </p>
+
+                    {/* Responsibilities as bullet list - ATS standard */}
+                    {exp.responsibilities && exp.responsibilities.length > 0 && (
+                      <ul className="list-disc list-outside ml-5 space-y-1 text-sm">
+                        {exp.responsibilities.map((r, idx) => (
+                          <li key={idx} className="pl-1">
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </article>
                 ))}
               </div>
             </section>
+          )}
 
-            <section>
-              <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-                Critical Projects
+          {/* ===== EDUCATION ===== */}
+          {education && education.length > 0 && (
+            <section aria-labelledby="education-heading">
+              <h2 id="education-heading" className="text-lg font-bold uppercase tracking-wide mb-4 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Education
               </h2>
-              <div className="space-y-8">
-                {projects.slice(0, 3).map((p, i) => (
-                  <div key={i} className="group">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="font-black text-lg sans uppercase tracking-tighter group-hover:text-slate-500 transition-colors">{p.name}</div>
-                      <span className="text-[10px] inter font-black uppercase text-slate-400">{p.category}</span>
+              <div className="space-y-4">
+                {education.map((edu, i) => (
+                  <div key={i}>
+                    <div className="flex flex-wrap justify-between items-baseline gap-2">
+                      <h3 className="text-base font-semibold">{edu.degree}</h3>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {edu.startDate} - {edu.endDate}
+                      </span>
                     </div>
-                    <p className="text-sm leading-relaxed text-slate-600 italic">
-                      {p.description}
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {edu.institution}
                     </p>
                   </div>
                 ))}
               </div>
             </section>
-          </div>
-
-          {/* --- ACADEMIC & CERTIFICATIONS --- */}
-          {((education && education.length > 0) || (certifications && certifications.length > 0) || (languages && languages.length > 0)) && (
-            <div className="mt-24 pt-16 border-t-2 border-slate-100 grid md:grid-cols-2 gap-16">
-              {education && education.length > 0 && (
-                <section>
-                  <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-                    Academic History
-                  </h2>
-                  <div className="space-y-6">
-                    {education.map((edu, i) => (
-                      <div key={i}>
-                        <div className="text-[10px] font-black uppercase text-slate-400 mb-1">{edu.startDate} - {edu.endDate}</div>
-                        <h4 className="font-bold text-lg leading-tight uppercase sans">{edu.degree}</h4>
-                        <div className="text-sm text-slate-500 italic">{edu.institution}</div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              <div className="space-y-16">
-                {certifications && certifications.length > 0 && (
-                  <section>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-                      Certifications
-                    </h2>
-                    <ul className="grid gap-3">
-                      {certifications.map((cert, i) => (
-                        <li key={i} className="text-sm font-medium inter uppercase tracking-wider flex items-center gap-3">
-                          <span className="w-1.5 h-1.5 bg-black rounded-full" />
-                          {cert}
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                )}
-
-                {languages && languages.length > 0 && (
-                  <section>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.4em] text-black border-l-4 border-black pl-4 mb-8 sans">
-                      Linguistics
-                    </h2>
-                    <div className="flex flex-wrap gap-x-8 gap-y-4">
-                      {languages.map((lang, i) => (
-                        <div key={i}>
-                          <div className="text-[10px] font-black uppercase text-slate-400 mb-1">{lang.level || 'Expert'}</div>
-                          <div className="text-lg font-bold uppercase sans">{lang.name}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                )}
-              </div>
-            </div>
           )}
-        </main>
 
-        <footer className="mt-24 pt-10 border-t-2 border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] inter font-bold uppercase tracking-[0.3em] text-slate-400">
-          <div>Ref: Available on Demand</div>
-          <div className="text-center">© {new Date().getFullYear()} {personalInfo.fullName}</div>
-          <div>Digital Archive: {personalInfo.portfolioNameAbbr}.{new Date().getFullYear()}</div>
-        </footer>
+          {/* ===== SKILLS ===== */}
+          {allSkills.length > 0 && (
+            <section aria-labelledby="skills-heading">
+              <h2 id="skills-heading" className="text-lg font-bold uppercase tracking-wide mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Skills
+              </h2>
+              {/* Skills as comma-separated list - best for ATS parsing */}
+              <p className="text-sm">
+                {allSkills.join(' • ')}
+              </p>
+            </section>
+          )}
+
+          {/* ===== PROJECTS ===== */}
+          {projects && projects.length > 0 && (
+            <section aria-labelledby="projects-heading">
+              <h2 id="projects-heading" className="text-lg font-bold uppercase tracking-wide mb-4 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Projects
+              </h2>
+              <div className="space-y-4">
+                {projects.map((p, i) => (
+                  <div key={i}>
+                    <div className="flex flex-wrap justify-between items-baseline gap-2">
+                      <h3 className="text-base font-semibold">{p.name}</h3>
+                      {p.tags && p.tags.length > 0 && (
+                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                          {p.tags.slice(0, 3).join(', ')}
+                        </span>
+                      )}
+                    </div>
+                    {p.description && (
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                        {p.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* ===== CERTIFICATIONS ===== */}
+          {certifications && certifications.length > 0 && (
+            <section aria-labelledby="certifications-heading">
+              <h2 id="certifications-heading" className="text-lg font-bold uppercase tracking-wide mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Certifications
+              </h2>
+              <ul className="list-disc list-outside ml-5 space-y-1 text-sm">
+                {certifications.map((cert, i) => (
+                  <li key={i} className="pl-1">{cert}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* ===== LANGUAGES ===== */}
+          {languages && languages.length > 0 && (
+            <section aria-labelledby="languages-heading">
+              <h2 id="languages-heading" className="text-lg font-bold uppercase tracking-wide mb-3 border-b border-gray-300 dark:border-gray-600 pb-1">
+                Languages
+              </h2>
+              <p className="text-sm">
+                {languages.map(l => `${l.name}${l.level ? ` (${l.level})` : ''}`).join(' • ')}
+              </p>
+            </section>
+          )}
+
+        </main>
 
       </div>
     </div>

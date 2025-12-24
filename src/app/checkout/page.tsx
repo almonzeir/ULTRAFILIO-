@@ -9,58 +9,59 @@ import {
     CheckCircle2,
     ShieldCheck,
     Loader2,
-    ArrowLeft
+    ArrowLeft,
+    Gift,
+    Trophy
 } from 'lucide-react';
+import { useUser } from '@/hooks/useUser';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/layout/header';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { LEMONSQUEEZY_VARIANTS } from '@/lib/lemonsqueezy';
+import { usePaddle } from '@/hooks/use-paddle';
+
+const PADDLE_PLANS = {
+    pro_monthly: process.env.NEXT_PUBLIC_PADDLE_MONTHLY_PRICE_ID || '',
+    pro_annual: process.env.NEXT_PUBLIC_PADDLE_ANNUAL_PRICE_ID || '',
+};
 
 export default function CheckoutPage() {
     const router = useRouter();
     const { toast } = useToast();
-    const [loading, setLoading] = useState<string | null>(null);
+    const [loading, setLoading] = React.useState<string | null>(null);
+    const { openCheckout } = usePaddle();
 
-    const handleCheckout = async (planType: 'pro_monthly' | 'pro_lifetime') => {
+    const { supabase, refreshUser, user } = useUser();
+
+    const handleCheckout = async (planType: 'pro_monthly' | 'pro_annual') => {
         setLoading(planType);
 
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                toast({ title: "Please Login", description: "You need to be logged in to subscribe." });
+            if (!user) {
+                toast({ title: "Please Login", description: "You need to be logged in to claim this offer." });
                 router.push('/login?redirect=/checkout');
                 return;
             }
 
-            const variantId = LEMONSQUEEZY_VARIANTS[planType];
-            if (!variantId) {
-                toast({ variant: 'destructive', title: "Configuration Error", description: "Product ID not configured." });
-                return;
-            }
+            // TEMPORARY: Early Bird Claim Logic
+            const { error } = await supabase
+                .from('users')
+                .update({
+                    is_pro: true,
+                    subscription_plan: planType === 'pro_annual' ? 'annual' : 'monthly',
+                    subscription_status: 'active'
+                })
+                .eq('id', user.id);
 
-            const response = await fetch('/api/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session.access_token}`
-                },
-                body: JSON.stringify({ variantId })
-            });
+            if (error) throw error;
 
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error || 'Failed to start checkout');
-            }
-
-            const { url } = await response.json();
-            window.location.href = url; // Redirect to Lemon Squeezy
+            await refreshUser?.();
+            router.push('/dashboard');
 
         } catch (error: any) {
-            console.error('Checkout error:', error);
-            toast({ variant: 'destructive', title: "Checkout Failed", description: error.message });
+            console.error('Claim error:', error);
             setLoading(null);
         }
     };
@@ -119,9 +120,9 @@ export default function CheckoutPage() {
                             ))}
                         </div>
 
-                        <div className="flex items-center gap-2 text-sm text-gray-500 pt-4 border-t border-white/5">
-                            <ShieldCheck className="w-4 h-4" />
-                            Secure payment via Lemon Squeezy. Cancel anytime.
+                        <div className="flex items-center gap-2 text-sm text-white/60 font-bold uppercase tracking-[0.2em] pt-4 border-t border-white/5">
+                            <Trophy className="w-4 h-4" />
+                            Active: First 1000 Users Founding Offer
                         </div>
                     </motion.div>
 
@@ -142,8 +143,8 @@ export default function CheckoutPage() {
                                             <p className="text-sm text-gray-400">Flexible, cancel anytime.</p>
                                         </div>
                                         <div className="text-right">
-                                            <div className="text-2xl font-bold text-white">$5</div>
-                                            <div className="text-xs text-gray-500">per month</div>
+                                            <div className="text-2xl font-bold text-white">$0</div>
+                                            <div className="text-xs text-white/40 font-bold uppercase">Early Bird</div>
                                         </div>
                                     </div>
                                     <Button
@@ -152,7 +153,7 @@ export default function CheckoutPage() {
                                         variant="outline"
                                         className="w-full h-12 border-white/10 hover:bg-white/5 hover:text-white"
                                     >
-                                        {loading === 'pro_monthly' ? <Loader2 className="animate-spin w-4 h-4" /> : 'Subscribe Monthly'}
+                                        {loading === 'pro_monthly' ? <Loader2 className="animate-spin w-4 h-4" /> : 'Claim Monthly Free'}
                                     </Button>
                                 </div>
                             </Card>
@@ -176,34 +177,34 @@ export default function CheckoutPage() {
                                     <div className="bg-[#1a1a1a] rounded-xl p-8 relative overflow-hidden">
                                         <div className="flex justify-between items-start mb-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 flex items-center justify-center">
-                                                    <Crown className="w-5 h-5 text-cyan-400" />
+                                                <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                                                    <Trophy className="w-5 h-5 text-white/80" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-bold text-xl text-white">Lifetime Access</h3>
-                                                    <p className="text-sm text-gray-400">Pay once, own forever.</p>
+                                                    <h3 className="font-bold text-xl text-white">Annual Pro</h3>
+                                                    <p className="text-sm text-gray-400">Full year of power features.</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <div className="text-3xl font-bold text-white">$15</div>
-                                                <div className="text-xs text-green-400 font-medium">Save $45/year</div>
+                                                <div className="text-3xl font-bold text-white">$0</div>
+                                                <div className="text-xs text-white/40 font-bold uppercase tracking-widest">Limited Member Offer</div>
                                             </div>
                                         </div>
 
                                         <Button
-                                            onClick={() => handleCheckout('pro_lifetime')}
+                                            onClick={() => handleCheckout('pro_annual')}
                                             disabled={!!loading}
-                                            className="w-full h-14 text-base font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 shadow-lg shadow-indigo-500/25 border-0"
+                                            className="w-full h-14 text-base font-bold bg-white text-black hover:bg-neutral-200 shadow-xl shadow-white/10 border-0"
                                         >
-                                            {loading === 'pro_lifetime' ? <Loader2 className="animate-spin w-5 h-5" /> : (
+                                            {loading === 'pro_annual' ? <Loader2 className="animate-spin w-5 h-5" /> : (
                                                 <span className="flex items-center gap-2">
-                                                    <Rocket className="w-5 h-5" /> Get Lifetime Access
+                                                    <Trophy className="w-5 h-5" /> Claim Free Year
                                                 </span>
                                             )}
                                         </Button>
 
                                         <div className="text-center mt-4">
-                                            <p className="text-xs text-gray-500">One-time payment. includes all future updates.</p>
+                                            <p className="text-xs text-gray-500">Early Access special. $0 for your first year.</p>
                                         </div>
                                     </div>
                                 </Card>

@@ -14,6 +14,7 @@ import type { Dictionary } from '@/lib/dictionaries';
 import { Loader2, ArrowRight, KeyRound, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { motion } from 'framer-motion';
+import { validateEmail, validatePassword, checkRateLimit, sanitizeInput } from '@/lib/validation';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -69,11 +70,35 @@ export default function LoginForm() {
     e.preventDefault();
     setError(null);
     setMessage(null);
+
+    // Rate limiting check
+    if (!checkRateLimit('login-attempt', 5, 60000)) {
+      setError('Too many login attempts. Please wait a minute and try again.');
+      return;
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      setError(emailValidation.error || 'Invalid email');
+      return;
+    }
+
+    // Validate password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.error || 'Invalid password');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Use sanitized email
+      const sanitizedEmail = emailValidation.sanitizedValue || email.trim().toLowerCase();
+
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: sanitizedEmail,
         password,
       });
 
@@ -83,7 +108,7 @@ export default function LoginForm() {
         } else if (error.message.includes('Invalid login credentials')) {
           setError('Invalid email or password. Please check your credentials and try again.');
         } else {
-          setError(error.message);
+          setError('An error occurred during login. Please try again.');
         }
         setLoading(false);
         return;
@@ -95,7 +120,8 @@ export default function LoginForm() {
         router.refresh();
       }
     } catch (error: any) {
-      setError(error.message || 'An unexpected error occurred. Please try again.');
+      // Don't expose internal error messages
+      setError('An unexpected error occurred. Please try again.');
       setLoading(false);
     }
   };
@@ -216,17 +242,9 @@ export default function LoginForm() {
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="ml-1 text-xs font-semibold uppercase tracking-widest text-[#94a3b8]/60">
-                        {dict.password}
-                      </Label>
-                      <Link
-                        href="/forgot-password"
-                        className="text-xs font-semibold text-white/50 hover:text-[#94a3b8] transition-colors"
-                      >
-                        {dict.forgotPassword}
-                      </Link>
-                    </div>
+                    <Label htmlFor="password" className="ml-1 text-xs font-semibold uppercase tracking-widest text-[#94a3b8]/60">
+                      {dict.password}
+                    </Label>
                     <Input
                       id="password"
                       type="password"
@@ -236,6 +254,14 @@ export default function LoginForm() {
                       disabled={loading}
                       className="h-12 rounded-xl input-teal"
                     />
+                    <div className="flex justify-end pt-1">
+                      <Link
+                        href="/forgot-password"
+                        className="text-xs font-semibold text-white/50 hover:text-[#94a3b8] transition-colors"
+                      >
+                        {dict.forgotPassword}
+                      </Link>
+                    </div>
                   </div>
 
                   <Button

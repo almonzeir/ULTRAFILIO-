@@ -43,3 +43,9 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+
+deploy.ps1
+DEPLOYMENT.md
+SYSTEM_ARCHITECTURE.md
+SYSTEM_DESIGN_DIAGRAMS.md

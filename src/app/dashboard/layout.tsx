@@ -12,7 +12,7 @@ export default function DashboardLayout({
             <main className="flex-grow pb-0">
                 {children}
             </main>
-            <Footer />
+            <Footer hideCTA />
         </div>
     );
 }

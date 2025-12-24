@@ -56,7 +56,7 @@ export default function Hero() {
         <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-slate-800/15 blur-[200px]" />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 md:px-8 pt-32 pb-32">
+      <div className="relative z-10 container mx-auto px-4 md:px-8 pt-40 sm:pt-44 md:pt-48 pb-32">
         <div className="flex flex-col items-center text-center">
 
           {/* Main Headline - Pro Typography */}
@@ -102,7 +102,7 @@ export default function Hero() {
             </Link>
 
             {/* Secondary CTA - Ghost Glass Button */}
-            <Link href="/demo-template">
+            <Link href="/#templates">
               <button className="liquid-button-ghost group h-14 sm:h-16 px-10 sm:px-14 rounded-full text-base sm:text-lg font-semibold text-white/80 hover:text-white transition-colors">
                 {dict.ctaDemo}
               </button>
@@ -114,7 +114,7 @@ export default function Hero() {
         <motion.div
           ref={mockupRef}
           style={{ y, opacity, willChange: 'transform, opacity' }}
-          className="mt-20 sm:mt-28 relative mx-auto max-w-6xl aspect-video"
+          className="mt-12 sm:mt-28 relative mx-auto max-w-6xl aspect-[4/3] sm:aspect-video"
         >
           {/* Outer Glow */}
           <div className="absolute -inset-4 bg-gradient-to-b from-white/5 to-transparent rounded-[4rem] blur-xl" />
@@ -137,7 +137,7 @@ export default function Hero() {
             <div className="relative w-full h-full pt-10 sm:pt-12">
               <video
                 poster="/image.png"
-                src="/hero-video.mp4"
+                src="https://zbazasdknnoiuknrarvz.supabase.co/storage/v1/object/public/portfolios/hero-video.mp4"
                 autoPlay
                 loop
                 muted

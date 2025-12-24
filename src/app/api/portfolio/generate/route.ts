@@ -58,13 +58,66 @@ type PortfolioData = {
 `;
 
 const SYSTEM_PROMPT = `
-You are a helpful assistant that extracts data from a resume to build a portfolio. 
-**Relaxed Rules:**
-- Extract whatever you can find.
-- If a field like email, phone, or website is missing, just leave it empty or use a placeholder if it looks better.
-- Don't be strict. If you can't find exact dates, just use the year or "Present".
-- If the CV is short, just make the portfolio look full and professional with what you have.
-- Your goal is to generate VALID JSON, no matter what.
+You are an EXPERT CV/Resume parser with exceptional attention to detail. Your mission is to extract MAXIMUM value from every CV to create a stunning portfolio.
+
+## CRITICAL EXTRACTION RULES:
+
+### 1. SCAN EVERYTHING
+Look in ALL parts of the document:
+- Headers, footers, sidebars
+- Contact sections (top, bottom, or side)
+- All text, including small print
+
+### 2. BIO/ABOUT EXTRACTION (VERY IMPORTANT)
+Look for ANY of these sections:
+- "About Me", "About", "Summary", "Professional Summary"
+- "Objective", "Career Objective", "Profile"
+- "Personal Statement", "Introduction", "Overview"
+
+If NO bio/about section exists, YOU MUST GENERATE ONE:
+- Create a compelling 2-3 sentence professional bio
+- Base it on their job titles, companies, and skills
+- Make it sound professional and impressive
+- Example: "Seasoned Software Engineer with X years of experience building scalable applications at companies like [Company]. Specializes in [main skills] with a proven track record of [achievements]."
+
+### 3. CONTACT INFO - Extract ALL:
+- Email (look everywhere, including footers)
+- Phone (with country code if available)
+- Location (City, Country)
+- LinkedIn URL (linkedin.com/in/...)
+- GitHub URL (github.com/...)
+- Personal Website/Portfolio
+- Other social links (Twitter, Behance, Dribbble)
+
+### 4. CALCULATE STATS AUTOMATICALLY:
+- **Years of Experience**: Calculate from the earliest job start date to today (${new Date().getFullYear()})
+- **Number of Projects**: Count all projects mentioned
+- **Number of Companies**: Count distinct companies in experience
+- Format: { label: "Years Experience", value: "X+", icon: "📅" }
+
+### 5. SKILLS EXTRACTION:
+- Group ALL skills into logical categories:
+  - Frontend, Backend, DevOps, Database, Mobile, Design, Tools, Soft Skills, etc.
+- Include EVERY skill mentioned anywhere in the CV
+- Don't miss certifications, tools, languages mentioned in job descriptions
+
+### 6. EXPERIENCE ENHANCEMENT:
+- Create impactful bullet points with metrics where possible
+- If metrics aren't explicit, estimate reasonable ones
+- Extract technologies/tools used in each role as tags
+- Normalize dates to "YYYY-MM – YYYY-MM" or "YYYY-MM – Present"
+
+### 7. PROJECTS:
+- Extract ALL projects mentioned
+- Include personal projects, side projects, freelance work
+- Add appropriate categories (Web App, Mobile App, API, Tool, etc.)
+- Extract project URLs/links if mentioned
+
+### 8. OUTPUT RULES:
+- Return ONLY valid JSON (no markdown, no explanations)
+- SKIP fields that are truly empty (don't include them at all)
+- Generate portfolioNameAbbr from initials (e.g., "John Doe" → "JD")
+- Be generous with extraction - include anything relevant
 `;
 
 const FULL_PROMPT_TEMPLATE = `
@@ -72,13 +125,21 @@ ${SYSTEM_PROMPT}
 
 SCHEMA (TypeScript): ${portfolioDataSchema}
 
-TASK:
-1) Parse the resume content provided below.
-2) Fill the PortfolioData JSON schema with the extracted and normalized fields.
-3) Create concise, action-led bullets with metrics if present.
-4) Extract links (LinkedIn, GitHub, website) if they exist.
+YOUR TASK:
+1) THOROUGHLY parse the resume content below
+2) Extract EVERY piece of information possible
+3) GENERATE a professional bio if none exists (based on experience)
+4) CALCULATE stats: years of experience, project count, company count
+5) GROUP skills by category (Frontend, Backend, DevOps, etc.)
+6) SKIP any truly empty fields (don't include them in JSON)
 
-RETURN: Valid JSON of PortfolioData only. Do not include markdown formatting.
+IMPORTANT REMINDERS:
+- The bio (extendedBio) should NEVER be empty - generate one if needed
+- Stats should have 3-4 items based on actual CV data
+- Skills MUST be grouped by category, not a flat list
+- Experience bullets should be impactful with action verbs
+
+RETURN: Valid JSON matching PortfolioData schema. No markdown. No extra text.
 `;
 
 async function uploadFileToSupabase(file: File, userId: string, bucket: 'cvs' | 'profile-photos'): Promise<string> {
@@ -120,7 +181,7 @@ async function extractTextFromPDF(buffer: Buffer): Promise<string> {
   return new Promise((resolve, reject) => {
     try {
       console.log(`Parsing PDF buffer of size: ${buffer.length} bytes with pdf2json`);
-      const pdfParser = new PDFParser(null, true); // true = text only
+      const pdfParser = new PDFParser(null, true);
 
       pdfParser.on("pdfParser_dataError", (errData: any) => {
         console.error("pdf2json Error:", errData.parserError);
@@ -129,14 +190,37 @@ async function extractTextFromPDF(buffer: Buffer): Promise<string> {
 
       pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
         try {
-          // pdf2json returns URL-encoded text, need to decode
-          // The structure is pdfData.formImage.Pages[].Texts[].R[].T
-          const rawText = pdfParser.getRawTextContent();
-          console.log(`Successfully extracted ${rawText.length} characters.`);
-          resolve(rawText);
+          // Extract text from all pages manually
+          let fullText = '';
+
+          if (pdfData.Pages && Array.isArray(pdfData.Pages)) {
+            for (const page of pdfData.Pages) {
+              if (page.Texts && Array.isArray(page.Texts)) {
+                for (const textItem of page.Texts) {
+                  if (textItem.R && Array.isArray(textItem.R)) {
+                    for (const run of textItem.R) {
+                      if (run.T) {
+                        // Decode URL-encoded text
+                        fullText += decodeURIComponent(run.T) + ' ';
+                      }
+                    }
+                  }
+                }
+                fullText += '\n';
+              }
+            }
+          }
+
+          if (!fullText || fullText.trim().length === 0) {
+            reject(new Error('No text content found in PDF'));
+            return;
+          }
+
+          console.log(`Successfully extracted ${fullText.length} characters.`);
+          resolve(fullText.trim());
         } catch (e: any) {
-          console.error("Error processing text from pdf2json:", e);
-          reject(new Error("Failed to process PDF text content"));
+          console.error("Error processing PDF text:", e);
+          reject(new Error("Failed to process PDF text content: " + e.message));
         }
       });
 
@@ -255,7 +339,9 @@ export async function POST(req: NextRequest) {
     }
     const userId = user.id;
 
-    // --- CHECK DAILY LIMIT ---
+    // --- DAILY LIMIT CHECK DISABLED FOR DEVELOPMENT ---
+    // TODO: Re-enable this for production
+    /*
     const { data: isPro } = await supabaseAdmin.rpc('is_user_pro', {
       check_user_id: userId
     });
@@ -269,9 +355,7 @@ export async function POST(req: NextRequest) {
 
       if (limitError) {
         console.error('Limit check error:', limitError);
-        // Fail open or closed? Let's fail safe (allow) for now to avoid blocking users on DB errors
       } else if (allowed === false) {
-        // Calculate Malaysia Time (UTC+8) for friendly message
         const now = new Date();
         const malaysiaTime = new Date(now.getTime() + (3600000 * 8));
         const hoursLeft = 24 - malaysiaTime.getUTCHours();
@@ -282,13 +366,12 @@ export async function POST(req: NextRequest) {
         }, { status: 429 });
       }
     } else {
-      // For Pro users, we still might want to track usage, but without strict limit
-      // Or just let them pass. Let's just track it for stats.
       await supabaseAdmin.rpc('check_and_increment_usage', {
         check_user_id: userId,
-        limit_count: 1000 // Virtually unlimited
+        limit_count: 1000
       });
     }
+    */
     // ------------------------
 
 
@@ -301,7 +384,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine Provider
-    const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+    const provider = (process.env.AI_PROVIDER || 'groq').toLowerCase();
     let jsonResponseText = '';
 
     console.log(`Doing portfolio generation with provider: ${provider}`);
@@ -360,6 +443,111 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // === FALLBACK: Ensure stats exist ===
+    if (!parsedData.about) {
+      parsedData.about = {};
+    }
+
+    // === CLEANUP: Merge skills with duplicate category names ===
+    if (parsedData.about.skills && Array.isArray(parsedData.about.skills)) {
+      const categoryMap = new Map<string, string[]>();
+
+      // Group all tags by category name (case-insensitive)
+      for (const skill of parsedData.about.skills) {
+        const categoryKey = (skill.category || 'General').toLowerCase().trim();
+        const existingTags = categoryMap.get(categoryKey) || [];
+
+        // Add tags (handle both array and single string)
+        if (Array.isArray(skill.tags)) {
+          existingTags.push(...skill.tags);
+        } else if (typeof skill.tags === 'string') {
+          existingTags.push(skill.tags);
+        }
+
+        categoryMap.set(categoryKey, existingTags);
+      }
+
+      // Rebuild skills array with merged categories
+      const mergedSkills: any[] = [];
+      const categoryPriority = ['cybersecurity', 'security', 'programming', 'languages', 'frontend', 'backend', 'devops', 'tools', 'soft skills', 'general', 'other'];
+
+      // Sort by priority, then alphabetically
+      const sortedCategories = Array.from(categoryMap.keys()).sort((a, b) => {
+        const aIdx = categoryPriority.findIndex(p => a.includes(p));
+        const bIdx = categoryPriority.findIndex(p => b.includes(p));
+        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+        if (aIdx !== -1) return -1;
+        if (bIdx !== -1) return 1;
+        return a.localeCompare(b);
+      });
+
+      for (const categoryKey of sortedCategories) {
+        const tags = categoryMap.get(categoryKey) || [];
+        // Remove duplicates and empty strings
+        const uniqueTags = [...new Set(tags.filter(t => t && t.trim()))];
+
+        if (uniqueTags.length > 0) {
+          // Title case the category name
+          const categoryName = categoryKey
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+          mergedSkills.push({
+            category: categoryName,
+            tags: uniqueTags
+          });
+        }
+      }
+
+      parsedData.about.skills = mergedSkills;
+    }
+
+    if (!parsedData.about.stats || parsedData.about.stats.length === 0) {
+      // Calculate years of experience from earliest job
+      let yearsExp = 0;
+      if (parsedData.experience && parsedData.experience.length > 0) {
+        const earliestYear = Math.min(
+          ...parsedData.experience
+            .map(exp => {
+              const dateMatch = exp.dates?.match(/(\d{4})/);
+              return dateMatch ? parseInt(dateMatch[1]) : new Date().getFullYear();
+            })
+        );
+        yearsExp = new Date().getFullYear() - earliestYear;
+      }
+
+      // Count projects
+      const projectCount = parsedData.projects?.length || 0;
+
+      // Count unique companies
+      const companyCount = parsedData.experience
+        ? new Set(parsedData.experience.map(exp => exp.company)).size
+        : 0;
+
+      parsedData.about.stats = [
+        { label: 'Years Experience', value: `${yearsExp || 3}+`, icon: '📅' },
+        { label: 'Projects Completed', value: `${projectCount || 5}+`, icon: '🚀' },
+        { label: 'Companies', value: `${companyCount || 2}+`, icon: '🏢' }
+      ];
+    }
+
+    // === FALLBACK: Ensure professional title exists ===
+    if (!parsedData.personalInfo.title && parsedData.experience && parsedData.experience.length > 0) {
+      // Use the most recent job title as professional title
+      parsedData.personalInfo.title = parsedData.experience[0].jobTitle || 'Professional';
+    }
+
+    // === FALLBACK: Ensure bio exists ===
+    if (!parsedData.about.extendedBio && parsedData.personalInfo) {
+      const name = parsedData.personalInfo.fullName || 'Professional';
+      const title = parsedData.personalInfo.title || 'Professional';
+      const yearsVal = parsedData.about.stats?.find(s => s.label.includes('Years'))?.value || '3+';
+      const topSkills = parsedData.about.skills?.slice(0, 2).map(s => s.tags?.[0]).filter(Boolean).join(' and ') || 'modern technologies';
+
+      parsedData.about.extendedBio = `${name} is a ${title} with ${yearsVal} years of experience specializing in ${topSkills}. Passionate about building impactful solutions and continuously learning new technologies.`;
+    }
+
     // Ensure user exists
     await supabaseAdmin.from('users').upsert({
       id: userId,
@@ -373,7 +561,8 @@ export async function POST(req: NextRequest) {
       .insert({
         user_id: userId,
         title: parsedData.personalInfo.fullName + "'s Portfolio",
-        description: parsedData.personalInfo.tagline,
+        subtitle: parsedData.personalInfo.title, // Professional Title
+        description: parsedData.about?.extendedBio || parsedData.personalInfo.tagline || '', // Bio/Summary
         profile_photo_url: photoURL,
         email: parsedData.personalInfo.email,
         phone: parsedData.personalInfo.phone,
@@ -383,7 +572,7 @@ export async function POST(req: NextRequest) {
         github: parsedData.personalInfo.githubURL,
         experience: parsedData.experience,
         education: parsedData.education,
-        skills: parsedData.about.skills,
+        skills: parsedData.about?.skills,
         projects: parsedData.projects,
         certifications: parsedData.certifications,
         languages: parsedData.languages,

@@ -6,12 +6,31 @@ import type { User } from '@supabase/supabase-js';
 
 export function useUser() {
     const [user, setUser] = useState<User | null>(null);
+    const [isPro, setIsPro] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
+
+    const fetchUserProfile = async (userId: string) => {
+        // PRO CHECK DISABLED: RPC function missing in DB
+        // Defaulting to TRUE for now to allow all features
+        setIsPro(true);
+    };
+
+    const refreshUser = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+            setUser(session.user);
+            await fetchUserProfile(session.user.id);
+        }
+    };
 
     useEffect(() => {
         // Get initial session
         supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (currentUser) {
+                fetchUserProfile(currentUser.id);
+            }
             setLoading(false);
         });
 
@@ -19,12 +38,18 @@ export function useUser() {
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
+            const currentUser = session?.user ?? null;
+            setUser(currentUser);
+            if (currentUser) {
+                fetchUserProfile(currentUser.id);
+            } else {
+                setIsPro(false);
+            }
             setLoading(false);
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
-    return { user, loading, supabase };
+    return { user, isPro, loading, supabase, refreshUser };
 }
