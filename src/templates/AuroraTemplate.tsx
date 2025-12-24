@@ -613,14 +613,16 @@ function FloatingStat({ value, label, icon: Icon, delay = 0, themeColor, isDark 
 }
 
 // ==================== MAIN TEMPLATE ====================
-export default function AuroraTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function AuroraTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: ColorTheme }) {
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-    // Theme support
-    const { theme } = useColorTheme();
+    // Theme support - prefer prop over context
+    const { theme: contextTheme } = useColorTheme();
+    const theme = colorTheme || contextTheme || 'purple';
+
     // Internal state synced with global prop
     const [localIsDark, setLocalIsDark] = useState(true);
     const isDark = isDarkMode !== undefined ? isDarkMode : localIsDark;

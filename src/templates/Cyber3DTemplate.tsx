@@ -53,7 +53,7 @@ function GlowingOrb({ className }: { className?: string }) {
     );
 }
 
-function CyberGrid() {
+function CyberGrid({ isDarkMode }: { isDarkMode: boolean }) {
     return (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Horizontal scan line */}
@@ -66,7 +66,7 @@ function CyberGrid() {
             {/* Grid pattern */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
             {/* Perspective grid floor */}
-            <div className="absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t from-[#050510] to-transparent" />
+            <div className={`absolute bottom-0 left-0 right-0 h-[40vh] bg-gradient-to-t ${isDarkMode ? 'from-[#050510]' : 'from-slate-50'} to-transparent`} />
         </div>
     );
 }
@@ -106,7 +106,7 @@ function TypewriterText({ text, className, delay = 0 }: { text: string; classNam
 
 // --- Main Template Component ---
 
-export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function Cyber3DTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({ target: containerRef });
     const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
@@ -120,7 +120,7 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
             {/* Background Effects - Sticky so it follows scroll but stays in container */}
             <div className="absolute inset-0 z-0 h-full overflow-hidden">
                 <div className="sticky top-0 h-screen w-full">
-                    <CyberGrid />
+                    <CyberGrid isDarkMode={!!isDarkMode} />
                     <MatrixRain />
                     <GlowingOrb className="w-[600px] h-[600px] bg-cyan-600/20 -top-40 -right-40" />
                     <GlowingOrb className="w-[400px] h-[400px] bg-fuchsia-600/20 bottom-20 -left-20" />
@@ -129,7 +129,7 @@ export default function Cyber3DTemplate({ data, isDarkMode }: { data: PortfolioD
             </div>
 
             {/* Header - Sticky */}
-            <header className="sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md bg-white/80 dark:bg-[#050510]/80 border-b border-cyan-900/30 transition-colors duration-300">
+            <header className={`sticky top-0 left-0 right-0 z-50 px-6 py-4 backdrop-blur-md ${isDarkMode ? 'bg-[#050510]/80' : 'bg-white/80'} border-b border-cyan-900/30 transition-colors duration-300`}>
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />

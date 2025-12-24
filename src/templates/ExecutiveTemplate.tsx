@@ -18,7 +18,7 @@ const staggerContainer = {
     }
 };
 
-export default function ExecutiveTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function ExecutiveTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
     // Consolidate skills by category - groups all skills with same category together

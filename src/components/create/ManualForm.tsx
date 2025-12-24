@@ -12,6 +12,15 @@ import { ArrowLeft, PlusCircle, Trash2 } from 'lucide-react';
 import type { Dictionary } from '@/lib/dictionaries';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { sanitizeInput, containsDangerousPattern } from '@/lib/validation';
+import imageCompression from 'browser-image-compression';
+
+// Image compression options - reduces file size by ~80%
+const compressionOptions = {
+  maxSizeMB: 0.3, // Max 300KB per image
+  maxWidthOrHeight: 1200, // Max dimension
+  useWebWorker: true,
+  fileType: 'image/webp' as const, // Convert to WebP for better compression
+};
 
 // Security: Custom refinement to check for dangerous patterns
 const safeString = (maxLength: number = 500) => z.string().max(maxLength).refine(
@@ -57,7 +66,7 @@ const projectSchema = z.object({
   ),
   description: safeString(1000).optional(),
   technologies: safeString(200).optional(),
-  link: z.string().url().optional().or(z.literal('')),
+  link: safeString(500).optional(), // More lenient - can be URL or text
   imageUrl: z.string().optional(),
 });
 
@@ -86,9 +95,9 @@ const formSchema = z.object({
   location: safeString(100).optional(),
   email: z.string().min(1, 'Email is required').email('Invalid email address').max(254),
   phone: z.string().max(30).optional(),
-  linkedin: z.string().url().optional().or(z.literal('')),
-  github: z.string().url().optional().or(z.literal('')),
-  skills: safeString(500).optional(),
+  linkedin: safeString(200).optional(), // More lenient - can be URL or text
+  github: safeString(200).optional(),   // More lenient - can be URL or text
+  skills: safeString(2000).optional(), // Increased limit for comprehensive skill lists
   experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
   projects: z.array(projectSchema).min(1, 'At least one project is required'),
@@ -124,30 +133,65 @@ export default function ManualForm({
   const [photoPreview, setPhotoPreview] = React.useState<string | null>(initialPhotoURL || null);
   const [photoFile, setPhotoFile] = React.useState<File | null>(null);
   const [projectImages, setProjectImages] = React.useState<{ [key: number]: { file: File | null, preview: string | null } }>({});
+  const [isCompressing, setIsCompressing] = React.useState(false);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setPhotoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setIsCompressing(true);
+        // Compress the image before storing
+        const compressedFile = await imageCompression(file, compressionOptions);
+        setPhotoFile(compressedFile);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPhotoPreview(reader.result as string);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        // Fallback to original file if compression fails
+        setPhotoFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPhotoPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } finally {
+        setIsCompressing(false);
+      }
     }
   };
 
-  const handleProjectImageChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProjectImageChange = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProjectImages(prev => ({
-          ...prev,
-          [index]: { file, preview: reader.result as string }
-        }));
-      };
-      reader.readAsDataURL(file);
+      try {
+        setIsCompressing(true);
+        // Compress the image before storing
+        const compressedFile = await imageCompression(file, compressionOptions);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProjectImages(prev => ({
+            ...prev,
+            [index]: { file: compressedFile, preview: reader.result as string }
+          }));
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        // Fallback to original file if compression fails
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProjectImages(prev => ({
+            ...prev,
+            [index]: { file, preview: reader.result as string }
+          }));
+        };
+        reader.readAsDataURL(file);
+      } finally {
+        setIsCompressing(false);
+      }
     }
   };
 
@@ -497,7 +541,7 @@ export default function ManualForm({
                           )}
                         </div>
                         <div>
-                          <Input {...register(`projects.${index}.link`)} type="url" placeholder={dict.step3.projects.link} />
+                          <Input {...register(`projects.${index}.link`)} placeholder={`${dict.step3.projects.link} (Optional)`} />
                           {errors.projects?.[index]?.link && <p className="text-red-500 text-sm mt-1">{errors.projects?.[index]?.link?.message}</p>}
                         </div>
                         <Textarea {...register(`projects.${index}.description`)} placeholder={dict.step3.projects.description} className="md:col-span-2" rows={2} />
@@ -567,7 +611,7 @@ export default function ManualForm({
                   <h4 className="text-xl font-semibold mb-4">{dict.step3.certifications.title}</h4>
                   {certificationFields.map((field, index) => (
                     <div key={field.id} className="grid md:grid-cols-3 gap-4 border p-4 rounded-lg mb-4 relative">
-                      <Input {...register(`certifications.${index}.name`)} placeholder={`${dict.step3.certifications.certificateName} *`} />
+                      <Input {...register(`certifications.${index}.name`)} placeholder={dict.step3.certifications.certificateName} />
                       <Input {...register(`certifications.${index}.organization`)} placeholder={dict.step3.certifications.organization} />
                       <Input {...register(`certifications.${index}.year`)} placeholder={dict.step3.certifications.year} />
                       <Button type="button" variant="destructive" size="icon" onClick={() => removeCertification(index)} className="absolute -top-3 -right-3 h-7 w-7">
@@ -585,7 +629,7 @@ export default function ManualForm({
                   <h4 className="text-xl font-semibold mb-4">{dict.step3.languages.title}</h4>
                   {languageFields.map((field, index) => (
                     <div key={field.id} className="grid md:grid-cols-2 gap-4 border p-4 rounded-lg mb-4 relative">
-                      <Input {...register(`languages.${index}.language`)} placeholder={`${dict.step3.languages.language} *`} />
+                      <Input {...register(`languages.${index}.language`)} placeholder={dict.step3.languages.language} />
                       <Input {...register(`languages.${index}.proficiency`)} placeholder={dict.step3.languages.proficiency.level} />
                       <Button type="button" variant="destructive" size="icon" onClick={() => removeLanguage(index)} className="absolute -top-3 -right-3 h-7 w-7">
                         <Trash2 className="h-4 w-4" />
@@ -600,6 +644,81 @@ export default function ManualForm({
 
                 {/* Step 3 Navigation */}
                 <div className="mt-8 pt-6 border-t border-white/10">
+                  {/* Show validation errors if any */}
+                  {Object.keys(errors).length > 0 && (
+                    <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+                      <p className="font-semibold mb-2">⚠️ Please fix the following errors before submitting:</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        {/* Step 1 fields */}
+                        {errors.fullName && <li>Full Name: {errors.fullName.message}</li>}
+                        {errors.professionalTitle && <li>Professional Title: {errors.professionalTitle.message}</li>}
+                        {errors.email && <li>Email: {errors.email.message}</li>}
+                        {errors.summary && <li>Summary: {errors.summary.message}</li>}
+                        {errors.location && <li>Location: {errors.location.message}</li>}
+                        {errors.phone && <li>Phone: {errors.phone.message}</li>}
+                        {errors.linkedin && <li>LinkedIn: {errors.linkedin.message}</li>}
+                        {errors.github && <li>GitHub: {errors.github.message}</li>}
+                        {errors.skills && <li>Skills: {errors.skills.message}</li>}
+
+                        {/* Experience errors */}
+                        {errors.experience && (
+                          <li>
+                            Experience: {typeof errors.experience === 'object' && 'message' in errors.experience
+                              ? (errors.experience as any).message
+                              : 'Check all entries'}
+                            {Array.isArray(errors.experience) && errors.experience.map((exp, i) =>
+                              exp && <span key={i} className="block ml-4 text-xs">• Entry {i + 1}: {exp.jobTitle?.message || exp.company?.message || exp.description?.message || 'Invalid characters'}</span>
+                            )}
+                          </li>
+                        )}
+
+                        {/* Education errors */}
+                        {errors.education && (
+                          <li>
+                            Education: {typeof errors.education === 'object' && 'message' in errors.education
+                              ? (errors.education as any).message
+                              : 'Check all entries'}
+                            {Array.isArray(errors.education) && errors.education.map((edu, i) =>
+                              edu && <span key={i} className="block ml-4 text-xs">• Entry {i + 1}: {edu.degree?.message || edu.institution?.message || 'Invalid characters'}</span>
+                            )}
+                          </li>
+                        )}
+
+                        {/* Projects errors */}
+                        {errors.projects && (
+                          <li>
+                            Projects: {typeof errors.projects === 'object' && 'message' in errors.projects
+                              ? (errors.projects as any).message
+                              : 'Check all entries'}
+                            {Array.isArray(errors.projects) && errors.projects.map((proj, i) =>
+                              proj && <span key={i} className="block ml-4 text-xs">• Project {i + 1}: {proj.title?.message || proj.description?.message || proj.technologies?.message || 'Invalid characters'}</span>
+                            )}
+                          </li>
+                        )}
+
+                        {/* Certifications errors */}
+                        {errors.certifications && (
+                          <li>
+                            Certifications: Check for invalid characters
+                            {Array.isArray(errors.certifications) && errors.certifications.map((cert, i) =>
+                              cert && <span key={i} className="block ml-4 text-xs">• Cert {i + 1}: {cert.name?.message || cert.organization?.message || 'Invalid characters'}</span>
+                            )}
+                          </li>
+                        )}
+
+                        {/* Languages errors */}
+                        {errors.languages && (
+                          <li>
+                            Languages: Check for invalid characters
+                            {Array.isArray(errors.languages) && errors.languages.map((lang, i) =>
+                              lang && <span key={i} className="block ml-4 text-xs">• Language {i + 1}: {lang.language?.message || lang.proficiency?.message || 'Invalid characters'}</span>
+                            )}
+                          </li>
+                        )}
+                      </ul>
+                      <p className="mt-3 text-xs text-red-300">Tip: Look for fields with red borders. "Invalid characters" usually means special symbols that need to be removed.</p>
+                    </div>
+                  )}
                   <div className="flex flex-col sm:flex-row gap-3 sm:justify-between">
                     <Button onClick={prevStep} type="button" variant="outline" className="w-full sm:w-auto border-white/20 hover:bg-white/5">
                       {dict.step3.backButton}

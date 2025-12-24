@@ -113,6 +113,27 @@ export default function CreatePortfolioPage() {
         }
       }
 
+      // Upload project images and get their URLs
+      const projectImageURLs: { [key: number]: string } = {};
+      if (formData.projectImageFiles) {
+        const uploadPromises = Object.entries(formData.projectImageFiles).map(async ([indexStr, imageData]: [string, any]) => {
+          const index = parseInt(indexStr);
+          if (imageData?.file) {
+            const fileExt = imageData.file.name.split('.').pop();
+            const fileName = `${user.id}-project-${index}-${Date.now()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage
+              .from('portfolios')
+              .upload(`project-images/${fileName}`, imageData.file);
+
+            if (!uploadError) {
+              const { data } = supabase.storage.from('portfolios').getPublicUrl(`project-images/${fileName}`);
+              projectImageURLs[index] = data.publicUrl;
+            }
+          }
+        });
+        await Promise.all(uploadPromises);
+      }
+
       const portfolioData: PortfolioData = {
         personalInfo: {
           fullName: formData.fullName,
@@ -146,11 +167,11 @@ export default function CreatePortfolioPage() {
           startDate: edu.startYear,
           endDate: edu.endYear,
         })).filter((edu: any) => edu.degree && edu.institution),
-        projects: formData.projects.map((proj: any) => ({
+        projects: formData.projects.map((proj: any, index: number) => ({
           name: proj.title,
           description: proj.description,
           category: 'General',
-          imageURL: '',
+          imageURL: projectImageURLs[index] || '',
           tags: proj.technologies ? proj.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
           detailsURL: proj.link || '#',
         })).filter((proj: any) => proj.name),
@@ -383,6 +404,27 @@ export default function CreatePortfolioPage() {
         }
       }
 
+      // Upload project images and get their URLs
+      const projectImageURLs: { [key: number]: string } = {};
+      if (formData.projectImageFiles) {
+        const uploadPromises = Object.entries(formData.projectImageFiles).map(async ([indexStr, imageData]: [string, any]) => {
+          const index = parseInt(indexStr);
+          if (imageData?.file) {
+            const fileExt = imageData.file.name.split('.').pop();
+            const fileName = `${user.id}-project-${index}-${Date.now()}.${fileExt}`;
+            const { error: uploadError } = await supabase.storage
+              .from('portfolios')
+              .upload(`project-images/${fileName}`, imageData.file);
+
+            if (!uploadError) {
+              const { data } = supabase.storage.from('portfolios').getPublicUrl(`project-images/${fileName}`);
+              projectImageURLs[index] = data.publicUrl;
+            }
+          }
+        });
+        await Promise.all(uploadPromises);
+      }
+
       const portfolioData: PortfolioData = {
         personalInfo: {
           fullName: formData.fullName,
@@ -415,11 +457,11 @@ export default function CreatePortfolioPage() {
           startDate: edu.startYear,
           endDate: edu.endYear,
         })).filter((edu: any) => edu.degree || edu.institution),
-        projects: formData.projects.map((proj: any) => ({
+        projects: formData.projects.map((proj: any, index: number) => ({
           name: proj.title,
           description: proj.description,
           category: 'General',
-          imageURL: '',
+          imageURL: projectImageURLs[index] || '',
           tags: proj.technologies ? proj.technologies.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
           detailsURL: proj.link || '#',
         })).filter((proj: any) => proj.name),

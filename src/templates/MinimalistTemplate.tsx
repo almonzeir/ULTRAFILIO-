@@ -21,7 +21,7 @@ const item = {
   animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
-export default function MinimalistTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function MinimalistTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
   const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
   return (

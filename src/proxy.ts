@@ -74,7 +74,7 @@ export async function proxy(request: NextRequest) {
         'dashboard', 'create', 'edit', 'settings', 'login', 'signup',
         'checkout', 'pricing', 'about', 'contact', 'blog', 'api',
         'p', 'portfolio', 'render', 'admin', 'privacy', 'terms',
-        'forgot-password', 'reset-password', 'refund-policy',
+        'forgot-password', 'reset-password', 'refund-policy', 'auth',
         'choose-profile-type', 'choose-template', 'template-preview',
         'builder', 'ai-building', 'demo'
     ];

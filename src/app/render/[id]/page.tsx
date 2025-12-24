@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { COLOR_THEMES, ColorTheme } from '@/lib/color-themes';
 
 // Dynamic Template Imports - SSR disabled to prevent hydration mismatches
 const ModernTemplate = dynamic(() => import('@/templates/ModernTemplate'), {
@@ -50,25 +51,19 @@ const GeneratedModernTemplate = dynamic(() => import('@/templates/GeneratedModer
 });
 
 import type { PortfolioData } from '@/templates/types';
-import { useColorTheme } from '@/context/color-theme-context';
-import type { ColorTheme } from '@/lib/color-themes';
 
 export default function RealPreviewPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: portfolioId } = use(params);
     const searchParams = useSearchParams();
     const themeParam = searchParams.get('theme') || searchParams.get('mode');
     const colorParam = searchParams.get('color') as ColorTheme | null;
-    const { setTheme: setColorTheme } = useColorTheme();
 
     // Determine if dark mode based on URL param (DO NOT use next-themes to avoid global theme change)
     const isDarkMode = themeParam !== 'light';  // Default to dark if not 'light'
 
-    // Apply color theme from URL if present
-    useEffect(() => {
-        if (colorParam) {
-            setColorTheme(colorParam);
-        }
-    }, [colorParam, setColorTheme]);
+    // Get color theme CSS variables from URL param
+    const colorTheme = colorParam && COLOR_THEMES[colorParam] ? colorParam : 'purple';
+    const colorCss = COLOR_THEMES[colorTheme].css;
 
     const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -146,6 +141,16 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
         }
     }, [portfolioId]);
 
+    // Apply color CSS variables globally to the iframe document
+    useEffect(() => {
+        if (typeof document !== 'undefined') {
+            const root = document.documentElement;
+            Object.entries(colorCss).forEach(([key, value]) => {
+                root.style.setProperty(key, value as string);
+            });
+        }
+    }, [colorCss]);
+
     if (loading) return <div className="min-h-screen bg-neutral-900" />; // Silent loading
     if (!portfolioData) return <div className="text-white text-center p-10">Portfolio Not Found</div>;
 
@@ -165,10 +170,22 @@ export default function RealPreviewPage({ params }: { params: Promise<{ id: stri
     const CurrentTemplate = templateMap[selectedTemplate] || ModernTemplate;
 
     // Debug: Log which template is being rendered
-    console.log("RenderPage: Rendering template:", selectedTemplate, "Component:", CurrentTemplate?.name || 'Unknown');
+    console.log("RenderPage: Rendering template:", selectedTemplate, "Color:", colorTheme, "Dark:", isDarkMode);
 
+
+
+    // Apply color CSS variables inline to ensure iframe gets them
     return (
-        <CurrentTemplate data={portfolioData} isDarkMode={isDarkMode} />
+        <div
+            style={{
+                '--brand': colorCss['--brand'],
+                '--brand-2': colorCss['--brand-2'],
+                '--brand-contrast': colorCss['--brand-contrast'],
+            } as React.CSSProperties}
+            className="min-h-screen"
+        >
+            <CurrentTemplate data={portfolioData} isDarkMode={isDarkMode} colorTheme={colorTheme} />
+        </div>
     );
 }
 

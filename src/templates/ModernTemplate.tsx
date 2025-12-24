@@ -1,8 +1,8 @@
-/* ModernTemplate.tsx - Stunning 'Glass & Glow' Framer Motion Redesign */
 import React from "react";
 import type { PortfolioData } from "./types";
 import { MapPin, Mail, User, ArrowUpRight, Github, Linkedin, Sparkles, GraduationCap, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { COLOR_THEMES } from '@/lib/color-themes';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
@@ -18,8 +18,15 @@ const staggerContainer = {
   }
 };
 
-export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function ModernTemplate({ data, isDarkMode, colorTheme = 'purple' }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
   const { personalInfo, about, experience, projects, education, certifications, languages } = data;
+
+  // Get actual color values from the theme
+  const theme = COLOR_THEMES[colorTheme as keyof typeof COLOR_THEMES] || COLOR_THEMES.purple;
+  const brandColor = theme.primary;  // e.g. '#8b5cf6' for purple
+  const brandColor2 = theme.secondary;
+
+  console.log('[ModernTemplate] isDarkMode:', isDarkMode, 'colorTheme:', colorTheme, 'brandColor:', brandColor);
 
   const consolidatedSkills = React.useMemo(() => {
     if (!about.skills) return [];
@@ -35,16 +42,28 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
   }, [about.skills]);
 
   return (
-    <div className={`font-sans antialiased ${isDarkMode ? 'dark' : ''} text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-[#020205] min-h-screen selection:bg-brand selection:text-white transition-colors duration-500`}>
+    <div
+      className={`font-sans antialiased ${isDarkMode ? 'dark' : ''} min-h-screen selection:bg-brand selection:text-white transition-colors duration-500 relative`}
+      style={{
+        backgroundColor: isDarkMode ? '#000000' : '#ffffff',
+        backgroundImage: isDarkMode
+          ? `radial-gradient(circle at 50% 0%, ${brandColor}50 0%, transparent 60%), radial-gradient(circle at 0% 100%, ${brandColor2}30 0%, transparent 40%), linear-gradient(to bottom, ${brandColor}20, transparent)`
+          : 'none',
+        color: isDarkMode ? '#f1f5f9' : '#0f172a'
+      }}
+    >
       <style>{`
         :root {
-          --glass-border: rgba(255, 255, 255, 0.1);
-          --glass-bg: rgba(255, 255, 255, 0.03);
-          --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+          --glass-border: rgba(0, 0, 0, 0.08);
+          --glass-bg: rgba(255, 255, 255, 0.7);
+          --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+          --section-bg: #f8fafc;
         }
         .dark {
           --glass-border: rgba(255, 255, 255, 0.05);
           --glass-bg: rgba(0, 0, 0, 0.4);
+          --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+          --section-bg: rgba(0, 0, 0, 0.2);
         }
         html { scroll-behavior: smooth; }
         .glass-panel {
@@ -67,7 +86,12 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
           position: absolute;
           filter: blur(100px);
           z-index: 0;
-          opacity: 0.3;
+          opacity: 0.25;
+        }
+        .dark .blob { opacity: 0.45; }
+        .dark .glass-panel {
+          background: rgba(15, 15, 25, 0.4);
+          border-color: hsl(var(--brand) / 0.15);
         }
       `}</style>
 
@@ -76,25 +100,39 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
         <motion.div
           animate={{ x: [0, 50, 0], y: [0, -50, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="blob bg-[hsl(var(--brand))] w-[500px] h-[500px] rounded-full -top-48 -left-48"
+          className="blob rounded-full -top-48 -left-48 w-[500px] h-[500px]"
+          style={{ backgroundColor: brandColor, opacity: isDarkMode ? 0.45 : 0.15 }}
         />
         <motion.div
           animate={{ x: [0, -50, 0], y: [0, 50, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="blob bg-[hsl(var(--brand-2))] w-[400px] h-[400px] rounded-full -bottom-24 -right-24"
+          className="blob rounded-full -bottom-24 -right-24 w-[400px] h-[400px]"
+          style={{ backgroundColor: brandColor2, opacity: isDarkMode ? 0.45 : 0.15 }}
         />
       </div>
 
       {/* --- NAVBAR --- */}
-      <nav className="fixed top-0 w-full z-50 transition-all duration-300 border-b border-white/5 bg-white/5 dark:bg-black/20 backdrop-blur-xl">
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b backdrop-blur-xl ${isDarkMode ? 'border-white/5 bg-black/20' : 'border-slate-200 bg-white/80'}`}>
         <div className="max-w-7xl mx-auto px-6 sm:px-8 h-20 flex items-center justify-between">
           <motion.a
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             href="#"
-            className="text-2xl font-black tracking-tighter"
+            className="text-2xl font-black tracking-tighter flex items-center gap-2"
           >
-            <span className="text-gradient pl-1">{personalInfo.portfolioNameAbbr}</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-base"
+              style={{
+                background: `linear-gradient(135deg, ${brandColor}, ${brandColor2})`,
+                boxShadow: `0 0 20px ${brandColor}80`
+              }}>
+              {personalInfo.portfolioNameAbbr}
+            </div>
+            <span className="hidden sm:block" style={{
+              background: `linear-gradient(135deg, ${brandColor}, ${brandColor2})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>{personalInfo.fullName.split(' ')[0]}</span>
           </motion.a>
 
           <div className="hidden md:flex items-center space-x-10">
@@ -114,7 +152,8 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               href="#contact"
-              className="px-6 py-3 rounded-2xl bg-gradient-brand text-white text-sm font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:scale-105 active:scale-95 transition-all"
+              className="px-6 py-3 rounded-2xl text-white text-sm font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:scale-105 active:scale-95 transition-all"
+              style={{ background: `linear-gradient(135deg, ${brandColor}, ${brandColor2})` }}
             >
               Contact
             </motion.a>
@@ -145,7 +184,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
           >
             <motion.div
               variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[hsl(var(--brand))] text-xs font-black uppercase tracking-[0.2em] mb-8"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[hsl(var(--brand)/0.1)] border border-[hsl(var(--brand)/0.2)] text-[hsl(var(--brand))] text-xs font-black uppercase tracking-[0.2em] mb-8"
             >
               <Sparkles className="w-3 h-3 animate-pulse" />
               Available for Excellence
@@ -156,7 +195,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.95] mb-6 sm:mb-8"
             >
               I&apos;m <span className="text-gradient">{personalInfo.fullName}</span> <br />
-              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl">Designing the Future.</span>
+              <span className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-400 dark:to-white">Designing the Future.</span>
             </motion.h1>
 
             <motion.p
@@ -170,7 +209,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               variants={fadeInUp}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-12 sm:mb-16 px-4 sm:px-0"
             >
-              <a href="#projects" className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-base sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl text-center">
+              <a href="#projects" className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl bg-gradient-brand text-white font-black text-base sm:text-lg hover:scale-105 active:scale-95 transition-all shadow-2xl text-center shadow-[hsl(var(--brand)/0.3)]">
                 Explore Projects
               </a>
               <a href={personalInfo.githubURL || '#'} target="_blank" className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-3xl glass-panel text-slate-900 dark:text-white font-black text-base sm:text-lg hover:bg-white/10 transition-all flex items-center justify-center gap-3">
@@ -211,8 +250,8 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               >
                 <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Status</div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs font-bold font-mono">LIVE_NODE</span>
+                  <div className="w-2 h-2 rounded-full bg-[hsl(var(--brand))] animate-pulse" />
+                  <span className="text-xs font-bold font-mono text-[hsl(var(--brand))]">LIVE_NODE</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -221,7 +260,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
       </section>
 
       {/* --- ABOUT --- */}
-      <section id="about" className="relative z-10 py-32 border-t border-white/5">
+      <section id="about" className={`relative z-10 py-32 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
         <div className="max-w-7xl mx-auto px-6 sm:px-8">
           <SectionHeader title="About" subtitle="Crafting digital experiences with precision" />
 
@@ -231,20 +270,20 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="glass-panel p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] relative overflow-hidden group border-2 border-white/5 hover:border-white/10 transition-all"
+              className={`glass-panel p-6 sm:p-10 md:p-16 rounded-[2rem] sm:rounded-[3rem] relative overflow-hidden group border-2 transition-all ${isDarkMode ? 'border-[hsl(var(--brand)/0.2)] bg-[hsl(var(--brand)/0.05)] hover:border-[hsl(var(--brand)/0.4)] shadow-[0_0_50px_hsl(var(--brand)/0.05)]' : 'border-slate-200 hover:border-slate-300'}`}
             >
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-brand opacity-[0.05] blur-[100px] pointer-events-none" />
-              <p className="text-lg sm:text-2xl md:text-4xl leading-relaxed sm:leading-tight text-slate-600 dark:text-slate-200 font-medium italic mb-8 sm:mb-12">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-brand opacity-[0.1] blur-[100px] pointer-events-none" />
+              <p className={`text-lg sm:text-2xl md:text-4xl leading-relaxed sm:leading-tight font-medium italic mb-8 sm:mb-12 ${isDarkMode ? 'text-white' : 'text-slate-700'}`}>
                 "{about.extendedBio}"
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm font-black uppercase tracking-[0.1em] sm:tracking-[0.2em]">
-                <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 max-w-full">
+                <div className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl border max-w-full ${isDarkMode ? 'bg-[hsl(var(--brand)/0.1)] border-[hsl(var(--brand)/0.2)] text-[hsl(var(--brand))]' : 'bg-slate-100 border-slate-200'}`}>
                   <MapPin className="w-4 h-4 text-[hsl(var(--brand))] flex-shrink-0" />
-                  <span className="text-slate-500 truncate">{personalInfo.location || 'Global'}</span>
+                  <span className={`${isDarkMode ? 'text-white/80' : 'text-slate-600'} truncate`}>{personalInfo.location || 'Global'}</span>
                 </div>
-                <div className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl bg-white/5 border border-white/5 max-w-full overflow-hidden">
+                <div className={`flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl border max-w-full overflow-hidden ${isDarkMode ? 'bg-[hsl(var(--brand)/0.1)] border-[hsl(var(--brand)/0.2)] text-[hsl(var(--brand))]' : 'bg-slate-100 border-slate-200'}`}>
                   <Mail className="w-4 h-4 text-[hsl(var(--brand))] flex-shrink-0" />
-                  <span className="text-slate-500 truncate">{personalInfo.email}</span>
+                  <span className={`${isDarkMode ? 'text-white/80' : 'text-slate-600'} truncate`}>{personalInfo.email}</span>
                 </div>
               </div>
             </motion.div>
@@ -258,18 +297,17 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.05 }}
                   viewport={{ once: true }}
-                  className={`glass-panel p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] hover:border-[hsl(var(--brand)/0.5)] transition-all group ${i === 0 ? 'sm:col-span-2' : ''
-                    }`}
+                  className={`glass-panel p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2rem] hover:border-[hsl(var(--brand)/0.5)] transition-all group ${i === 0 ? 'sm:col-span-2' : ''}`}
                 >
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-1.5 h-5 bg-gradient-brand rounded-full" />
-                    <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400 group-hover:text-foreground transition-colors">
+                    <h3 className={`text-xs font-black uppercase tracking-[0.3em] group-hover:text-foreground transition-colors ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}`}>
                       {group.category}
                     </h3>
                   </div>
                   <div className="flex flex-wrap gap-2.5">
                     {group.tags.map(tag => (
-                      <span key={tag} className="px-4 py-1.5 rounded-xl bg-white/5 border border-white/5 text-xs font-bold text-slate-500 dark:text-slate-400 group-hover:text-foreground group-hover:bg-white/10 transition-all">
+                      <span key={tag} className={`px-4 py-1.5 rounded-xl border text-xs font-bold transition-all ${isDarkMode ? 'bg-[hsl(var(--brand)/0.1)] border-[hsl(var(--brand)/0.2)] text-[hsl(var(--brand))] group-hover:bg-[hsl(var(--brand)/0.2)]' : 'bg-slate-100 border-slate-200 text-slate-600 group-hover:text-slate-900 group-hover:bg-slate-200'}`}>
                         {tag}
                       </span>
                     ))}
@@ -282,7 +320,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
       </section>
 
       {/* --- PROJECTS --- */}
-      <section id="projects" className="relative z-10 py-32 bg-black/20 overflow-hidden">
+      <section id="projects" className={`relative z-10 py-32 overflow-hidden ${isDarkMode ? 'bg-black/20' : 'bg-slate-50'}`}>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[hsl(var(--brand))] opacity-[0.02] blur-[150px] -z-10" />
         <div className="max-w-7xl mx-auto px-6 sm:px-8 text-center sm:text-left">
           <SectionHeader title="Projects" subtitle="Featured highlights of my recent work" />
@@ -303,7 +341,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
                   {project.imageURL ? (
                     <img src={project.imageURL} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={project.name} />
                   ) : (
-                    <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white/5 font-black text-4xl">PROJ_{i + 1}</div>
+                    <div className={`w-full h-full flex items-center justify-center font-black text-4xl ${isDarkMode ? 'bg-slate-900 text-white/5' : 'bg-slate-200 text-slate-400'}`}>PROJ_{i + 1}</div>
                   )}
                   <div className="absolute top-6 right-6 z-20 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 transition-transform">
                     <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
@@ -330,7 +368,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
 
       {/* --- EDUCATION & CERTIFICATIONS --- */}
       {((education && education.length > 0) || (certifications && certifications.length > 0)) && (
-        <section id="academic" className="relative z-10 py-32 bg-slate-100/50 dark:bg-black/40">
+        <section id="academic" className={`relative z-10 py-32 ${isDarkMode ? 'bg-black/40' : 'bg-white'}`}>
           <div className="max-w-7xl mx-auto px-6 sm:px-8">
             <div className="grid lg:grid-cols-2 gap-16">
               {/* Education */}
@@ -392,7 +430,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
 
       {/* --- LANGUAGES --- */}
       {languages && languages.length > 0 && (
-        <section className="relative z-10 py-20 border-y border-white/5">
+        <section className={`relative z-10 py-20 border-y ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
           <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-wrap justify-center gap-12">
             {languages.map((lang, idx) => (
               <div key={idx} className="flex flex-col items-center gap-2">
@@ -406,7 +444,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
       )}
 
       {/* --- EXPERIENCE --- */}
-      <section id="experience" className="relative z-10 py-32 border-t border-white/5">
+      <section id="experience" className={`relative z-10 py-32 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
         <div className="max-w-4xl mx-auto px-6 sm:px-8">
           <SectionHeader title="Experience" subtitle="Professional journey and core impact" />
           <div className="mt-20 space-y-12">
@@ -452,7 +490,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
       </section>
 
       {/* --- CONTACT --- */}
-      <footer id="contact" className="relative z-10 py-20 sm:py-40 px-4 sm:px-8 border-t border-white/5">
+      <footer id="contact" className={`relative z-10 py-20 sm:py-40 px-4 sm:px-8 border-t ${isDarkMode ? 'border-white/5' : 'border-slate-200'}`}>
         <div className="max-w-5xl mx-auto text-center relative">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -469,7 +507,7 @@ export default function ModernTemplate({ data, isDarkMode }: { data: PortfolioDa
               Now accepting new projects. Let&apos;s bring your vision to life with precision and style.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <a href={`mailto:${personalInfo.email}`} className="px-12 py-5 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl">
+              <a href={`mailto:${personalInfo.email}`} className="px-12 py-5 rounded-[2rem] bg-gradient-brand text-white font-black text-xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-[hsl(var(--brand)/0.2)]">
                 Start a Project
               </a>
               <a href={personalInfo.linkedInURL || '#'} className="px-12 py-5 rounded-[2rem] glass-panel text-foreground font-black text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-3">

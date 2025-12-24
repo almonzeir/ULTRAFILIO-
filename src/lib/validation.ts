@@ -10,10 +10,16 @@ const DANGEROUS_PATTERNS = [
     /javascript:/gi,
     /on\w+\s*=/gi,
 
-    // SQL injection patterns
-    /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|TRUNCATE|EXEC|UNION|DECLARE)\b)/gi,
-    /--/g,
-    /;.*$/g,
+    // SQL injection patterns - more specific to avoid false positives
+    // Only match when SQL syntax context is present (not isolated words like "Students Union")
+    /(\bSELECT\s+.+\s+FROM\b)/gi,       // SELECT ... FROM
+    /(\bINSERT\s+INTO\b)/gi,            // INSERT INTO
+    /(\bUPDATE\s+.+\s+SET\b)/gi,        // UPDATE ... SET
+    /(\bDELETE\s+FROM\b)/gi,            // DELETE FROM
+    /(\bDROP\s+(TABLE|DATABASE)\b)/gi,  // DROP TABLE/DATABASE
+    /(\bUNION\s+SELECT\b)/gi,           // UNION SELECT (SQL injection)
+    /(\bEXEC\s*\()/gi,                  // EXEC( function calls
+    /(';\s*--)/g,                        // '; -- (SQL comment injection)
 
     // HTML injection
     /<[^>]*>/g,

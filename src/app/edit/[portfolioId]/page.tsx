@@ -64,7 +64,21 @@ export default function EditPortfolioPage() {
     const [saving, setSaving] = useState(false);
     const [publishing, setPublishing] = useState(false);
     const [activeTab, setActiveTab] = useState('edit');
-    const [isDarkMode, setIsDarkMode] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+
+    // Load theme preference from localStorage on mount
+    useEffect(() => {
+        const savedTheme = localStorage.getItem('editor-theme');
+        if (savedTheme) {
+            setIsDarkMode(savedTheme === 'dark');
+        }
+    }, []);
+
+    // Save theme preference when it changes
+    useEffect(() => {
+        localStorage.setItem('editor-theme', isDarkMode ? 'dark' : 'light');
+        console.log("Editor: isDarkMode changed to:", isDarkMode);
+    }, [isDarkMode]);
     const [templateId, setTemplateId] = useState('modern');
     const [colorTheme, setColorTheme] = useState('purple');
     const [isMobileView, setIsMobileView] = useState(false);
@@ -151,7 +165,28 @@ export default function EditPortfolioPage() {
                     },
                     about: {
                         extendedBio: data.description || "",
-                        skills: data.skills || [],
+                        // Merge skills with duplicate category names
+                        skills: (() => {
+                            const skills = data.skills || [];
+                            if (!Array.isArray(skills) || skills.length === 0) return [];
+
+                            const categoryMap = new Map<string, string[]>();
+                            for (const skill of skills) {
+                                const categoryKey = (skill.category || 'General').toLowerCase().trim();
+                                const existingTags = categoryMap.get(categoryKey) || [];
+                                if (Array.isArray(skill.tags)) {
+                                    existingTags.push(...skill.tags);
+                                } else if (typeof skill.tags === 'string') {
+                                    existingTags.push(skill.tags);
+                                }
+                                categoryMap.set(categoryKey, existingTags);
+                            }
+
+                            return Array.from(categoryMap.entries()).map(([key, tags]) => ({
+                                category: key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+                                tags: [...new Set(tags.filter(t => t && t.trim()))]
+                            })).filter(s => s.tags.length > 0);
+                        })(),
                     },
                     projects: data.projects || [],
                     experience: data.experience || [],
@@ -196,9 +231,10 @@ export default function EditPortfolioPage() {
                 certifications: portfolioData.certifications,
                 languages: portfolioData.languages,
                 template_id: overrideTemplateId || templateId,
-                color_theme: overrideColorTheme || colorTheme,
-                updated_at: new Date().toISOString(),
-                section_order: portfolioData.sectionOrder
+                // DISABLED: Missing in DB
+                // color_theme: overrideColorTheme || colorTheme,
+                // section_order: portfolioData.sectionOrder, 
+                updated_at: new Date().toISOString()
             };
 
             const { error } = await supabase.from('portfolios').update(updates).eq('id', portfolioId);
@@ -206,7 +242,12 @@ export default function EditPortfolioPage() {
             if (!silent) toast({ title: "Saved", description: "Changes saved successfully." });
             setPreviewKey(Date.now()); // Refresh preview iframe
         } catch (e: any) {
-            if (!silent) toast({ variant: 'destructive', title: "Error", description: e.message });
+            console.error("Save Error Details:", e);
+            if (!silent) toast({
+                variant: 'destructive',
+                title: "Error Saving",
+                description: e.message || "Check console for details. A database column might be missing."
+            });
         } finally {
             setSaving(false);
         }
@@ -971,10 +1012,7 @@ export default function EditPortfolioPage() {
                                 )}
                             </div>
 
-                            {/* Desktop: Open in new tab hint */}
-                            <div className="hidden lg:flex justify-center p-2 bg-black/20 text-[10px] text-white/30 uppercase tracking-widest">
-                                Live Preview Mode • <a href={`/render/${portfolioId}?template=${templateId}`} target="_blank" className="hover:text-white ml-1 underline">Open Fullscreen</a>
-                            </div>
+                            {/* Desktop: Removed Open in new tab hint as requested */}
                         </div>
                     )}
                 </main>

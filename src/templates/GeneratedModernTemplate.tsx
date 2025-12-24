@@ -2,11 +2,11 @@
 import React from 'react';
 import type { PortfolioData } from './types';
 
-export default function FuturisticTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function FuturisticTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
   const { personalInfo, about, experience, projects, education, certifications, languages } = data;
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-[#050505] dark:bg-[#050505] text-[#e0e0e0] dark:text-[#e0e0e0] font-mono selection:bg-[hsl(var(--brand))] selection:text-black overflow-x-hidden transition-colors duration-500`}>
+    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''} bg-[#ffffff] dark:bg-[#050505] text-[#1a1a1a] dark:text-[#e0e0e0] font-mono selection:bg-[hsl(var(--brand))] selection:text-white dark:selection:text-black overflow-x-hidden transition-colors duration-500`}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
         
@@ -23,10 +23,14 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
         }
 
         .cyber-card {
-          background: rgba(10, 10, 10, 0.8);
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.8);
+          border: 1px solid rgba(0, 0, 0, 0.1);
           backdrop-blur: 10px;
           position: relative;
+        }
+        .dark .cyber-card {
+          background: rgba(10, 10, 10, 0.8);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .cyber-card::before {
@@ -91,7 +95,7 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
             <div className="absolute -inset-4 border border-[hsl(var(--brand)/0.3)] animate-pulse"></div>
             <div className="absolute -inset-8 border border-[hsl(var(--brand)/0.1)] animate-pulse delay-500"></div>
 
-            <div className="relative w-64 h-64 md:w-96 md:h-96 bg-black border-2 border-[hsl(var(--brand))] overflow-hidden">
+            <div className="relative w-64 h-64 md:w-96 md:h-96 bg-white dark:bg-black border-2 border-[hsl(var(--brand))] overflow-hidden">
               {personalInfo.profilePhotoURL ? (
                 <img src={personalInfo.profilePhotoURL} alt="CORE_IDENTITY" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0" />
               ) : (
@@ -283,7 +287,7 @@ export default function FuturisticTemplate({ data, isDarkMode }: { data: Portfol
       )}
 
       {/* --- FOOTER --- */}
-      <footer id="signal" className="py-20 px-6 border-t border-[hsl(var(--brand)/0.3)] bg-gradient-to-b from-[#050505] to-[hsl(var(--brand)/0.05)] text-center">
+      <footer id="signal" className={`py-20 px-6 border-t border-[hsl(var(--brand)/0.3)] ${isDarkMode ? 'bg-gradient-to-b from-[#050505] to-[hsl(var(--brand)/0.05)]' : 'bg-gradient-to-b from-[#ffffff] to-[hsl(var(--brand)/0.05)]'} text-center`}>
         <div className="w-16 h-16 mx-auto mb-8 rounded-full border border-[hsl(var(--brand))] flex items-center justify-center animate-pulse">
           <div className="w-12 h-12 bg-[hsl(var(--brand)/0.2)] rounded-full flex items-center justify-center">
             <span className="text-2xl text-[hsl(var(--brand))]">📶</span>

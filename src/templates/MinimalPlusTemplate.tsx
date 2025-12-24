@@ -23,7 +23,7 @@ const fadeInUp = {
     transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] }
 };
 
-export default function MinimalPlusTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function MinimalPlusTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
     const { personalInfo, about, experience, projects, education, certifications, languages, sectionOrder = ['hero', 'about', 'skills', 'projects', 'experience', 'education', 'contact'] } = data;
 
     return (

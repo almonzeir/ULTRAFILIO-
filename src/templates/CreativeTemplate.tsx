@@ -4,7 +4,7 @@ import type { PortfolioData } from './types';
 import { Ghost, ArrowUpRight, Github, Linkedin, Mail, ExternalLink, Moon, Sun, Sparkles, Zap, GraduationCap } from 'lucide-react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
-export default function CreativeTemplate({ data, isDarkMode }: { data: PortfolioData; isDarkMode?: boolean }) {
+export default function CreativeTemplate({ data, isDarkMode, colorTheme }: { data: PortfolioData; isDarkMode?: boolean; colorTheme?: string }) {
     const { personalInfo, about, experience, projects, education, certifications, languages } = data;
     const { scrollYProgress } = useScroll();
     const scaleProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });

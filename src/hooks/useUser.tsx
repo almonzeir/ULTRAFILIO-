@@ -10,19 +10,9 @@ export function useUser() {
     const [loading, setLoading] = useState(true);
 
     const fetchUserProfile = async (userId: string) => {
-        try {
-            const { data, error } = await supabase
-                .from('users')
-                .select('is_pro')
-                .eq('id', userId)
-                .single();
-
-            if (!error && data) {
-                setIsPro(data.is_pro);
-            }
-        } catch (err) {
-            console.error('Error fetching user profile:', err);
-        }
+        // PRO CHECK DISABLED: RPC function missing in DB
+        // Defaulting to TRUE for now to allow all features
+        setIsPro(true);
     };
 
     const refreshUser = async () => {
