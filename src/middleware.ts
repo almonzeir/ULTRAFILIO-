@@ -82,11 +82,9 @@ export async function proxy(request: NextRequest) {
     const firstSegment = pathname.split('/')[1];
 
     if (firstSegment && !reservedPaths.includes(firstSegment) && !pathname.includes('.')) {
-        console.log(`Rewriting ${pathname} to /p${pathname}`);
-        const url = request.nextUrl.clone();
-        url.pathname = `/p${pathname}`;
-        return NextResponse.rewrite(url);
-    }
+    const url = new URL(`/p${pathname}`, request.url);
+    return NextResponse.rewrite(url);
+}
 
     // Add security headers
     response.headers.set('X-DNS-Prefetch-Control', 'on');
