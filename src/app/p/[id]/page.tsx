@@ -20,6 +20,7 @@ import type { PortfolioData } from '@/templates/types';
 
 // Template mapping
 const TEMPLATES: Record<string, React.ComponentType<{ data: PortfolioData }>> = {
+    'liquid-silk': MinimalPlusTemplate,
     'aurora': AuroraTemplate,
     'modern': ModernTemplate,
     'executive': ExecutiveTemplate,
@@ -51,7 +52,7 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
                 // Try to find by ID first, then by slug
                 let query = supabase
                     .from('portfolios')
-                    .select('*, users!inner(is_pro)'); // Join with users to check Pro status
+                    .select('*');
 
                 // Check if it's a UUID format or a slug
                 const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug);
@@ -69,8 +70,7 @@ export default function PublicPortfolioPage({ params }: { params: { id: string }
                     return;
                 }
 
-                const ownerIsPro = data.users?.is_pro || false;
-                processPortfolioData(data, ownerIsPro);
+                processPortfolioData(data, true);
             } catch (err) {
                 console.error('Public Load error:', err);
                 setNotFound(true);
