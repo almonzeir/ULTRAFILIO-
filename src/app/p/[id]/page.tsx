@@ -44,7 +44,13 @@ export default function PublicPortfolioPage({ params }: { params: Promise<{ id: 
     const [idOrSlug, setIdOrSlug] = useState<string | null>(null);
 
     useEffect(() => {
-        params.then((p) => setIdOrSlug(p.id));
+        if (params && typeof params.then === 'function') {
+            params.then((p) => setIdOrSlug(p.id));
+        } else {
+            // Fallback for when params is already resolved (older Next.js or different env)
+            const p = params as unknown as { id: string };
+            setIdOrSlug(p.id);
+        }
     }, [params]);
 
     const { setTheme } = useColorTheme();
