@@ -21,6 +21,7 @@ import type { PortfolioData } from '@/templates/types';
 
 // Template mapping
 const TEMPLATES: Record<string, React.ComponentType<{ data: PortfolioData }>> = {
+    'liquid-silk': MinimalPlusTemplate,
     'aurora': AuroraTemplate,
     'modern': ModernTemplate,
     'executive': ExecutiveTemplate,
@@ -39,6 +40,13 @@ const PRO_TEMPLATES = ['cyber', 'aurora', 'minimal-plus', 'creative', 'modern'];
 export default function PublicPortfolioPage() {
     const params = useParams();
     const idOrSlug = params.id as string;
+export default function PublicPortfolioPage({ params }: { params: Promise<{ id: string }> }) {
+    const [idOrSlug, setIdOrSlug] = useState<string | null>(null);
+
+    useEffect(() => {
+        params.then((p) => setIdOrSlug(p.id));
+    }, [params]);
+
     const { setTheme } = useColorTheme();
     const searchParams = useSearchParams();
     const templateOverride = searchParams.get('template');
@@ -50,6 +58,7 @@ export default function PublicPortfolioPage() {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (!idOrSlug) return;
             try {
                 // Try to find by ID first, then by slug
                 let query = supabase
@@ -72,8 +81,7 @@ export default function PublicPortfolioPage() {
                     return;
                 }
 
-                const ownerIsPro = data.users?.is_pro || false;
-                processPortfolioData(data, ownerIsPro);
+                processPortfolioData(data, true);
             } catch (err) {
                 console.error('Public Load error:', err);
                 setNotFound(true);
