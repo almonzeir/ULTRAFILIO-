@@ -33,7 +33,6 @@ function TemplateCard({ template, index }: { template: Template; index: number }
       whileHover={{ y: -12, scale: 1.02, transition: { duration: 0.4 } }}
       className="group relative"
     >
-      <Link href={`/preview/${template.key}`}>
         {/* Liquid Silver Glass Card */}
         <div className="relative aspect-[4/3] liquid-silver-glass rounded-[2rem] overflow-hidden transition-all duration-700 p-8 flex flex-col justify-between">
 
@@ -69,14 +68,10 @@ function TemplateCard({ template, index }: { template: Template; index: number }
 
             {/* View Button */}
             <div className="mt-4 flex justify-center">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase text-white/50 group-hover:text-white/80 transition-colors duration-500">
-                Preview Template
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
             </div>
           </div>
         </div>
-      </Link>
+
     </motion.div>
   );
 }
@@ -108,7 +103,7 @@ export default function TemplateGallery() {
   ];
 
   return (
-    <section id="templates" className="relative py-24 sm:py-32 lg:py-48 overflow-hidden">
+    <section id="templates" className="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
       {/* Living Background */}
       <MeshGradientBackground />
 
