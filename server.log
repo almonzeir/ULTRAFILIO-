@@ -1,0 +1,43 @@
+
+> nextn@0.1.0 dev
+> next dev -p 9005
+
+▲ Next.js 16.1.0 (Turbopack)
+- Local:         http://localhost:9005
+- Network:       http://192.168.0.2:9005
+- Environments: .env.local
+
+✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 1536ms
+○ Compiling /p/[id] ...
+
+warn - The class `ease-[0.16,1,0.3,1]` is ambiguous and matches multiple utilities.
+warn - If this is content and not a class, replace it with `ease-&lsqb;0.16,1,0.3,1&rsqb;` to silence this warning.
+Error: Route "/p/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PublicPortfolioPage (src/app/p/[id]/page.tsx:38:29)
+  36 |
+  37 | export default function PublicPortfolioPage({ params }: { params: { id: string } }) {
+> 38 |     const idOrSlug = params.id;
+     |                             ^
+  39 |     const { setTheme } = useColorTheme();
+  40 |     const searchParams = useSearchParams();
+  41 |     const templateOverride = searchParams.get('template');
+ GET /hamid-ai 200 in 11.9s (compile: 10.8s, proxy.ts: 212ms, render: 867ms)
+✓ Compiled in 1997ms
+Error: Route "/p/[id]" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PublicPortfolioPage (src/app/p/[id]/page.tsx:40:29)
+  38 |
+  39 | export default function PublicPortfolioPage({ params }: { params: { id: string } }) {
+> 40 |     const idOrSlug = params.id;
+     |                             ^
+  41 |     const { setTheme } = useColorTheme();
+  42 |     const searchParams = useSearchParams();
+  43 |     const templateOverride = searchParams.get('template');
+ GET /hamid-ai 200 in 2.3s (compile: 1039ms, proxy.ts: 66ms, render: 1173ms)
+ GET /hamid-ai 200 in 415ms (compile: 137ms, proxy.ts: 10ms, render: 268ms)

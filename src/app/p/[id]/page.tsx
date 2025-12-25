@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { useColorTheme } from '@/context/color-theme-context';
 import { Loader2 } from 'lucide-react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useParams } from 'next/navigation';
 
 // Templates
 import ModernTemplate from '@/templates/ModernTemplate';
@@ -16,6 +16,7 @@ import MinimalistTemplate from '@/templates/MinimalistTemplate';
 import GeneratedModernTemplate from '@/templates/GeneratedModernTemplate';
 import Cyber3DTemplate from '@/templates/Cyber3DTemplate';
 import AuroraTemplate from '@/templates/AuroraTemplate';
+import LiquidSilkTemplate from '@/templates/LiquidSilkTemplate';
 import type { PortfolioData } from '@/templates/types';
 
 // Template mapping
@@ -30,11 +31,15 @@ const TEMPLATES: Record<string, React.ComponentType<{ data: PortfolioData }>> = 
     'minimalist': MinimalistTemplate,
     'generated': GeneratedModernTemplate,
     'cyber': Cyber3DTemplate,
+    'liquid-silk': LiquidSilkTemplate,
 };
 
 // Define Pro Templates
 const PRO_TEMPLATES = ['cyber', 'aurora', 'minimal-plus', 'creative', 'modern'];
 
+export default function PublicPortfolioPage() {
+    const params = useParams();
+    const idOrSlug = params.id as string;
 export default function PublicPortfolioPage({ params }: { params: Promise<{ id: string }> }) {
     const [idOrSlug, setIdOrSlug] = useState<string | null>(null);
 
