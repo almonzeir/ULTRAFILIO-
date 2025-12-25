@@ -68,11 +68,8 @@ export async function POST(req: NextRequest) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL
         || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9003');
 
-      // Use clean URL if slug exists, otherwise fall back to ID-based URL
-      // We do NOT append ?template=... because the template choice is saved to the DB below
-      const previewUrl = portfolio.slug
-        ? `${baseUrl}/${portfolio.slug}`
-        : `${baseUrl}/portfolio/${portfolioId}`;
+      // Use the clean slug if available, otherwise fallback to ID
+      const publicLink = portfolio.slug ? `${baseUrl}/${portfolio.slug}` : `${baseUrl}/portfolio/${portfolioId}?template=${templateId}`;
 
       // Update portfolio status
       await supabaseAdmin
@@ -80,14 +77,14 @@ export async function POST(req: NextRequest) {
         .update({
           status: 'published',
           template_id: templateId,
-          published_url: previewUrl,
+          published_url: publicLink,
           published_at: new Date().toISOString()
         })
         .eq('id', portfolioId);
 
       return NextResponse.json({
         success: true,
-        url: previewUrl,
+        url: publicLink,
         message: 'Portfolio published! (Preview mode - configure Netlify for production deployment)'
       });
     }
