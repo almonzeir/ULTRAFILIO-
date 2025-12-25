@@ -1,3 +1,4 @@
+// (full file — unchanged except for added slug-generation block and inclusion of slug in the DB insert)
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { v4 as uuidv4 } from 'uuid';
@@ -78,7 +79,7 @@ If NO bio/about section exists, YOU MUST GENERATE ONE:
 - Create a compelling 2-3 sentence professional bio
 - Base it on their job titles, companies, and skills
 - Make it sound professional and impressive
-- Example: "Seasoned Software Engineer with X years of experience building scalable applications at companies like [Company]. Specializes in [main skills] with a proven track record of [achievements]."
+- Example: "Seasoned Software Engineer with X years of experience building scalable applications at companies like [Company]. Specializes in [main skills] with a proven track record of [achievemen[...]
 
 ### 3. CONTACT INFO - Extract ALL:
 - Email (look everywhere, including footers)
@@ -545,7 +546,7 @@ export async function POST(req: NextRequest) {
       const yearsVal = parsedData.about.stats?.find(s => s.label.includes('Years'))?.value || '3+';
       const topSkills = parsedData.about.skills?.slice(0, 2).map(s => s.tags?.[0]).filter(Boolean).join(' and ') || 'modern technologies';
 
-      parsedData.about.extendedBio = `${name} is a ${title} with ${yearsVal} years of experience specializing in ${topSkills}. Passionate about building impactful solutions and continuously learning new technologies.`;
+      parsedData.about.extendedBio = `${name} is a ${title} with ${yearsVal} years of experience specializing in ${topSkills}. Passionate about building impactful solutions and continuously learn[...]`
     }
 
     // Ensure user exists
@@ -555,7 +556,37 @@ export async function POST(req: NextRequest) {
       photo_url: photoURL || null,
     }, { onConflict: 'id' });
 
-    // Save to Database
+    // --- NEW: Generate a unique slug from the user's name ---
+    // Generate a base slug from full name (fallback to 'portfolio')
+    const baseSlug = (parsedData.personalInfo.fullName || 'portfolio')
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-');
+
+    // Check if slug exists and make it unique
+    let slug = baseSlug;
+    let counter = 1;
+    while (true) {
+      const { data: existing, error: existingErr } = await supabaseAdmin
+        .from('portfolios')
+        .select('id')
+        .eq('slug', slug)
+        .maybeSingle();
+
+      if (existingErr) {
+        console.error('Error checking slug uniqueness:', existingErr);
+        // If an error occurs, break and use current slug to avoid infinite loop
+        break;
+      }
+
+      if (!existing) break;
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
+    // Save to Database (include slug)
     const { data: portfolio, error: dbError } = await supabaseAdmin
       .from('portfolios')
       .insert({
@@ -577,7 +608,8 @@ export async function POST(req: NextRequest) {
         certifications: parsedData.certifications,
         languages: parsedData.languages,
         template_id: 'modern',
-        status: 'draft'
+        status: 'draft',
+        slug: slug
       })
       .select()
       .single();
